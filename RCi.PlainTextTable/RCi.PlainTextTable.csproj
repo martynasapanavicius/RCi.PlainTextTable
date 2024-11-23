@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<WarningsAsErrors>Nullable</WarningsAsErrors>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+			<_Parameter1>RCi.PlainTextTable.Tests</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
+
+</Project>
