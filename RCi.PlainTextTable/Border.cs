@@ -1,4 +1,9 @@
 ﻿namespace RCi.PlainTextTable
 {
-    public enum Border { None, Normal, Bold, }
+    public enum Border
+    {
+        None,
+        Normal,
+        Bold,
+    }
 }

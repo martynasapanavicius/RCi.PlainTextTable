@@ -39,6 +39,15 @@ namespace RCi.PlainTextTable
             );
         }
 
-        public override string ToString() => $"{Coordinate}, CS={ColumnSpan}, RS={RowSpan}, M=({Margin}), TS={TextSize}, TSWM={TextSizeWithMargin}, HA={HorizontalAlignment.ToString()[..1]}, VA={VerticalAlignment.ToString()[..1]}, B=({Borders})";
+        public override string ToString() =>
+            $"{Coordinate}, " +
+            $"CS={ColumnSpan}, " +
+            $"RS={RowSpan}, " +
+            $"M=({Margin}), " +
+            $"TS={TextSize}, " +
+            $"TSWM={TextSizeWithMargin}, " +
+            $"HA={HorizontalAlignment.ToString()[..1]}, " +
+            $"VA={VerticalAlignment.ToString()[..1]}, " +
+            $"B=({Borders})";
     }
 }
