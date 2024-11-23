@@ -52,8 +52,12 @@ namespace RCi.PlainTextTable
             return new ColumnControl(this, col);
         }
 
-        internal void DeleteCell(Cell cell)
+        internal void DeleteCell(ICell cell)
         {
+            if (!ReferenceEquals(cell.Host(), this))
+            {
+                throw new ArgumentException("cell does not belong to this plain text table");
+            }
             _cells.Remove(cell.Coordinate);
             RowCount = _cells.Count == 0 ? 0 : _cells.Max(p => p.Key.Row) + 1;
             ColumnCount = _cells.Count == 0 ? 0 : _cells.Max(p => p.Key.Col) + 1;

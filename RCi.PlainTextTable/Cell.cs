@@ -21,8 +21,8 @@
         public required PlainTextTable Host { get; init; }
         public required Coordinate Coordinate { get; init; }
         public string Text { get; set; } = string.Empty;
-        public int ColumnSpan { get; set; } = 1;
-        public int RowSpan { get; set; } = 1;
+        public int ColumnSpan { get; set; } = 1; // TODO: validate or clamp values on set
+        public int RowSpan { get; set; } = 1; // TODO: validate or clamp values on set
         public Margin? Margin { get; set; }
         public Borders? Borders { get; set; }
         public HorizontalAlignment? HorizontalAlignment { get; set; }
@@ -31,5 +31,4 @@
         PlainTextTable ICell.Host() => Host;
         public void Delete() => Host.DeleteCell(this);
     }
-
 }
