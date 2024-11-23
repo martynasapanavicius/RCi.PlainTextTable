@@ -65,17 +65,6 @@ namespace RCi.PlainTextTable
 
         public override string ToString() => CompileToText
         (
-            //_cells.ToDictionary(p => p.Key, p => new PttLogicalCell
-            //{
-            //    Coordinate = p.Value.Coordinate,
-            //    Text = p.Value.Text,
-            //    ColumnSpan = p.Value.ColumnSpan,
-            //    RowSpan = p.Value.RowSpan,
-            //    Margin = p.Value.Margin ?? DefaultMargin,
-            //    Borders = p.Value.Borders ?? DefaultBorders,
-            //    HorizontalAlignment = p.Value.HorizontalAlignment ?? DefaultHorizontalAlignment,
-            //    VerticalAlignment = p.Value.VerticalAlignment ?? DefaultVerticalAlignment,
-            //})
             _cells.Select(p => new LogicalCell
             {
                 Coordinate = p.Value.Coordinate,
@@ -480,350 +469,326 @@ namespace RCi.PlainTextTable
                 PaintBorder(canvas, borderMask, m.BottomRightBorderCorner, GetBorderCornerCharacter(bottomRightBorder), bottomRightBorder);
                 PaintBorder(canvas, borderMask, m.BottomLeftBorderCorner, GetBorderCornerCharacter(bottomLeftBorder), bottomLeftBorder);
             }
+        }
 
-            #region // BuildPhysicalGrid
+        private static int GetBorderSize(Border border) => border switch
+        {
+            Border.None => 0,
+            Border.Normal => 1,
+            Border.Bold => 1,
+            _ => throw new ArgumentOutOfRangeException(nameof(border))
+        };
 
-            static void BuildPhysicalGrid
-            (
-                IReadOnlyDictionary<Coordinate, LogicalCell> logicalCells,
-                out LogicalToPhysicalMap logicalToPhysicalMap,
-                out PhysicalToLogicalMap physicalToLogicalMap
-            )
+        private static Coordinate GetLogicalCellTopLeftPhysicalCoordinate(LogicalToPhysicalMap logicalToPhysicalMap, Coordinate logicalCoordinate) =>
+            logicalToPhysicalMap[logicalCoordinate]
+                .OrderBy(x => x.Row)
+                .ThenBy(x => x.Col)
+                .First();
+
+        private static int GetNextAvailableColumn(HashSet<Coordinate> physicalCoordinatesSet, int row)
+        {
+            var expected = 0;
+            var stream = physicalCoordinatesSet
+                .Where(x => x.Row == row)
+                .OrderBy(x => x.Col);
+            foreach (var pair in stream)
             {
-                // construct physical grid
-                logicalToPhysicalMap = new SortedDictionary<Coordinate, HashSet<Coordinate>>(); // TODO: SortedDictionary
-                physicalToLogicalMap = new SortedDictionary<Coordinate, Coordinate>();          // TODO: SortedDictionary // TODO: are we okay to only have 1:1 mapping?
-
-                // helper set for finding next available column in a row
-                var physicalCoordinatesSet = new HashSet<Coordinate>();
-
-                // since we might have empty logical rows, ignore them in physical mapping
-                var logicalToPhysicalRowMap = logicalCells
-                    .Values
-                    .Select(p => p.Row)
-                    .Distinct()
-                    .OrderBy(x => x)
-                    .Select((n, i) => (logicalRow: n, physicalRow: i))
-                    .ToDictionary(t => t.logicalRow, t => t.physicalRow);
-                foreach (var logicalCell in logicalCells.Values
-                             .OrderBy(x => x.Row)
-                             .ThenBy(x => x.Col))
+                if (pair.Col != expected)
                 {
-                    var physicalCoordinates = new HashSet<Coordinate>();
-                    logicalToPhysicalMap.Add(logicalCell.Coordinate, physicalCoordinates);
-
-                    // find next available row
-                    var topLeftPhysicalRow = logicalToPhysicalRowMap[logicalCell.Row];
-
-                    // find next available column in this row
-                    var topLeftPhysicalCol = GetNextAvailableColumn(physicalCoordinatesSet, topLeftPhysicalRow);
-
-                    // spread vertically (down)
-                    for (var y = 0; y < logicalCell.RowSpan; y++)
-                    {
-                        // spread horizontally (right)
-                        for (var x = 0; x < logicalCell.ColumnSpan; x++)
-                        {
-                            var physicalCoordinate = new Coordinate(topLeftPhysicalRow + y, topLeftPhysicalCol + x);
-                            physicalCoordinatesSet.Add(physicalCoordinate); // mark that this cell is created
-                            physicalCoordinates.Add(physicalCoordinate);    // add to logical -> physical mapping
-
-                            // TODO: are we okay to only have 1:1 mapping?
-                            //physicalToLogicalMap.Add(physicalCoordinate, logicalCell.Coordinate);
-                            physicalToLogicalMap[physicalCoordinate] = logicalCell.Coordinate;
-                        }
-                    }
-                }
-
-                return;
-
-                static int GetNextAvailableColumn(HashSet<Coordinate> physicalCoordinatesSet, int row)
-                {
-                    var expected = 0;
-                    var stream = physicalCoordinatesSet
-                        .Where(x => x.Row == row)
-                        .OrderBy(x => x.Col);
-                    foreach (var pair in stream)
-                    {
-                        if (pair.Col != expected)
-                        {
-                            return expected;
-                        }
-                        expected++;
-                    }
                     return expected;
                 }
+                expected++;
+            }
+            return expected;
+        }
+
+        private static void BuildPhysicalGrid
+        (
+            IReadOnlyDictionary<Coordinate, LogicalCell> logicalCells,
+            out LogicalToPhysicalMap logicalToPhysicalMap,
+            out PhysicalToLogicalMap physicalToLogicalMap
+        )
+        {
+            // construct physical grid
+            logicalToPhysicalMap = new SortedDictionary<Coordinate, HashSet<Coordinate>>(); // TODO: SortedDictionary
+            physicalToLogicalMap = new SortedDictionary<Coordinate, Coordinate>();          // TODO: SortedDictionary // TODO: are we okay to only have 1:1 mapping?
+
+            // helper set for finding next available column in a row
+            var physicalCoordinatesSet = new HashSet<Coordinate>();
+
+            // since we might have empty logical rows, ignore them in physical mapping
+            var logicalToPhysicalRowMap = logicalCells
+                .Values
+                .Select(p => p.Row)
+                .Distinct()
+                .OrderBy(x => x)
+                .Select((n, i) => (logicalRow: n, physicalRow: i))
+                .ToDictionary(t => t.logicalRow, t => t.physicalRow);
+            foreach (var logicalCell in logicalCells.Values
+                         .OrderBy(x => x.Row)
+                         .ThenBy(x => x.Col))
+            {
+                var physicalCoordinates = new HashSet<Coordinate>();
+                logicalToPhysicalMap.Add(logicalCell.Coordinate, physicalCoordinates);
+
+                // find next available row
+                var topLeftPhysicalRow = logicalToPhysicalRowMap[logicalCell.Row];
+
+                // find next available column in this row
+                var topLeftPhysicalCol = GetNextAvailableColumn(physicalCoordinatesSet, topLeftPhysicalRow);
+
+                // spread vertically (down)
+                for (var y = 0; y < logicalCell.RowSpan; y++)
+                {
+                    // spread horizontally (right)
+                    for (var x = 0; x < logicalCell.ColumnSpan; x++)
+                    {
+                        var physicalCoordinate = new Coordinate(topLeftPhysicalRow + y, topLeftPhysicalCol + x);
+                        physicalCoordinatesSet.Add(physicalCoordinate); // mark that this cell is created
+                        physicalCoordinates.Add(physicalCoordinate);    // add to logical -> physical mapping
+
+                        // TODO: are we okay to only have 1:1 mapping?
+                        //physicalToLogicalMap.Add(physicalCoordinate, logicalCell.Coordinate);
+                        physicalToLogicalMap[physicalCoordinate] = logicalCell.Coordinate;
+                    }
+                }
+            }
+        }
+
+        private static void MergeTransientEmptyPhysicalColsAndRows
+        (
+            LogicalCellsMap logicalCellsMap,
+            ref LogicalToPhysicalMap logicalToPhysicalMap,
+            ref PhysicalToLogicalMap physicalToLogicalMap
+        )
+        {
+            var physicalColsToValidate = physicalToLogicalMap
+                .Select(p => p.Key.Col)
+                .Distinct()
+                .OrderByDescending(x => x)
+                .ToImmutableArray();
+            foreach (var physicalCol in physicalColsToValidate)
+            {
+                MergeCol(logicalCellsMap, ref logicalToPhysicalMap, ref physicalToLogicalMap, physicalCol);
             }
 
-            static Coordinate GetLogicalCellTopLeftPhysicalCoordinate(LogicalToPhysicalMap logicalToPhysicalMap, Coordinate logicalCoordinate) =>
-                logicalToPhysicalMap[logicalCoordinate]
-                    .OrderBy(x => x.Row)
-                    .ThenBy(x => x.Col)
-                    .First();
+            var physicalRowsToValidate = physicalToLogicalMap
+                .Select(p => p.Key.Row)
+                .Distinct()
+                .OrderByDescending(x => x)
+                .ToImmutableArray();
+            foreach (var physicalRow in physicalRowsToValidate)
+            {
+                MergeRow(logicalCellsMap, ref logicalToPhysicalMap, ref physicalToLogicalMap, physicalRow);
+            }
 
-            static Coordinate GetLogicalCellBottomRightPhysicalCoordinate(LogicalToPhysicalMap logicalToPhysicalMap, Coordinate logicalCoordinate) =>
-                logicalToPhysicalMap[logicalCoordinate]
-                    .OrderByDescending(x => x.Row)
-                    .ThenByDescending(x => x.Col)
-                    .First();
+            return;
 
-            #endregion
-
-            #region // MergeTransientEmptyPhysicalColsAndRows
-
-            static void MergeTransientEmptyPhysicalColsAndRows
+            static void MergeCol
             (
                 LogicalCellsMap logicalCellsMap,
                 ref LogicalToPhysicalMap logicalToPhysicalMap,
-                ref PhysicalToLogicalMap physicalToLogicalMap
+                ref PhysicalToLogicalMap physicalToLogicalMap,
+                int physicalCol
             )
             {
-                var physicalColsToValidate = physicalToLogicalMap
-                    .Select(p => p.Key.Col)
-                    .Distinct()
-                    .OrderByDescending(x => x)
-                    .ToImmutableArray();
-                foreach (var physicalCol in physicalColsToValidate)
+                var logicalCoordinatesToAdjust = new HashSet<Coordinate>();
+
+                // find cols which start in this area
+                foreach (var (_, logicalCoordinate) in physicalToLogicalMap.Where(x => x.Key.Col == physicalCol))
                 {
-                    MergeCol(logicalCellsMap, ref logicalToPhysicalMap, ref physicalToLogicalMap, physicalCol);
-                }
-
-                var physicalRowsToValidate = physicalToLogicalMap
-                    .Select(p => p.Key.Row)
-                    .Distinct()
-                    .OrderByDescending(x => x)
-                    .ToImmutableArray();
-                foreach (var physicalRow in physicalRowsToValidate)
-                {
-                    MergeRow(logicalCellsMap, ref logicalToPhysicalMap, ref physicalToLogicalMap, physicalRow);
-                }
-
-                return;
-
-                static void MergeCol
-                (
-                    LogicalCellsMap logicalCellsMap,
-                    ref LogicalToPhysicalMap logicalToPhysicalMap,
-                    ref PhysicalToLogicalMap physicalToLogicalMap,
-                    int physicalCol
-                )
-                {
-                    var logicalCoordinatesToAdjust = new HashSet<Coordinate>();
-
-                    // find cols which start in this area
-                    foreach (var (_, logicalCoordinate) in physicalToLogicalMap.Where(x => x.Key.Col == physicalCol))
+                    var topLeftPhysicalCoordinate = GetLogicalCellTopLeftPhysicalCoordinate(logicalToPhysicalMap, logicalCoordinate);
+                    if (topLeftPhysicalCoordinate.Col == physicalCol)
                     {
-                        var topLeftPhysicalCoordinate = GetLogicalCellTopLeftPhysicalCoordinate(logicalToPhysicalMap, logicalCoordinate);
-                        if (topLeftPhysicalCoordinate.Col == physicalCol)
-                        {
-                            // this physical cell belongs to logical cell which is spawned in this column,
-                            // this column is un-mergeable, thus terminate
-                            return;
-                        }
-
-                        // collect logical cells to adjust
-                        logicalCoordinatesToAdjust.Add(logicalCoordinate);
+                        // this physical cell belongs to logical cell which is spawned in this column,
+                        // this column is un-mergeable, thus terminate
+                        return;
                     }
 
-                    // this column is empty and transient, meaning it has no native cells,
-                    // only the ones which col-span into/through it,
-                    // thus delete this column and update mappings
-                    foreach (var logicalCoordinate in logicalCoordinatesToAdjust)
-                    {
-                        var oldCell = logicalCellsMap[logicalCoordinate];
-                        var newCell = oldCell with { ColumnSpan = oldCell.ColumnSpan - 1 };
-                        logicalCellsMap[logicalCoordinate] = newCell;
+                    // collect logical cells to adjust
+                    logicalCoordinatesToAdjust.Add(logicalCoordinate);
+                }
 
-                        var physicalCoordinatesToRemove = logicalToPhysicalMap[logicalCoordinate]
-                            .Where(x => x.Col == physicalCol)
-                            .ToImmutableArray();
-                        foreach (var physicalCoordinate in physicalCoordinatesToRemove)
-                        {
-                            logicalToPhysicalMap[logicalCoordinate].Remove(physicalCoordinate);
-                            physicalToLogicalMap.Remove(physicalCoordinate);
-                        }
-                    }
+                // this column is empty and transient, meaning it has no native cells,
+                // only the ones which col-span into/through it,
+                // thus delete this column and update mappings
+                foreach (var logicalCoordinate in logicalCoordinatesToAdjust)
+                {
+                    var oldCell = logicalCellsMap[logicalCoordinate];
+                    var newCell = oldCell with { ColumnSpan = oldCell.ColumnSpan - 1 };
+                    logicalCellsMap[logicalCoordinate] = newCell;
 
-                    // move all physical coordinates from this column to the right
-                    var physicalCoordinatesToMove = physicalToLogicalMap
-                        .Where(p => p.Key.Col > physicalCol)
+                    var physicalCoordinatesToRemove = logicalToPhysicalMap[logicalCoordinate]
+                        .Where(x => x.Col == physicalCol)
                         .ToImmutableArray();
-                    foreach (var (physicalCoordinate, logicalCoordinate) in physicalCoordinatesToMove)
+                    foreach (var physicalCoordinate in physicalCoordinatesToRemove)
                     {
+                        logicalToPhysicalMap[logicalCoordinate].Remove(physicalCoordinate);
                         physicalToLogicalMap.Remove(physicalCoordinate);
-                        physicalToLogicalMap.Add((physicalCoordinate.Row, physicalCoordinate.Col - 1), logicalCoordinate);
-                    }
-                    foreach (var (_, physicalCoordinateSet) in logicalToPhysicalMap)
-                    {
-                        var physicalCoordinates = physicalCoordinateSet
-                            .Where(x => x.Col > physicalCol)
-                            .ToImmutableArray();
-                        foreach (var physicalCoordinate in physicalCoordinates)
-                        {
-                            physicalCoordinateSet.Remove(physicalCoordinate);
-                        }
-                        foreach (var physicalCoordinate in physicalCoordinates)
-                        {
-                            physicalCoordinateSet.Add((physicalCoordinate.Row, physicalCoordinate.Col - 1));
-                        }
                     }
                 }
 
-                static void MergeRow
-                (
-                    LogicalCellsMap logicalCellsMap,
-                    ref LogicalToPhysicalMap logicalToPhysicalMap,
-                    ref PhysicalToLogicalMap physicalToLogicalMap,
-                    int physicalRow
-                )
+                // move all physical coordinates from this column to the right
+                var physicalCoordinatesToMove = physicalToLogicalMap
+                    .Where(p => p.Key.Col > physicalCol)
+                    .ToImmutableArray();
+                foreach (var (physicalCoordinate, logicalCoordinate) in physicalCoordinatesToMove)
                 {
-                    var logicalCoordinatesToAdjust = new HashSet<Coordinate>();
-
-                    // find rows which start in this area
-                    foreach (var (_, logicalCoordinate) in physicalToLogicalMap.Where(x => x.Key.Row == physicalRow))
-                    {
-                        var topLeftPhysicalCoordinate = GetLogicalCellTopLeftPhysicalCoordinate(logicalToPhysicalMap, logicalCoordinate);
-                        if (topLeftPhysicalCoordinate.Row == physicalRow)
-                        {
-                            // this physical cell belongs to logical cell which is spawned in this row,
-                            // this row is un-mergeable, thus terminate
-                            return;
-                        }
-
-                        // collect logical cells to adjust
-                        logicalCoordinatesToAdjust.Add(logicalCoordinate);
-                    }
-
-                    // this row is empty and transient, meaning it has no native cells,
-                    // only the ones which row-span into/through it,
-                    // thus delete this row and update mappings
-                    foreach (var logicalCoordinate in logicalCoordinatesToAdjust)
-                    {
-                        var oldCell = logicalCellsMap[logicalCoordinate];
-                        var newCell = oldCell with { RowSpan = oldCell.RowSpan - 1 };
-                        logicalCellsMap[logicalCoordinate] = newCell;
-
-                        var physicalCoordinatesToRemove = logicalToPhysicalMap[logicalCoordinate]
-                            .Where(x => x.Row == physicalRow)
-                            .ToImmutableArray();
-                        foreach (var physicalCoordinate in physicalCoordinatesToRemove)
-                        {
-                            logicalToPhysicalMap[logicalCoordinate].Remove(physicalCoordinate);
-                            physicalToLogicalMap.Remove(physicalCoordinate);
-                        }
-                    }
-
-                    // move all physical coordinates from this row to the upside
-                    var physicalCoordinatesToMove = physicalToLogicalMap
-                        .Where(p => p.Key.Row > physicalRow)
+                    physicalToLogicalMap.Remove(physicalCoordinate);
+                    physicalToLogicalMap.Add((physicalCoordinate.Row, physicalCoordinate.Col - 1), logicalCoordinate);
+                }
+                foreach (var (_, physicalCoordinateSet) in logicalToPhysicalMap)
+                {
+                    var physicalCoordinates = physicalCoordinateSet
+                        .Where(x => x.Col > physicalCol)
                         .ToImmutableArray();
-                    foreach (var (physicalCoordinate, logicalCoordinate) in physicalCoordinatesToMove)
+                    foreach (var physicalCoordinate in physicalCoordinates)
                     {
-                        physicalToLogicalMap.Remove(physicalCoordinate);
-                        physicalToLogicalMap.Add((physicalCoordinate.Row - 1, physicalCoordinate.Col), logicalCoordinate);
+                        physicalCoordinateSet.Remove(physicalCoordinate);
                     }
-                    foreach (var (_, physicalCoordinateSet) in logicalToPhysicalMap)
+                    foreach (var physicalCoordinate in physicalCoordinates)
                     {
-                        var physicalCoordinates = physicalCoordinateSet
-                            .Where(x => x.Row > physicalRow)
-                            .ToImmutableArray();
-                        foreach (var physicalCoordinate in physicalCoordinates)
-                        {
-                            physicalCoordinateSet.Remove(physicalCoordinate);
-                        }
-                        foreach (var physicalCoordinate in physicalCoordinates)
-                        {
-                            physicalCoordinateSet.Add((physicalCoordinate.Row - 1, physicalCoordinate.Col));
-                        }
+                        physicalCoordinateSet.Add((physicalCoordinate.Row, physicalCoordinate.Col - 1));
                     }
                 }
             }
 
-            #endregion
-
-            #region // BuildPhysicalBorders
-
-            static void BuildPhysicalBorders
+            static void MergeRow
             (
                 LogicalCellsMap logicalCellsMap,
-                LogicalToPhysicalMap logicalToPhysicalMap,
-                out IDictionary<Coordinate, Border> verticalPhysicalCellBordersMap,
-                out IDictionary<Coordinate, Border> horizontalPhysicalCellBordersMap
+                ref LogicalToPhysicalMap logicalToPhysicalMap,
+                ref PhysicalToLogicalMap physicalToLogicalMap,
+                int physicalRow
             )
             {
-                verticalPhysicalCellBordersMap = new SortedDictionary<Coordinate /* physical coordinate */, Border>(); // TODO: SortedDictionary
-                horizontalPhysicalCellBordersMap = new SortedDictionary<Coordinate /* physical coordinate */, Border>(); // TODO: SortedDictionary
+                var logicalCoordinatesToAdjust = new HashSet<Coordinate>();
 
-                foreach (var logicalCell in logicalCellsMap.Values
-                             .OrderBy(x => x.Row)
-                             .ThenBy(x => x.Col))
+                // find rows which start in this area
+                foreach (var (_, logicalCoordinate) in physicalToLogicalMap.Where(x => x.Key.Row == physicalRow))
                 {
-                    var topLeftPhysicalCoordinate = GetLogicalCellTopLeftPhysicalCoordinate(logicalToPhysicalMap, logicalCell.Coordinate);
-
-                    // spread vertically (down)
-                    for (var y = 0; y < logicalCell.RowSpan; y++)
+                    var topLeftPhysicalCoordinate = GetLogicalCellTopLeftPhysicalCoordinate(logicalToPhysicalMap, logicalCoordinate);
+                    if (topLeftPhysicalCoordinate.Row == physicalRow)
                     {
-                        // spread horizontally (right)
-                        for (var x = 0; x < logicalCell.ColumnSpan; x++)
-                        {
-                            var physicalCoordinate = new Coordinate(topLeftPhysicalCoordinate.Row + y, topLeftPhysicalCoordinate.Col + x);
+                        // this physical cell belongs to logical cell which is spawned in this row,
+                        // this row is un-mergeable, thus terminate
+                        return;
+                    }
 
-                            // check which physical cell borders are on the edge of logical cell
-                            var canHaveLeftBorder = x == 0;
-                            var canHaveTopBorder = y == 0;
-                            var canHaveRightBorder = x == logicalCell.ColumnSpan - 1;
-                            var canHaveBottomBorder = y == logicalCell.RowSpan - 1;
+                    // collect logical cells to adjust
+                    logicalCoordinatesToAdjust.Add(logicalCoordinate);
+                }
 
-                            // get border types
-                            var leftBorder = canHaveLeftBorder ? logicalCell.Borders.Left : Border.None;
-                            var topBorder = canHaveTopBorder ? logicalCell.Borders.Top : Border.None;
-                            var rightBorder = canHaveRightBorder ? logicalCell.Borders.Right : Border.None;
-                            var bottomBorder = canHaveBottomBorder ? logicalCell.Borders.Bottom : Border.None;
+                // this row is empty and transient, meaning it has no native cells,
+                // only the ones which row-span into/through it,
+                // thus delete this row and update mappings
+                foreach (var logicalCoordinate in logicalCoordinatesToAdjust)
+                {
+                    var oldCell = logicalCellsMap[logicalCoordinate];
+                    var newCell = oldCell with { RowSpan = oldCell.RowSpan - 1 };
+                    logicalCellsMap[logicalCoordinate] = newCell;
 
-                            // update vertical borders
-                            MergeBorder(verticalPhysicalCellBordersMap, physicalCoordinate, canHaveLeftBorder, leftBorder);
-                            MergeBorder(verticalPhysicalCellBordersMap, (physicalCoordinate.Row, physicalCoordinate.Col + 1), canHaveRightBorder, rightBorder);
-
-                            // update horizontal borders
-                            MergeBorder(horizontalPhysicalCellBordersMap, physicalCoordinate, canHaveTopBorder, topBorder);
-                            MergeBorder(horizontalPhysicalCellBordersMap, (physicalCoordinate.Row + 1, physicalCoordinate.Col), canHaveBottomBorder, bottomBorder);
-                        }
+                    var physicalCoordinatesToRemove = logicalToPhysicalMap[logicalCoordinate]
+                        .Where(x => x.Row == physicalRow)
+                        .ToImmutableArray();
+                    foreach (var physicalCoordinate in physicalCoordinatesToRemove)
+                    {
+                        logicalToPhysicalMap[logicalCoordinate].Remove(physicalCoordinate);
+                        physicalToLogicalMap.Remove(physicalCoordinate);
                     }
                 }
 
-                return;
-
-                static Border MergeBorders(Border left, Border right) => (Border)Math.Max((int)left, (int)right);
-
-                static void MergeBorder(IDictionary<Coordinate, Border> existingBorders, Coordinate coordinate, bool canHaveBorder, Border newBorder)
+                // move all physical coordinates from this row to the upside
+                var physicalCoordinatesToMove = physicalToLogicalMap
+                    .Where(p => p.Key.Row > physicalRow)
+                    .ToImmutableArray();
+                foreach (var (physicalCoordinate, logicalCoordinate) in physicalCoordinatesToMove)
                 {
-                    if (canHaveBorder)
+                    physicalToLogicalMap.Remove(physicalCoordinate);
+                    physicalToLogicalMap.Add((physicalCoordinate.Row - 1, physicalCoordinate.Col), logicalCoordinate);
+                }
+                foreach (var (_, physicalCoordinateSet) in logicalToPhysicalMap)
+                {
+                    var physicalCoordinates = physicalCoordinateSet
+                        .Where(x => x.Row > physicalRow)
+                        .ToImmutableArray();
+                    foreach (var physicalCoordinate in physicalCoordinates)
                     {
-                        // merge
-                        var existingBorder = existingBorders.TryGetValue(coordinate, out var border) ? border : default;
-                        existingBorders[coordinate] = MergeBorders(existingBorder, newBorder);
+                        physicalCoordinateSet.Remove(physicalCoordinate);
                     }
-                    else
+                    foreach (var physicalCoordinate in physicalCoordinates)
                     {
-                        // override
-                        existingBorders[coordinate] = Border.None;
+                        physicalCoordinateSet.Add((physicalCoordinate.Row - 1, physicalCoordinate.Col));
+                    }
+                }
+            }
+        }
+
+        private static void BuildPhysicalBorders
+        (
+            LogicalCellsMap logicalCellsMap,
+            LogicalToPhysicalMap logicalToPhysicalMap,
+            out IDictionary<Coordinate, Border> verticalPhysicalCellBordersMap,
+            out IDictionary<Coordinate, Border> horizontalPhysicalCellBordersMap
+        )
+        {
+            verticalPhysicalCellBordersMap = new SortedDictionary<Coordinate /* physical coordinate */, Border>(); // TODO: SortedDictionary
+            horizontalPhysicalCellBordersMap = new SortedDictionary<Coordinate /* physical coordinate */, Border>(); // TODO: SortedDictionary
+
+            foreach (var logicalCell in logicalCellsMap.Values
+                         .OrderBy(x => x.Row)
+                         .ThenBy(x => x.Col))
+            {
+                var topLeftPhysicalCoordinate = GetLogicalCellTopLeftPhysicalCoordinate(logicalToPhysicalMap, logicalCell.Coordinate);
+
+                // spread vertically (down)
+                for (var y = 0; y < logicalCell.RowSpan; y++)
+                {
+                    // spread horizontally (right)
+                    for (var x = 0; x < logicalCell.ColumnSpan; x++)
+                    {
+                        var physicalCoordinate = new Coordinate(topLeftPhysicalCoordinate.Row + y, topLeftPhysicalCoordinate.Col + x);
+
+                        // check which physical cell borders are on the edge of logical cell
+                        var canHaveLeftBorder = x == 0;
+                        var canHaveTopBorder = y == 0;
+                        var canHaveRightBorder = x == logicalCell.ColumnSpan - 1;
+                        var canHaveBottomBorder = y == logicalCell.RowSpan - 1;
+
+                        // get border types
+                        var leftBorder = canHaveLeftBorder ? logicalCell.Borders.Left : Border.None;
+                        var topBorder = canHaveTopBorder ? logicalCell.Borders.Top : Border.None;
+                        var rightBorder = canHaveRightBorder ? logicalCell.Borders.Right : Border.None;
+                        var bottomBorder = canHaveBottomBorder ? logicalCell.Borders.Bottom : Border.None;
+
+                        // update vertical borders
+                        MergeBorder(verticalPhysicalCellBordersMap, physicalCoordinate, canHaveLeftBorder, leftBorder);
+                        MergeBorder(verticalPhysicalCellBordersMap, (physicalCoordinate.Row, physicalCoordinate.Col + 1), canHaveRightBorder, rightBorder);
+
+                        // update horizontal borders
+                        MergeBorder(horizontalPhysicalCellBordersMap, physicalCoordinate, canHaveTopBorder, topBorder);
+                        MergeBorder(horizontalPhysicalCellBordersMap, (physicalCoordinate.Row + 1, physicalCoordinate.Col), canHaveBottomBorder, bottomBorder);
                     }
                 }
             }
 
-            #endregion
+            return;
 
-            #region // GetBorderSize
+            static Border MergeBorders(Border left, Border right) => (Border)Math.Max((int)left, (int)right);
 
-            static int GetBorderSize(Border border) => border switch
+            static void MergeBorder(IDictionary<Coordinate, Border> existingBorders, Coordinate coordinate, bool canHaveBorder, Border newBorder)
             {
-                Border.None => 0,
-                Border.Normal => 1,
-                Border.Bold => 1,
-                _ => throw new ArgumentOutOfRangeException(nameof(border))
-            };
-
-            #endregion
+                if (canHaveBorder)
+                {
+                    // merge
+                    var existingBorder = existingBorders.TryGetValue(coordinate, out var border) ? border : default;
+                    existingBorders[coordinate] = MergeBorders(existingBorder, newBorder);
+                }
+                else
+                {
+                    // override
+                    existingBorders[coordinate] = Border.None;
+                }
+            }
         }
     }
 }
