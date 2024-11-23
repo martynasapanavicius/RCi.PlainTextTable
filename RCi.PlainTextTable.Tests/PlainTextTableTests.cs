@@ -6,7 +6,7 @@ namespace RCi.PlainTextTable.Tests
         [Test]
         public static void Empty()
         {
-            var ptt = new Ptt();
+            var ptt = new PlainTextTable();
             var actual = ptt.ToString();
             Assert.That(actual, Is.EqualTo(string.Empty));
         }
@@ -14,7 +14,7 @@ namespace RCi.PlainTextTable.Tests
         [Test]
         public static void One()
         {
-            var ptt = new Ptt();
+            var ptt = new PlainTextTable();
             ptt[0, 0].Text("a");
 
             var actual = ptt.ToString();
@@ -30,7 +30,7 @@ namespace RCi.PlainTextTable.Tests
         [Test]
         public static void OneFarAway()
         {
-            var ptt = new Ptt();
+            var ptt = new PlainTextTable();
             ptt[99, 99].Text("a");
 
             var actual = ptt.ToString();
@@ -46,7 +46,7 @@ namespace RCi.PlainTextTable.Tests
         [Test]
         public static void TwoInOneRow()
         {
-            var ptt = new Ptt();
+            var ptt = new PlainTextTable();
             ptt[0, 0].Text("a");
             ptt[0, 1].Text("b");
 
@@ -63,7 +63,7 @@ namespace RCi.PlainTextTable.Tests
         [Test]
         public static void TwoInOneRowWithGap()
         {
-            var ptt = new Ptt();
+            var ptt = new PlainTextTable();
             ptt[0, 0].Text("a");
             ptt[0, 99].Text("b");
 
@@ -80,7 +80,7 @@ namespace RCi.PlainTextTable.Tests
         [Test]
         public static void TwoInOneColumn()
         {
-            var ptt = new Ptt();
+            var ptt = new PlainTextTable();
             ptt[0, 0].Text("a");
             ptt[1, 0].Text("b");
 
@@ -99,7 +99,7 @@ namespace RCi.PlainTextTable.Tests
         [Test]
         public static void TwoInOneColumnWithGap()
         {
-            var ptt = new Ptt();
+            var ptt = new PlainTextTable();
             ptt[0, 0].Text("a");
             ptt[1, 0].Text("b");
 
@@ -118,7 +118,7 @@ namespace RCi.PlainTextTable.Tests
         [Test]
         public static void Quad()
         {
-            var ptt = new Ptt();
+            var ptt = new PlainTextTable();
             ptt[0, 0].Text("a");
             ptt[0, 1].Text("b");
             ptt[1, 0].Text("A");
@@ -139,7 +139,7 @@ namespace RCi.PlainTextTable.Tests
         [Test]
         public static void QuadWithGaps()
         {
-            var ptt = new Ptt();
+            var ptt = new PlainTextTable();
             ptt[0, 0].Text("a");
             ptt[0, 99].Text("b");
             ptt[99, 0].Text("A");
@@ -160,7 +160,7 @@ namespace RCi.PlainTextTable.Tests
         [Test]
         public static void ColSpan()
         {
-            var ptt = new Ptt();
+            var ptt = new PlainTextTable();
             ptt[0, 0].Text("a").ColumnSpan(2);
             ptt[0, 1].Text("b");
             ptt[1, 0].Text("A");
@@ -181,7 +181,7 @@ namespace RCi.PlainTextTable.Tests
         [Test]
         public static void RowSpan()
         {
-            var ptt = new Ptt();
+            var ptt = new PlainTextTable();
             ptt[0, 0].Text("a").RowSpan(2);
             ptt[0, 1].Text("b");
             ptt[1, 0].Text("A");
@@ -202,7 +202,7 @@ namespace RCi.PlainTextTable.Tests
         [Test]
         public static void ColSpanWithGap()
         {
-            var ptt = new Ptt();
+            var ptt = new PlainTextTable();
 
             ptt[0, 0].Text("a");
             ptt[0, 1].Text("b").ColumnSpan(2).RowSpan(2);
@@ -229,7 +229,7 @@ namespace RCi.PlainTextTable.Tests
         [Test]
         public static void Overlap()
         {
-            var ptt = new Ptt();
+            var ptt = new PlainTextTable();
 
             ptt[0, 0].Text("a");
             ptt[0, 1].Text("b").ColumnSpan(2).RowSpan(2);
@@ -265,7 +265,7 @@ namespace RCi.PlainTextTable.Tests
         [Test]
         public static void Overlap_NoMargin()
         {
-            var ptt = new Ptt
+            var ptt = new PlainTextTable
             {
                 DefaultMargin = 0,
             };
@@ -306,7 +306,7 @@ namespace RCi.PlainTextTable.Tests
         [Test]
         public static void FractionalGrowth_ColumnSpan_DoesNotExpand()
         {
-            var ptt = new Ptt
+            var ptt = new PlainTextTable
             {
                 DefaultMargin = 0,
             };
@@ -332,7 +332,7 @@ namespace RCi.PlainTextTable.Tests
         [Test]
         public static void FractionalGrowth_ColumnSpan_Fit()
         {
-            var ptt = new Ptt
+            var ptt = new PlainTextTable
             {
                 DefaultMargin = 0,
             };
@@ -358,7 +358,7 @@ namespace RCi.PlainTextTable.Tests
         [Test]
         public static void FractionalGrowth_ColumnSpan_DoesNotFit_Leftover1()
         {
-            var ptt = new Ptt
+            var ptt = new PlainTextTable
             {
                 DefaultMargin = 0,
             };
@@ -384,7 +384,7 @@ namespace RCi.PlainTextTable.Tests
         [Test]
         public static void FractionalGrowth_ColumnSpan_DoesNotFit_Leftover2()
         {
-            var ptt = new Ptt
+            var ptt = new PlainTextTable
             {
                 DefaultMargin = 0,
             };
@@ -410,7 +410,7 @@ namespace RCi.PlainTextTable.Tests
         [Test]
         public static void FractionalGrowth_ColumnSpan_Fit2()
         {
-            var ptt = new Ptt
+            var ptt = new PlainTextTable
             {
                 DefaultMargin = 0,
             };
@@ -438,7 +438,7 @@ namespace RCi.PlainTextTable.Tests
         [Test]
         public static void FractionalGrowth_RowSpan_DoesNotExpand()
         {
-            var ptt = new Ptt
+            var ptt = new PlainTextTable
             {
                 DefaultMargin = 0,
             };
@@ -471,7 +471,7 @@ namespace RCi.PlainTextTable.Tests
         [Test]
         public static void FractionalGrowth_RowSpan_Fit()
         {
-            var ptt = new Ptt
+            var ptt = new PlainTextTable
             {
                 DefaultMargin = 0,
             };
@@ -505,7 +505,7 @@ namespace RCi.PlainTextTable.Tests
         [Test]
         public static void FractionalGrowth_RowSpan_DoesNotFit_Leftover1()
         {
-            var ptt = new Ptt
+            var ptt = new PlainTextTable
             {
                 DefaultMargin = 0,
             };
@@ -541,7 +541,7 @@ namespace RCi.PlainTextTable.Tests
         [Test]
         public static void FractionalGrowth_RowSpan_DoesNotFit_Leftover2()
         {
-            var ptt = new Ptt
+            var ptt = new PlainTextTable
             {
                 DefaultMargin = 0,
             };
@@ -579,7 +579,7 @@ namespace RCi.PlainTextTable.Tests
         [Test]
         public static void FractionalGrowth_RowSpan_Fit2()
         {
-            var ptt = new Ptt
+            var ptt = new PlainTextTable
             {
                 DefaultMargin = 0,
             };

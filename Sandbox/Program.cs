@@ -8,7 +8,7 @@ namespace Sandbox
         static void Main()
         {
             //var nl = Environment.NewLine;
-            var ptt = new Ptt();
+            var ptt = new PlainTextTable();
 
             ptt[0, 0].Text("a").RowSpan(2);
             ptt[0, 1].Text("b");

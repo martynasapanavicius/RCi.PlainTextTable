@@ -5,237 +5,28 @@ using System.Linq;
 using System.Text;
 using Coordinate = (int row, int col);
 using Size = (int width, int height);
-using LogicalCellsMap = System.Collections.Generic.IDictionary<(int row, int col) /* logical coordinate */, RCi.PlainTextTable.PttLogicalCell>;
+using LogicalCellsMap = System.Collections.Generic.IDictionary<(int row, int col) /* logical coordinate */, RCi.PlainTextTable.LogicalCell>;
 using LogicalToPhysicalMap = System.Collections.Generic.IDictionary<(int row, int col) /* logical coordinate */, System.Collections.Generic.HashSet<(int row, int col) /* physical coordinate */>>;
 using PhysicalToLogicalMap = System.Collections.Generic.IDictionary<(int row, int col) /* physical coordinate */, (int row, int col) /* physical coordinate */>;
 
 namespace RCi.PlainTextTable
 {
-    public static class PttExtensions
+    public sealed class PlainTextTable
     {
-        public static IPttCell Text(this IPttCell cell, string text)
-        {
-            cell.Text = text;
-            return cell;
-        }
-
-        public static IPttCell ColumnSpan(this IPttCell cell, int span)
-        {
-            cell.ColumnSpan = span;
-            return cell;
-        }
-
-        public static IPttCell RowSpan(this IPttCell cell, int span)
-        {
-            cell.RowSpan = span;
-            return cell;
-        }
-
-        public static PttRowControl Row(this Ptt ptt, int row) => new(ptt, row);
-
-        public static PttColumnControl Column(this Ptt ptt, int col) => new(ptt, col);
-    }
-
-    public enum PttHorizontalAlignment { Left, Center, Right, }
-
-    public enum PttVerticalAlignment { Top, Center, Bottom, }
-
-    public enum PttBorder { None, Normal, Bold, }
-
-    public readonly record struct PttMargin(int Left, int Top, int Right, int Bottom)
-    {
-        public PttMargin(int horizontal, int vertical) :
-            this(horizontal, vertical, horizontal, vertical)
-        {
-        }
-
-        public PttMargin(int universal) :
-            this(universal, universal, universal, universal)
-        {
-        }
-
-        public int Width => Right - Left;
-        public int Height => Bottom - Top;
-
-        public static implicit operator PttMargin(int universal) =>
-            new(universal);
-
-        public static implicit operator PttMargin((int horizontal, int vertical) tuple) =>
-            new(tuple.horizontal, tuple.vertical);
-
-        public static implicit operator PttMargin((int left, int top, int right, int bottom) tuple) =>
-            new(tuple.left, tuple.top, tuple.right, tuple.bottom);
-
-        public override string ToString() => $"{Left},{Top},{Right},{Bottom}";
-    }
-
-    public readonly record struct PttBorders(PttBorder Left, PttBorder Top, PttBorder Right, PttBorder Bottom)
-    {
-        public PttBorders(PttBorder universalHorizontal, PttBorder universalVertical) :
-            this(universalHorizontal, universalVertical, universalHorizontal, universalVertical)
-        {
-        }
-
-        public PttBorders(PttBorder universal) :
-            this(universal, universal, universal, universal)
-        {
-        }
-
-        public override string ToString() => $"{Left},{Top},{Right},{Bottom}";
-    }
-
-    public interface IPttCell
-    {
-        Coordinate Coordinate { get; }
-        string Text { get; set; }
-        int ColumnSpan { get; set; }
-        int RowSpan { get; set; }
-        PttMargin? Margin { get; set; }
-        PttBorders? Borders { get; set; }
-        PttHorizontalAlignment? HorizontalAlignment { get; set; }
-        PttVerticalAlignment? VerticalAlignment { get; set; }
-
-        Ptt Host();
-        void Delete();
-    }
-
-    internal sealed class PttCell :
-        IPttCell
-    {
-        public required Ptt Host { get; init; }
-        public required Coordinate Coordinate { get; init; }
-        public string Text { get; set; } = string.Empty;
-        public int ColumnSpan { get; set; } = 1;
-        public int RowSpan { get; set; } = 1;
-        public PttMargin? Margin { get; set; }
-        public PttBorders? Borders { get; set; }
-        public PttHorizontalAlignment? HorizontalAlignment { get; set; }
-        public PttVerticalAlignment? VerticalAlignment { get; set; }
-
-        Ptt IPttCell.Host() => Host;
-        public void Delete() => Host.DeleteCell(this);
-    }
-
-    public readonly struct PttRowControl(Ptt host, int row)
-    {
-        public IPttCell this[int col] => host[row, col];
-        public Ptt Host() => host;
-
-        public PttRowControl Text(params string[] texts)
-        {
-            for (var i = 0; i < texts.Length; i++)
-            {
-                host[row, i].Text(texts[i]);
-            }
-            return this;
-        }
-
-        public PttRowControl Text(string text)
-        {
-            for (var i = 0; i < host.ColumnCount; i++)
-            {
-                host[row, i].Text(text);
-            }
-            return this;
-        }
-    }
-
-    public readonly struct PttColumnControl(Ptt host, int col)
-    {
-        public IPttCell this[int row] => host[row, col];
-        public Ptt Host() => host;
-
-        public PttColumnControl Text(params string[] texts)
-        {
-            for (var i = 0; i < texts.Length; i++)
-            {
-                host[i, col].Text(texts[i]);
-            }
-            return this;
-        }
-
-        public PttColumnControl Text(string text)
-        {
-            for (var i = 0; i < host.RowCount; i++)
-            {
-                host[i, col].Text(text);
-            }
-            return this;
-        }
-    }
-
-    internal sealed record PttLogicalCell
-    {
-        public required Coordinate Coordinate { get; init; }
-        public int Col => Coordinate.col;
-        public int Row => Coordinate.row;
-        public required string Text { get; init; }
-        public required int ColumnSpan { get; init; }
-        public required int RowSpan { get; init; }
-        public required PttMargin Margin { get; init; }
-        public required PttBorders Borders { get; init; }
-        public required PttHorizontalAlignment HorizontalAlignment { get; init; }
-        public required PttVerticalAlignment VerticalAlignment { get; init; }
-
-        private Size? _textSize;
-        public Size TextSize => _textSize ??= GetTextSize();
-
-        private Size? _textSizeWithMargin;
-        public Size TextSizeWithMargin => _textSizeWithMargin ??= GetTextSizeWithMargin();
-
-        private Size GetTextSize()
-        {
-            var lines = Text.Split(Environment.NewLine);
-            var width = lines.Length == 0 ? 0 : lines.Max(l => l.Length);
-            var height = lines.Length;
-            return (width, height);
-        }
-
-        private Size GetTextSizeWithMargin()
-        {
-            return
-            (
-                Margin.Left + TextSize.width + Margin.Right,
-                Margin.Top + TextSize.height + Margin.Bottom
-            );
-        }
-
-        public override string ToString() => $"{Coordinate}, CS={ColumnSpan}, RS={RowSpan}, M=({Margin}), TS={TextSize}, TSWM={TextSizeWithMargin}, HA={HorizontalAlignment.ToString()[..1]}, VA={VerticalAlignment.ToString()[..1]}, B=({Borders})";
-    }
-
-    internal sealed record PttTableCellMargins
-    {
-        public required PttMargin Area { get; init; }
-
-        // borders
-        public required PttMargin LeftBorder { get; init; }
-        public required PttMargin TopBorder { get; init; }
-        public required PttMargin RightBorder { get; init; }
-        public required PttMargin BottomBorder { get; init; }
-
-        // corners
-        public required PttMargin TopLeftBorderCorner { get; init; }
-        public required PttMargin TopRightBorderCorner { get; init; }
-        public required PttMargin BottomRightBorderCorner { get; init; }
-        public required PttMargin BottomLeftBorderCorner { get; init; }
-    }
-
-    public sealed class Ptt
-    {
-        private readonly Dictionary<Coordinate, PttCell> _cells = new();
+        private readonly Dictionary<Coordinate, Cell> _cells = new();
         public int RowCount { get; private set; }
         public int ColumnCount { get; private set; }
-        public PttMargin DefaultMargin { get; set; } = new(1, 0);
-        public PttBorders DefaultBorders { get; set; } = new(PttBorder.Normal);
-        public PttHorizontalAlignment DefaultHorizontalAlignment { get; set; } = PttHorizontalAlignment.Left;
-        public PttVerticalAlignment DefaultVerticalAlignment { get; set; } = PttVerticalAlignment.Top;
-        public IPttCell this[Coordinate c]
+        public Margin DefaultMargin { get; set; } = new(1, 0);
+        public Borders DefaultBorders { get; set; } = new(Border.Normal);
+        public HorizontalAlignment DefaultHorizontalAlignment { get; set; } = HorizontalAlignment.Left;
+        public VerticalAlignment DefaultVerticalAlignment { get; set; } = VerticalAlignment.Top;
+        public ICell this[Coordinate c]
         {
             get
             {
                 if (!_cells.TryGetValue(c, out var cell))
                 {
-                    cell = new PttCell
+                    cell = new Cell
                     {
                         Host = this,
                         Coordinate = c,
@@ -247,23 +38,23 @@ namespace RCi.PlainTextTable
                 return cell;
             }
         }
-        public IPttCell this[int row, int col] => this[(row, col)];
+        public ICell this[int row, int col] => this[(row, col)];
 
-        public PttRowControl AppendRow()
+        public RowControl AppendRow()
         {
             var row = RowCount;
             RowCount++;
-            return new PttRowControl(this, row);
+            return new RowControl(this, row);
         }
 
-        public PttColumnControl AppendColumn()
+        public ColumnControl AppendColumn()
         {
             var col = ColumnCount;
             ColumnCount++;
-            return new PttColumnControl(this, col);
+            return new ColumnControl(this, col);
         }
 
-        internal void DeleteCell(PttCell cell)
+        internal void DeleteCell(Cell cell)
         {
             _cells.Remove(cell.Coordinate);
             RowCount = _cells.Count == 0 ? 0 : _cells.Max(p => p.Key.row) + 1;
@@ -283,7 +74,7 @@ namespace RCi.PlainTextTable
             //    HorizontalAlignment = p.Value.HorizontalAlignment ?? DefaultHorizontalAlignment,
             //    VerticalAlignment = p.Value.VerticalAlignment ?? DefaultVerticalAlignment,
             //})
-            _cells.Select(p => new PttLogicalCell
+            _cells.Select(p => new LogicalCell
             {
                 Coordinate = p.Value.Coordinate,
                 Text = p.Value.Text,
@@ -296,7 +87,7 @@ namespace RCi.PlainTextTable
             })
         );
 
-        private static string CompileToText(IEnumerable<PttLogicalCell> logicalCellsStream)
+        private static string CompileToText(IEnumerable<LogicalCell> logicalCellsStream)
         {
             var logicalCellsMap = logicalCellsStream.ToDictionary(c => c.Coordinate, c => c);
 
@@ -455,7 +246,7 @@ namespace RCi.PlainTextTable
             var sumGlobalCellsHeight = physicalRowHeights.Length == 0 ? 0 : physicalRowHeights.Sum();
             var canvasSize = new Size(sumGlobalBordersWidth + sumGlobalCellsWidth, sumGlobalBordersHeight + sumGlobalCellsHeight);
             var canvas /* [row, col] */ = Enumerable.Range(0, canvasSize.height).Select(_ => new char[canvasSize.width]).ToArray();
-            var borderMask /* [row, col] */ = Enumerable.Range(0, canvasSize.height).Select(_ => new PttBorder[canvasSize.width]).ToArray();
+            var borderMask /* [row, col] */ = Enumerable.Range(0, canvasSize.height).Select(_ => new Border[canvasSize.width]).ToArray();
 
             foreach (var (logicalCoordinate, _) in logicalCellsMap)
             {
@@ -514,7 +305,7 @@ namespace RCi.PlainTextTable
                 return (y, x); // row = y, col = x
             }
 
-            PttTableCellMargins GetTableCellMargins(Coordinate logicalCoordinate)
+            TableCellMargins GetTableCellMargins(Coordinate logicalCoordinate)
             {
                 // get cell area
                 var pCells = logicalToPhysicalMap[logicalCoordinate];
@@ -533,7 +324,7 @@ namespace RCi.PlainTextTable
                     xyBottomRight.row + physicalRowHeights[bottomRightPhysicalCell.row],
                     xyBottomRight.col + physicalColWidths[bottomRightPhysicalCell.col]
                 );
-                var area = new PttMargin(xyTopLeft.col, xyTopLeft.row, xyBottomRight.col, xyBottomRight.row);
+                var area = new Margin(xyTopLeft.col, xyTopLeft.row, xyBottomRight.col, xyBottomRight.row);
 
                 // get borders and corners
                 var logicalCell = logicalCellsMap[logicalCoordinate];
@@ -542,16 +333,16 @@ namespace RCi.PlainTextTable
                 var rightBorderSize = GetBorderSize(logicalCell.Borders.Right);
                 var bottomBorderSize = GetBorderSize(logicalCell.Borders.Bottom);
 
-                var borderLeft = new PttMargin(area.Left - leftBorderSize, area.Top, area.Left, area.Bottom);
-                var borderTopLeft = new PttMargin(area.Left - leftBorderSize, area.Top - topBorderSize, area.Left, area.Top);
-                var borderTop = new PttMargin(area.Left, area.Top - topBorderSize, area.Right, area.Top);
-                var borderTopRight = new PttMargin(area.Right, area.Top - topBorderSize, area.Right + rightBorderSize, area.Top);
-                var borderRight = new PttMargin(area.Right, area.Top, area.Right + rightBorderSize, area.Bottom);
-                var borderBottomRight = new PttMargin(area.Right, area.Bottom, area.Right + rightBorderSize, area.Bottom + bottomBorderSize);
-                var borderBottom = new PttMargin(area.Left, area.Bottom, area.Right, area.Bottom + bottomBorderSize);
-                var borderBottomLeft = new PttMargin(area.Left - leftBorderSize, area.Bottom, area.Left, area.Bottom + bottomBorderSize);
+                var borderLeft = new Margin(area.Left - leftBorderSize, area.Top, area.Left, area.Bottom);
+                var borderTopLeft = new Margin(area.Left - leftBorderSize, area.Top - topBorderSize, area.Left, area.Top);
+                var borderTop = new Margin(area.Left, area.Top - topBorderSize, area.Right, area.Top);
+                var borderTopRight = new Margin(area.Right, area.Top - topBorderSize, area.Right + rightBorderSize, area.Top);
+                var borderRight = new Margin(area.Right, area.Top, area.Right + rightBorderSize, area.Bottom);
+                var borderBottomRight = new Margin(area.Right, area.Bottom, area.Right + rightBorderSize, area.Bottom + bottomBorderSize);
+                var borderBottom = new Margin(area.Left, area.Bottom, area.Right, area.Bottom + bottomBorderSize);
+                var borderBottomLeft = new Margin(area.Left - leftBorderSize, area.Bottom, area.Left, area.Bottom + bottomBorderSize);
 
-                return new PttTableCellMargins
+                return new TableCellMargins
                 {
                     Area = area,
 
@@ -567,31 +358,31 @@ namespace RCi.PlainTextTable
                 };
             }
 
-            static char GetHorizontalBorderCharacter(PttBorder border) => border switch
+            static char GetHorizontalBorderCharacter(Border border) => border switch
             {
-                PttBorder.None => ' ',
-                PttBorder.Normal => '-',
-                PttBorder.Bold => '=',
+                Border.None => ' ',
+                Border.Normal => '-',
+                Border.Bold => '=',
                 _ => throw new ArgumentOutOfRangeException(nameof(border)),
             };
 
-            static char GetVerticalBorderCharacter(PttBorder border) => border switch
+            static char GetVerticalBorderCharacter(Border border) => border switch
             {
-                PttBorder.None => ' ',
-                PttBorder.Normal => '|',
-                PttBorder.Bold => '@',
+                Border.None => ' ',
+                Border.Normal => '|',
+                Border.Bold => '@',
                 _ => throw new ArgumentOutOfRangeException(nameof(border)),
             };
 
-            static char GetBorderCornerCharacter(PttBorder border) => border switch
+            static char GetBorderCornerCharacter(Border border) => border switch
             {
-                PttBorder.None => ' ',
-                PttBorder.Normal => '+',
-                PttBorder.Bold => '#',
+                Border.None => ' ',
+                Border.Normal => '+',
+                Border.Bold => '#',
                 _ => throw new ArgumentOutOfRangeException(nameof(border)),
             };
 
-            static void PaintRectangle(char[][] canvas, PttMargin rectangle, char color)
+            static void PaintRectangle(char[][] canvas, Margin rectangle, char color)
             {
                 for (var y = rectangle.Top; y < rectangle.Bottom; y++)
                 {
@@ -602,7 +393,7 @@ namespace RCi.PlainTextTable
                 }
             }
 
-            static void PaintBorder(char[][] canvas, PttBorder[][] borderMask, PttMargin rectangle, char color, PttBorder weight)
+            static void PaintBorder(char[][] canvas, Border[][] borderMask, Margin rectangle, char color, Border weight)
             {
                 for (var y = rectangle.Top; y < rectangle.Bottom; y++)
                 {
@@ -617,7 +408,7 @@ namespace RCi.PlainTextTable
                 }
             }
 
-            static void PaintText(char[][] canvas, PttMargin cellArea, PttLogicalCell logicalCell)
+            static void PaintText(char[][] canvas, Margin cellArea, LogicalCell logicalCell)
             {
                 var lines = logicalCell.Text.Split(Environment.NewLine);
                 if (lines.Length == 0)
@@ -627,7 +418,7 @@ namespace RCi.PlainTextTable
                 }
 
                 // area in which are allowed to write text
-                var writableArea = new PttMargin
+                var writableArea = new Margin
                 (
                     cellArea.Left + logicalCell.Margin.Left,
                     cellArea.Top + logicalCell.Margin.Top,
@@ -637,9 +428,9 @@ namespace RCi.PlainTextTable
 
                 var verticalOffset = logicalCell.VerticalAlignment switch
                 {
-                    PttVerticalAlignment.Top => 0,
-                    PttVerticalAlignment.Center => (writableArea.Height - lines.Length) / 2,
-                    PttVerticalAlignment.Bottom => writableArea.Height - lines.Length,
+                    VerticalAlignment.Top => 0,
+                    VerticalAlignment.Center => (writableArea.Height - lines.Length) / 2,
+                    VerticalAlignment.Bottom => writableArea.Height - lines.Length,
                     _ => throw new ArgumentOutOfRangeException(nameof(logicalCell.VerticalAlignment)),
                 };
 
@@ -648,9 +439,9 @@ namespace RCi.PlainTextTable
                     var line = lines[i];
                     var horizontalOffset = logicalCell.HorizontalAlignment switch
                     {
-                        PttHorizontalAlignment.Left => 0,
-                        PttHorizontalAlignment.Center => (writableArea.Width - line.Length) / 2,
-                        PttHorizontalAlignment.Right => writableArea.Width - line.Length,
+                        HorizontalAlignment.Left => 0,
+                        HorizontalAlignment.Center => (writableArea.Width - line.Length) / 2,
+                        HorizontalAlignment.Right => writableArea.Width - line.Length,
                         _ => throw new ArgumentOutOfRangeException(nameof(logicalCell.HorizontalAlignment)),
                     };
                     var y = writableArea.Top + i + verticalOffset; // row
@@ -678,10 +469,10 @@ namespace RCi.PlainTextTable
                 PaintBorder(canvas, borderMask, m.BottomBorder, GetHorizontalBorderCharacter(logicalCell.Borders.Bottom), logicalCell.Borders.Bottom);
 
                 // border corners
-                var topLeftBorder = (PttBorder)Math.Max((int)logicalCell.Borders.Top, (int)logicalCell.Borders.Left);
-                var topRightBorder = (PttBorder)Math.Max((int)logicalCell.Borders.Top, (int)logicalCell.Borders.Right);
-                var bottomRightBorder = (PttBorder)Math.Max((int)logicalCell.Borders.Bottom, (int)logicalCell.Borders.Right);
-                var bottomLeftBorder = (PttBorder)Math.Max((int)logicalCell.Borders.Bottom, (int)logicalCell.Borders.Left);
+                var topLeftBorder = (Border)Math.Max((int)logicalCell.Borders.Top, (int)logicalCell.Borders.Left);
+                var topRightBorder = (Border)Math.Max((int)logicalCell.Borders.Top, (int)logicalCell.Borders.Right);
+                var bottomRightBorder = (Border)Math.Max((int)logicalCell.Borders.Bottom, (int)logicalCell.Borders.Right);
+                var bottomLeftBorder = (Border)Math.Max((int)logicalCell.Borders.Bottom, (int)logicalCell.Borders.Left);
                 PaintBorder(canvas, borderMask, m.TopLeftBorderCorner, GetBorderCornerCharacter(topLeftBorder), topLeftBorder);
                 PaintBorder(canvas, borderMask, m.TopRightBorderCorner, GetBorderCornerCharacter(topRightBorder), topRightBorder);
                 PaintBorder(canvas, borderMask, m.BottomRightBorderCorner, GetBorderCornerCharacter(bottomRightBorder), bottomRightBorder);
@@ -692,7 +483,7 @@ namespace RCi.PlainTextTable
 
             static void BuildPhysicalGrid
             (
-                IReadOnlyDictionary<Coordinate, PttLogicalCell> logicalCells,
+                IReadOnlyDictionary<Coordinate, LogicalCell> logicalCells,
                 out LogicalToPhysicalMap logicalToPhysicalMap,
                 out PhysicalToLogicalMap physicalToLogicalMap
             )
@@ -954,12 +745,12 @@ namespace RCi.PlainTextTable
             (
                 LogicalCellsMap logicalCellsMap,
                 LogicalToPhysicalMap logicalToPhysicalMap,
-                out IDictionary<Coordinate, PttBorder> verticalPhysicalCellBordersMap,
-                out IDictionary<Coordinate, PttBorder> horizontalPhysicalCellBordersMap
+                out IDictionary<Coordinate, Border> verticalPhysicalCellBordersMap,
+                out IDictionary<Coordinate, Border> horizontalPhysicalCellBordersMap
             )
             {
-                verticalPhysicalCellBordersMap = new SortedDictionary<Coordinate /* physical coordinate */, PttBorder>(); // TODO: SortedDictionary
-                horizontalPhysicalCellBordersMap = new SortedDictionary<Coordinate /* physical coordinate */, PttBorder>(); // TODO: SortedDictionary
+                verticalPhysicalCellBordersMap = new SortedDictionary<Coordinate /* physical coordinate */, Border>(); // TODO: SortedDictionary
+                horizontalPhysicalCellBordersMap = new SortedDictionary<Coordinate /* physical coordinate */, Border>(); // TODO: SortedDictionary
 
                 foreach (var logicalCell in logicalCellsMap.Values
                              .OrderBy(x => x.Row)
@@ -982,10 +773,10 @@ namespace RCi.PlainTextTable
                             var canHaveBottomBorder = y == logicalCell.RowSpan - 1;
 
                             // get border types
-                            var leftBorder = canHaveLeftBorder ? logicalCell.Borders.Left : PttBorder.None;
-                            var topBorder = canHaveTopBorder ? logicalCell.Borders.Top : PttBorder.None;
-                            var rightBorder = canHaveRightBorder ? logicalCell.Borders.Right : PttBorder.None;
-                            var bottomBorder = canHaveBottomBorder ? logicalCell.Borders.Bottom : PttBorder.None;
+                            var leftBorder = canHaveLeftBorder ? logicalCell.Borders.Left : Border.None;
+                            var topBorder = canHaveTopBorder ? logicalCell.Borders.Top : Border.None;
+                            var rightBorder = canHaveRightBorder ? logicalCell.Borders.Right : Border.None;
+                            var bottomBorder = canHaveBottomBorder ? logicalCell.Borders.Bottom : Border.None;
 
                             // update vertical borders
                             MergeBorder(verticalPhysicalCellBordersMap, physicalCoordinate, canHaveLeftBorder, leftBorder);
@@ -1000,9 +791,9 @@ namespace RCi.PlainTextTable
 
                 return;
 
-                static PttBorder MergeBorders(PttBorder left, PttBorder right) => (PttBorder)Math.Max((int)left, (int)right);
+                static Border MergeBorders(Border left, Border right) => (Border)Math.Max((int)left, (int)right);
 
-                static void MergeBorder(IDictionary<Coordinate, PttBorder> existingBorders, Coordinate coordinate, bool canHaveBorder, PttBorder newBorder)
+                static void MergeBorder(IDictionary<Coordinate, Border> existingBorders, Coordinate coordinate, bool canHaveBorder, Border newBorder)
                 {
                     if (canHaveBorder)
                     {
@@ -1013,7 +804,7 @@ namespace RCi.PlainTextTable
                     else
                     {
                         // override
-                        existingBorders[coordinate] = PttBorder.None;
+                        existingBorders[coordinate] = Border.None;
                     }
                 }
             }
@@ -1022,11 +813,11 @@ namespace RCi.PlainTextTable
 
             #region // GetBorderSize
 
-            static int GetBorderSize(PttBorder border) => border switch
+            static int GetBorderSize(Border border) => border switch
             {
-                PttBorder.None => 0,
-                PttBorder.Normal => 1,
-                PttBorder.Bold => 1,
+                Border.None => 0,
+                Border.Normal => 1,
+                Border.Bold => 1,
                 _ => throw new ArgumentOutOfRangeException(nameof(border))
             };
 
