@@ -80,18 +80,16 @@ namespace RCi.PlainTextTable
 
         private static string CompileToText(IEnumerable<LogicalCell> logicalCellsStream)
         {
-            var logicalCellsMap = logicalCellsStream.ToDictionary(c => c.Coordinate, c => c);
+            var logicalCellsMap = (LogicalCellsMap)logicalCellsStream.ToDictionary(c => c.Coordinate, c => c);
 
             // build physical grid
             BuildPhysicalGrid(logicalCellsMap, out var logicalToPhysicalMap, out var physicalToLogicalMap);
 
             // there might be empty rows with no original cell spawns, we can merge those
-            MergeTransientEmptyPhysicalColsAndRows(logicalCellsMap, ref logicalToPhysicalMap, ref physicalToLogicalMap);
+            MergeTransientEmptyPhysicalColsAndRows(ref logicalCellsMap, ref logicalToPhysicalMap, ref physicalToLogicalMap);
 
             // build physical borders map
             BuildPhysicalBorders(logicalCellsMap, logicalToPhysicalMap, out var verticalPhysicalCellBordersMap, out var horizontalPhysicalCellBordersMap);
-
-            // ------
 
             // get max sizes for global physical borders
             var physicalVerticalBorderWidths = verticalPhysicalCellBordersMap
@@ -106,127 +104,10 @@ namespace RCi.PlainTextTable
                 .OrderBy(t => t.row)
                 .Select(t => GetBorderSize(t.border))
                 .ToImmutableArray();
-            var physicalColWidths = new int[logicalToPhysicalMap.Count == 0 ? 0 : logicalToPhysicalMap.Values.Max(x => x.Max(c => c.Col)) + 1];
-            var physicalRowHeights = new int[logicalToPhysicalMap.Count == 0 ? 0 : logicalToPhysicalMap.Values.Max(x => x.Max(c => c.Row)) + 1];
 
-            GrowPhysicalCols();
-            GrowPhysicalRows();
-
-            void GrowPhysicalCols()
-            {
-                foreach (var logicalCell in logicalCellsMap.Values
-                             .OrderBy(x => x.Row)
-                             .ThenBy(x => x.Col))
-                {
-                    // get physical columns which this logical cell interacts with
-                    var physicalCols = logicalToPhysicalMap[logicalCell.Coordinate]
-                        .Select(x => x.Col)
-                        .Distinct()
-                        .OrderBy(x => x)
-                        .ToImmutableArray();
-                    var minPhysicalCol = physicalCols[0];
-                    var maxPhysicalCol = physicalCols[^1];
-                    var localColDistribution = physicalCols.ToDictionary(x => x, _ => 0);
-
-                    // distribute height across columns and borders
-                    var widthBudget = logicalCell.TextSizeWithMargin.Width;
-                    var firstRound = true;
-
-                    // start with column, then flip to border, then flip to column again and repeat flipping
-                    (int? col, int? border) current = (maxPhysicalCol, default);
-                    while (widthBudget > 0)
-                    {
-                        if (current.col is not null)
-                        {
-                            // distribute to col
-                            var physicalCol = current.col.Value;
-                            localColDistribution[physicalCol]++;
-                            physicalColWidths[physicalCol] = Math.Max(physicalColWidths[physicalCol], localColDistribution[physicalCol]);
-                            widthBudget--;
-                            if (physicalCol == minPhysicalCol)
-                            {
-                                // we are at the last column, flip back to first column
-                                current = (maxPhysicalCol, default);
-                                firstRound = false;
-                            }
-                            else
-                            {
-                                // flip to border
-                                current = (default, physicalCol);
-                            }
-                        }
-                        else
-                        {
-                            var physicalBorder = current.border!.Value;
-                            if (firstRound)
-                            {
-                                // distribute to border
-                                widthBudget -= physicalVerticalBorderWidths[physicalBorder];
-                            }
-                            // flip to row
-                            current = (physicalBorder - 1, default);
-                        }
-                    }
-                }
-            }
-
-            void GrowPhysicalRows()
-            {
-                foreach (var logicalCell in logicalCellsMap.Values
-                             .OrderBy(x => x.Row)
-                             .ThenBy(x => x.Col))
-                {
-                    // get physical rows which this logical cell interacts with
-                    var physicalRows = logicalToPhysicalMap[logicalCell.Coordinate]
-                        .Select(x => x.Row)
-                        .Distinct()
-                        .OrderBy(x => x)
-                        .ToImmutableArray();
-                    var minPhysicalRow = physicalRows[0];
-                    var maxPhysicalRow = physicalRows[^1];
-                    var localRowDistribution = physicalRows.ToDictionary(x => x, _ => 0);
-
-                    // distribute height across rows and borders
-                    var heightBudget = logicalCell.TextSizeWithMargin.Height;
-                    var firstRound = true;
-
-                    // start with row, then flip to border, then flip to row again and repeat flipping
-                    (int? row, int? border) current = (maxPhysicalRow, default);
-                    while (heightBudget > 0)
-                    {
-                        if (current.row is not null)
-                        {
-                            // distribute to row
-                            var physicalRow = current.row.Value;
-                            localRowDistribution[physicalRow]++;
-                            physicalRowHeights[physicalRow] = Math.Max(physicalRowHeights[physicalRow], localRowDistribution[physicalRow]);
-                            heightBudget--;
-                            if (physicalRow == minPhysicalRow)
-                            {
-                                // we are at the last row, flip back to first row
-                                current = (maxPhysicalRow, default);
-                                firstRound = false;
-                            }
-                            else
-                            {
-                                // flip to border
-                                current = (default, physicalRow);
-                            }
-                        }
-                        else
-                        {
-                            // distribute to border
-                            var physicalBorder = current.border!.Value;
-                            if (firstRound)
-                            {
-                                heightBudget -= physicalHorizontalBorderHeights[physicalBorder];
-                            }
-                            // flip to row
-                            current = (physicalBorder - 1, default);
-                        }
-                    }
-                }
-            }
+            // get min sizes for physical rows and columns
+            var physicalColWidths = GrowPhysicalCols(logicalCellsMap, logicalToPhysicalMap, physicalVerticalBorderWidths);
+            var physicalRowHeights = GrowPhysicalRows(logicalCellsMap, logicalToPhysicalMap, physicalHorizontalBorderHeights);
 
             // ------
 
@@ -485,26 +366,9 @@ namespace RCi.PlainTextTable
                 .ThenBy(x => x.Col)
                 .First();
 
-        private static int GetNextAvailableColumn(HashSet<Coordinate> physicalCoordinatesSet, int row)
-        {
-            var expected = 0;
-            var stream = physicalCoordinatesSet
-                .Where(x => x.Row == row)
-                .OrderBy(x => x.Col);
-            foreach (var pair in stream)
-            {
-                if (pair.Col != expected)
-                {
-                    return expected;
-                }
-                expected++;
-            }
-            return expected;
-        }
-
         private static void BuildPhysicalGrid
         (
-            IReadOnlyDictionary<Coordinate, LogicalCell> logicalCells,
+            LogicalCellsMap logicalCellsMap,
             out LogicalToPhysicalMap logicalToPhysicalMap,
             out PhysicalToLogicalMap physicalToLogicalMap
         )
@@ -517,14 +381,14 @@ namespace RCi.PlainTextTable
             var physicalCoordinatesSet = new HashSet<Coordinate>();
 
             // since we might have empty logical rows, ignore them in physical mapping
-            var logicalToPhysicalRowMap = logicalCells
+            var logicalToPhysicalRowMap = logicalCellsMap
                 .Values
                 .Select(p => p.Row)
                 .Distinct()
                 .OrderBy(x => x)
                 .Select((n, i) => (logicalRow: n, physicalRow: i))
                 .ToDictionary(t => t.logicalRow, t => t.physicalRow);
-            foreach (var logicalCell in logicalCells.Values
+            foreach (var logicalCell in logicalCellsMap.Values
                          .OrderBy(x => x.Row)
                          .ThenBy(x => x.Col))
             {
@@ -553,11 +417,30 @@ namespace RCi.PlainTextTable
                     }
                 }
             }
+
+            return;
+
+            static int GetNextAvailableColumn(HashSet<Coordinate> physicalCoordinatesSet, int row)
+            {
+                var expected = 0;
+                var stream = physicalCoordinatesSet
+                    .Where(x => x.Row == row)
+                    .OrderBy(x => x.Col);
+                foreach (var pair in stream)
+                {
+                    if (pair.Col != expected)
+                    {
+                        return expected;
+                    }
+                    expected++;
+                }
+                return expected;
+            }
         }
 
         private static void MergeTransientEmptyPhysicalColsAndRows
         (
-            LogicalCellsMap logicalCellsMap,
+            ref LogicalCellsMap logicalCellsMap,
             ref LogicalToPhysicalMap logicalToPhysicalMap,
             ref PhysicalToLogicalMap physicalToLogicalMap
         )
@@ -569,7 +452,7 @@ namespace RCi.PlainTextTable
                 .ToImmutableArray();
             foreach (var physicalCol in physicalColsToValidate)
             {
-                MergeCol(logicalCellsMap, ref logicalToPhysicalMap, ref physicalToLogicalMap, physicalCol);
+                MergeCol(ref logicalCellsMap, ref logicalToPhysicalMap, ref physicalToLogicalMap, physicalCol);
             }
 
             var physicalRowsToValidate = physicalToLogicalMap
@@ -579,14 +462,14 @@ namespace RCi.PlainTextTable
                 .ToImmutableArray();
             foreach (var physicalRow in physicalRowsToValidate)
             {
-                MergeRow(logicalCellsMap, ref logicalToPhysicalMap, ref physicalToLogicalMap, physicalRow);
+                MergeRow(ref logicalCellsMap, ref logicalToPhysicalMap, ref physicalToLogicalMap, physicalRow);
             }
 
             return;
 
             static void MergeCol
             (
-                LogicalCellsMap logicalCellsMap,
+                ref LogicalCellsMap logicalCellsMap,
                 ref LogicalToPhysicalMap logicalToPhysicalMap,
                 ref PhysicalToLogicalMap physicalToLogicalMap,
                 int physicalCol
@@ -655,7 +538,7 @@ namespace RCi.PlainTextTable
 
             static void MergeRow
             (
-                LogicalCellsMap logicalCellsMap,
+                ref LogicalCellsMap logicalCellsMap,
                 ref LogicalToPhysicalMap logicalToPhysicalMap,
                 ref PhysicalToLogicalMap physicalToLogicalMap,
                 int physicalRow
@@ -789,6 +672,140 @@ namespace RCi.PlainTextTable
                     existingBorders[coordinate] = Border.None;
                 }
             }
+        }
+
+        private static ImmutableArray<int> GrowPhysicalCols
+        (
+            LogicalCellsMap logicalCellsMap,
+            LogicalToPhysicalMap logicalToPhysicalMap,
+            ImmutableArray<int> physicalVerticalBorderWidths
+        )
+        {
+            var physicalColWidths = new int[logicalToPhysicalMap.Count == 0 ? 0 : logicalToPhysicalMap.Values.Max(x => x.Max(c => c.Col)) + 1];
+
+            foreach (var logicalCell in logicalCellsMap.Values
+                         .OrderBy(x => x.Row)
+                         .ThenBy(x => x.Col))
+            {
+                // get physical columns which this logical cell interacts with
+                var physicalCols = logicalToPhysicalMap[logicalCell.Coordinate]
+                    .Select(x => x.Col)
+                    .Distinct()
+                    .OrderBy(x => x)
+                    .ToImmutableArray();
+                var minPhysicalCol = physicalCols[0];
+                var maxPhysicalCol = physicalCols[^1];
+                var localColDistribution = physicalCols.ToDictionary(x => x, _ => 0);
+
+                // distribute height across columns and borders
+                var widthBudget = logicalCell.TextSizeWithMargin.Width;
+                var firstRound = true;
+
+                // start with column, then flip to border, then flip to column again and repeat flipping
+                (int? col, int? border) current = (maxPhysicalCol, default);
+                while (widthBudget > 0)
+                {
+                    if (current.col is not null)
+                    {
+                        // distribute to col
+                        var physicalCol = current.col.Value;
+                        localColDistribution[physicalCol]++;
+                        physicalColWidths[physicalCol] = Math.Max(physicalColWidths[physicalCol], localColDistribution[physicalCol]);
+                        widthBudget--;
+                        if (physicalCol == minPhysicalCol)
+                        {
+                            // we are at the last column, flip back to first column
+                            current = (maxPhysicalCol, default);
+                            firstRound = false;
+                        }
+                        else
+                        {
+                            // flip to border
+                            current = (default, physicalCol);
+                        }
+                    }
+                    else
+                    {
+                        var physicalBorder = current.border!.Value;
+                        if (firstRound)
+                        {
+                            // distribute to border
+                            widthBudget -= physicalVerticalBorderWidths[physicalBorder];
+                        }
+                        // flip to row
+                        current = (physicalBorder - 1, default);
+                    }
+                }
+            }
+
+            return physicalColWidths.UnsafeAsImmutableArray();
+        }
+
+        private static ImmutableArray<int> GrowPhysicalRows
+        (
+            LogicalCellsMap logicalCellsMap,
+            LogicalToPhysicalMap logicalToPhysicalMap,
+            ImmutableArray<int> physicalHorizontalBorderHeights
+        )
+        {
+            var physicalRowHeights = new int[logicalToPhysicalMap.Count == 0 ? 0 : logicalToPhysicalMap.Values.Max(x => x.Max(c => c.Row)) + 1];
+
+            foreach (var logicalCell in logicalCellsMap.Values
+                         .OrderBy(x => x.Row)
+                         .ThenBy(x => x.Col))
+            {
+                // get physical rows which this logical cell interacts with
+                var physicalRows = logicalToPhysicalMap[logicalCell.Coordinate]
+                    .Select(x => x.Row)
+                    .Distinct()
+                    .OrderBy(x => x)
+                    .ToImmutableArray();
+                var minPhysicalRow = physicalRows[0];
+                var maxPhysicalRow = physicalRows[^1];
+                var localRowDistribution = physicalRows.ToDictionary(x => x, _ => 0);
+
+                // distribute height across rows and borders
+                var heightBudget = logicalCell.TextSizeWithMargin.Height;
+                var firstRound = true;
+
+                // start with row, then flip to border, then flip to row again and repeat flipping
+                (int? row, int? border) current = (maxPhysicalRow, default);
+                while (heightBudget > 0)
+                {
+                    if (current.row is not null)
+                    {
+                        // distribute to row
+                        var physicalRow = current.row.Value;
+                        localRowDistribution[physicalRow]++;
+                        physicalRowHeights[physicalRow] = Math.Max(physicalRowHeights[physicalRow], localRowDistribution[physicalRow]);
+                        heightBudget--;
+                        if (physicalRow == minPhysicalRow)
+                        {
+                            // we are at the last row, flip back to first row
+                            current = (maxPhysicalRow, default);
+                            firstRound = false;
+                        }
+                        else
+                        {
+                            // flip to border
+                            current = (default, physicalRow);
+                        }
+                    }
+                    else
+                    {
+                        // distribute to border
+                        var physicalBorder = current.border!.Value;
+                        if (firstRound)
+                        {
+                            heightBudget -= physicalHorizontalBorderHeights[physicalBorder];
+                        }
+                        // flip to row
+                        current = (physicalBorder - 1, default);
+                    }
+                }
+            }
+
+            return physicalRowHeights.UnsafeAsImmutableArray();
         }
     }
 }
