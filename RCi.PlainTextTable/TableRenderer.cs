@@ -2,8 +2,18 @@
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
-using LogicalCellsMap = System.Collections.Generic.IDictionary<RCi.PlainTextTable.Coordinate /* logical coordinate */, RCi.PlainTextTable.LogicalCell>;
-using LogicalToPhysicalMap = System.Collections.Generic.IDictionary<RCi.PlainTextTable.Coordinate /* logical coordinate */, System.Collections.Generic.HashSet<RCi.PlainTextTable.Coordinate /* physical coordinate */>>;
+using ReadOnlyLogicalCellsMap =
+    System.Collections.Generic.IReadOnlyDictionary
+    <
+        RCi.PlainTextTable.Coordinate /* logical coordinate */,
+        RCi.PlainTextTable.LogicalCell
+    >;
+using ReadOnlyLogicalToPhysicalMap =
+    System.Collections.Generic.IReadOnlyDictionary
+    <
+        RCi.PlainTextTable.Coordinate /* logical coordinate */,
+        System.Collections.Generic.HashSet<RCi.PlainTextTable.Coordinate /* physical coordinate */>
+    >;
 
 namespace RCi.PlainTextTable
 {
@@ -28,8 +38,8 @@ namespace RCi.PlainTextTable
 
         internal static string RenderText
         (
-            LogicalCellsMap logicalCellsMap,
-            LogicalToPhysicalMap logicalToPhysicalMap,
+            ReadOnlyLogicalCellsMap logicalCellsMap,
+            ReadOnlyLogicalToPhysicalMap logicalToPhysicalMap,
             ImmutableArray<int> physicalVerticalBorderWidths,
             ImmutableArray<int> physicalHorizontalBorderHeights,
             ImmutableArray<int> physicalColWidths,

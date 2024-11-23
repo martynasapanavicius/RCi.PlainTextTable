@@ -2,9 +2,24 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using LogicalCellsMap = System.Collections.Generic.IDictionary<RCi.PlainTextTable.Coordinate /* logical coordinate */, RCi.PlainTextTable.LogicalCell>;
-using LogicalToPhysicalMap = System.Collections.Generic.IDictionary<RCi.PlainTextTable.Coordinate /* logical coordinate */, System.Collections.Generic.HashSet<RCi.PlainTextTable.Coordinate /* physical coordinate */>>;
-using PhysicalToLogicalMap = System.Collections.Generic.IDictionary<RCi.PlainTextTable.Coordinate /* physical coordinate */, RCi.PlainTextTable.Coordinate /* physical coordinate */>;
+using LogicalCellsMap =
+    System.Collections.Generic.Dictionary
+    <
+        RCi.PlainTextTable.Coordinate /* logical coordinate */,
+        RCi.PlainTextTable.LogicalCell
+    >;
+using LogicalToPhysicalMap =
+    System.Collections.Generic.Dictionary
+    <
+        RCi.PlainTextTable.Coordinate /* logical coordinate */,
+        System.Collections.Generic.HashSet<RCi.PlainTextTable.Coordinate /* physical coordinate */>
+    >;
+using PhysicalToLogicalMap =
+    System.Collections.Generic.Dictionary
+    <
+        RCi.PlainTextTable.Coordinate /* physical coordinate */,
+        RCi.PlainTextTable.Coordinate /* physical coordinate */
+    >;
 
 namespace RCi.PlainTextTable
 {
@@ -27,8 +42,8 @@ namespace RCi.PlainTextTable
         )
         {
             // construct physical grid
-            logicalToPhysicalMap = new SortedDictionary<Coordinate, HashSet<Coordinate>>(); // TODO: SortedDictionary
-            physicalToLogicalMap = new SortedDictionary<Coordinate, Coordinate>();          // TODO: SortedDictionary // TODO: are we okay to only have 1:1 mapping?
+            logicalToPhysicalMap = new LogicalToPhysicalMap();
+            physicalToLogicalMap = new PhysicalToLogicalMap();
 
             // helper set for finding next available column in a row
             var physicalCoordinatesSet = new HashSet<Coordinate>();
