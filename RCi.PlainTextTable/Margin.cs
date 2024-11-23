@@ -13,7 +13,6 @@
         }
 
         public int Width => Right - Left;
-
         public int Height => Bottom - Top;
 
         public static implicit operator Margin(int universal) =>
