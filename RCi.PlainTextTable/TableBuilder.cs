@@ -478,7 +478,7 @@ namespace RCi.PlainTextTable
 
         internal static void BuildPhysicalTable
         (
-            IEnumerable<LogicalCell> logicalCellsStream,
+            IEnumerable<LogicalCell> logicalCells,
             out LogicalCellsMap logicalCellsMap,
             out LogicalToPhysicalMap logicalToPhysicalMap,
             out ImmutableArray<int> physicalVerticalBorderWidths,
@@ -487,7 +487,7 @@ namespace RCi.PlainTextTable
             out ImmutableArray<int> physicalRowHeights
         )
         {
-            logicalCellsMap = logicalCellsStream.ToDictionary(c => c.Coordinate, c => c);
+            logicalCellsMap = logicalCells.ToDictionary(c => c.Coordinate, c => c);
 
             // build physical grid
             BuildPhysicalGrid(logicalCellsMap, out logicalToPhysicalMap, out var physicalToLogicalMap);

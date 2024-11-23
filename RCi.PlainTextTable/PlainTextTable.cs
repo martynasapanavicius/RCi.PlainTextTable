@@ -18,6 +18,8 @@ namespace RCi.PlainTextTable
 
         // derivatives
 
+        public Cell this[int row, int col] => this[new Coordinate(row, col)];
+
         public Cell this[Coordinate c]
         {
             get
@@ -34,7 +36,16 @@ namespace RCi.PlainTextTable
             }
         }
 
-        public Cell this[int row, int col] => this[(row, col)];
+        internal void DeleteCell(Cell cell)
+        {
+            if (!ReferenceEquals(cell.Host, this))
+            {
+                throw new ArgumentException("cell does not belong to this plain text table");
+            }
+            _cells.Remove(cell.Coordinate);
+            RowCount = _cells.Count == 0 ? 0 : _cells.Max(p => p.Key.Row) + 1;
+            ColumnCount = _cells.Count == 0 ? 0 : _cells.Max(p => p.Key.Col) + 1;
+        }
 
         public RowChooser Rows => new(this);
 
@@ -58,18 +69,7 @@ namespace RCi.PlainTextTable
             return new ColumnControl(this, col);
         }
 
-        internal void DeleteCell(Cell cell)
-        {
-            if (!ReferenceEquals(cell.Host, this))
-            {
-                throw new ArgumentException("cell does not belong to this plain text table");
-            }
-            _cells.Remove(cell.Coordinate);
-            RowCount = _cells.Count == 0 ? 0 : _cells.Max(p => p.Key.Row) + 1;
-            ColumnCount = _cells.Count == 0 ? 0 : _cells.Max(p => p.Key.Col) + 1;
-        }
-
-        public override string ToString() => CompileToText
+        public override string ToString() => RenderTable
         (
             _cells.Select(p => new LogicalCell
             {
@@ -84,11 +84,11 @@ namespace RCi.PlainTextTable
             })
         );
 
-        internal static string CompileToText(IEnumerable<LogicalCell> logicalCellsStream)
+        internal static string RenderTable(IEnumerable<LogicalCell> logicalCells)
         {
             TableBuilder.BuildPhysicalTable
             (
-                logicalCellsStream,
+                logicalCells,
                 out var logicalCellsMap,
                 out var logicalToPhysicalMap,
                 out var physicalVerticalBorderWidths,
