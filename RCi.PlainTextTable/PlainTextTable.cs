@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
-using Coordinate = (int row, int col);
-using Size = (int width, int height);
-using LogicalCellsMap = System.Collections.Generic.IDictionary<(int row, int col) /* logical coordinate */, RCi.PlainTextTable.LogicalCell>;
-using LogicalToPhysicalMap = System.Collections.Generic.IDictionary<(int row, int col) /* logical coordinate */, System.Collections.Generic.HashSet<(int row, int col) /* physical coordinate */>>;
-using PhysicalToLogicalMap = System.Collections.Generic.IDictionary<(int row, int col) /* physical coordinate */, (int row, int col) /* physical coordinate */>;
+using LogicalCellsMap = System.Collections.Generic.IDictionary<RCi.PlainTextTable.Coordinate /* logical coordinate */, RCi.PlainTextTable.LogicalCell>;
+using LogicalToPhysicalMap = System.Collections.Generic.IDictionary<RCi.PlainTextTable.Coordinate /* logical coordinate */, System.Collections.Generic.HashSet<RCi.PlainTextTable.Coordinate /* physical coordinate */>>;
+using PhysicalToLogicalMap = System.Collections.Generic.IDictionary<RCi.PlainTextTable.Coordinate /* physical coordinate */, RCi.PlainTextTable.Coordinate /* physical coordinate */>;
 
 namespace RCi.PlainTextTable
 {
@@ -32,8 +30,8 @@ namespace RCi.PlainTextTable
                         Coordinate = c,
                     };
                     _cells.Add(c, cell);
-                    RowCount = Math.Max(RowCount, c.row + 1);
-                    ColumnCount = Math.Max(ColumnCount, c.col + 1);
+                    RowCount = Math.Max(RowCount, c.Row + 1);
+                    ColumnCount = Math.Max(ColumnCount, c.Col + 1);
                 }
                 return cell;
             }
@@ -57,8 +55,8 @@ namespace RCi.PlainTextTable
         internal void DeleteCell(Cell cell)
         {
             _cells.Remove(cell.Coordinate);
-            RowCount = _cells.Count == 0 ? 0 : _cells.Max(p => p.Key.row) + 1;
-            ColumnCount = _cells.Count == 0 ? 0 : _cells.Max(p => p.Key.col) + 1;
+            RowCount = _cells.Count == 0 ? 0 : _cells.Max(p => p.Key.Row) + 1;
+            ColumnCount = _cells.Count == 0 ? 0 : _cells.Max(p => p.Key.Col) + 1;
         }
 
         public override string ToString() => CompileToText
@@ -104,19 +102,19 @@ namespace RCi.PlainTextTable
 
             // get max sizes for global physical borders
             var physicalVerticalBorderWidths = verticalPhysicalCellBordersMap
-                .GroupBy(p => p.Key.col)
+                .GroupBy(p => p.Key.Col)
                 .Select(g => (col: g.Key, border: g.Max(p => p.Value)))
                 .OrderBy(t => t.col)
                 .Select(t => GetBorderSize(t.border))
                 .ToImmutableArray();
             var physicalHorizontalBorderHeights = horizontalPhysicalCellBordersMap
-                .GroupBy(p => p.Key.row)
+                .GroupBy(p => p.Key.Row)
                 .Select(g => (row: g.Key, border: g.Max(p => p.Value)))
                 .OrderBy(t => t.row)
                 .Select(t => GetBorderSize(t.border))
                 .ToImmutableArray();
-            var physicalColWidths = new int[logicalToPhysicalMap.Count == 0 ? 0 : logicalToPhysicalMap.Values.Max(x => x.Max(c => c.col)) + 1];
-            var physicalRowHeights = new int[logicalToPhysicalMap.Count == 0 ? 0 : logicalToPhysicalMap.Values.Max(x => x.Max(c => c.row)) + 1];
+            var physicalColWidths = new int[logicalToPhysicalMap.Count == 0 ? 0 : logicalToPhysicalMap.Values.Max(x => x.Max(c => c.Col)) + 1];
+            var physicalRowHeights = new int[logicalToPhysicalMap.Count == 0 ? 0 : logicalToPhysicalMap.Values.Max(x => x.Max(c => c.Row)) + 1];
 
             GrowPhysicalCols();
             GrowPhysicalRows();
@@ -129,7 +127,7 @@ namespace RCi.PlainTextTable
                 {
                     // get physical columns which this logical cell interacts with
                     var physicalCols = logicalToPhysicalMap[logicalCell.Coordinate]
-                        .Select(x => x.col)
+                        .Select(x => x.Col)
                         .Distinct()
                         .OrderBy(x => x)
                         .ToImmutableArray();
@@ -138,7 +136,7 @@ namespace RCi.PlainTextTable
                     var localColDistribution = physicalCols.ToDictionary(x => x, _ => 0);
 
                     // distribute height across columns and borders
-                    var widthBudget = logicalCell.TextSizeWithMargin.width;
+                    var widthBudget = logicalCell.TextSizeWithMargin.Width;
                     var firstRound = true;
 
                     // start with column, then flip to border, then flip to column again and repeat flipping
@@ -187,7 +185,7 @@ namespace RCi.PlainTextTable
                 {
                     // get physical rows which this logical cell interacts with
                     var physicalRows = logicalToPhysicalMap[logicalCell.Coordinate]
-                        .Select(x => x.row)
+                        .Select(x => x.Row)
                         .Distinct()
                         .OrderBy(x => x)
                         .ToImmutableArray();
@@ -196,7 +194,7 @@ namespace RCi.PlainTextTable
                     var localRowDistribution = physicalRows.ToDictionary(x => x, _ => 0);
 
                     // distribute height across rows and borders
-                    var heightBudget = logicalCell.TextSizeWithMargin.height;
+                    var heightBudget = logicalCell.TextSizeWithMargin.Height;
                     var firstRound = true;
 
                     // start with row, then flip to border, then flip to row again and repeat flipping
@@ -245,8 +243,8 @@ namespace RCi.PlainTextTable
             var sumGlobalCellsWidth = physicalColWidths.Length == 0 ? 0 : physicalColWidths.Sum();
             var sumGlobalCellsHeight = physicalRowHeights.Length == 0 ? 0 : physicalRowHeights.Sum();
             var canvasSize = new Size(sumGlobalBordersWidth + sumGlobalCellsWidth, sumGlobalBordersHeight + sumGlobalCellsHeight);
-            var canvas /* [row, col] */ = Enumerable.Range(0, canvasSize.height).Select(_ => new char[canvasSize.width]).ToArray();
-            var borderMask /* [row, col] */ = Enumerable.Range(0, canvasSize.height).Select(_ => new Border[canvasSize.width]).ToArray();
+            var canvas /* [row, col] */ = Enumerable.Range(0, canvasSize.Height).Select(_ => new char[canvasSize.Width]).ToArray();
+            var borderMask /* [row, col] */ = Enumerable.Range(0, canvasSize.Height).Select(_ => new Border[canvasSize.Width]).ToArray();
 
             foreach (var (logicalCoordinate, _) in logicalCellsMap)
             {
@@ -284,20 +282,20 @@ namespace RCi.PlainTextTable
                 int x = 0, y = 0;
 
                 // account for previous borders
-                for (var i = 0; i <= physicalCoordinate.col; i++)
+                for (var i = 0; i <= physicalCoordinate.Col; i++)
                 {
                     x += physicalVerticalBorderWidths[i];
                 }
-                for (var i = 0; i <= physicalCoordinate.row; i++)
+                for (var i = 0; i <= physicalCoordinate.Row; i++)
                 {
                     y += physicalHorizontalBorderHeights[i];
                 }
                 // account for previous cells
-                for (var i = 0; i < physicalCoordinate.col; i++)
+                for (var i = 0; i < physicalCoordinate.Col; i++)
                 {
                     x += physicalColWidths[i];
                 }
-                for (var i = 0; i < physicalCoordinate.row; i++)
+                for (var i = 0; i < physicalCoordinate.Row; i++)
                 {
                     y += physicalRowHeights[i];
                 }
@@ -310,21 +308,21 @@ namespace RCi.PlainTextTable
                 // get cell area
                 var pCells = logicalToPhysicalMap[logicalCoordinate];
                 var topLeftPhysicalCell = pCells
-                    .OrderBy(x => x.row)
-                    .ThenBy(x => x.col)
+                    .OrderBy(x => x.Row)
+                    .ThenBy(x => x.Col)
                     .First();
                 var bottomRightPhysicalCell = pCells
-                    .OrderByDescending(x => x.row)
-                    .ThenByDescending(x => x.col)
+                    .OrderByDescending(x => x.Row)
+                    .ThenByDescending(x => x.Col)
                     .First();
                 var xyTopLeft = GetTopLeftTableCoordinate(topLeftPhysicalCell);
                 var xyBottomRight = GetTopLeftTableCoordinate(bottomRightPhysicalCell);
                 xyBottomRight =
                 (
-                    xyBottomRight.row + physicalRowHeights[bottomRightPhysicalCell.row],
-                    xyBottomRight.col + physicalColWidths[bottomRightPhysicalCell.col]
+                    xyBottomRight.Row + physicalRowHeights[bottomRightPhysicalCell.Row],
+                    xyBottomRight.Col + physicalColWidths[bottomRightPhysicalCell.Col]
                 );
-                var area = new Margin(xyTopLeft.col, xyTopLeft.row, xyBottomRight.col, xyBottomRight.row);
+                var area = new Margin(xyTopLeft.Col, xyTopLeft.Row, xyBottomRight.Col, xyBottomRight.Row);
 
                 // get borders and corners
                 var logicalCell = logicalCellsMap[logicalCoordinate];
@@ -539,11 +537,11 @@ namespace RCi.PlainTextTable
                 {
                     var expected = 0;
                     var stream = physicalCoordinatesSet
-                        .Where(x => x.row == row)
-                        .OrderBy(x => x.col);
+                        .Where(x => x.Row == row)
+                        .OrderBy(x => x.Col);
                     foreach (var pair in stream)
                     {
-                        if (pair.col != expected)
+                        if (pair.Col != expected)
                         {
                             return expected;
                         }
@@ -555,14 +553,14 @@ namespace RCi.PlainTextTable
 
             static Coordinate GetLogicalCellTopLeftPhysicalCoordinate(LogicalToPhysicalMap logicalToPhysicalMap, Coordinate logicalCoordinate) =>
                 logicalToPhysicalMap[logicalCoordinate]
-                    .OrderBy(x => x.row)
-                    .ThenBy(x => x.col)
+                    .OrderBy(x => x.Row)
+                    .ThenBy(x => x.Col)
                     .First();
 
             static Coordinate GetLogicalCellBottomRightPhysicalCoordinate(LogicalToPhysicalMap logicalToPhysicalMap, Coordinate logicalCoordinate) =>
                 logicalToPhysicalMap[logicalCoordinate]
-                    .OrderByDescending(x => x.row)
-                    .ThenByDescending(x => x.col)
+                    .OrderByDescending(x => x.Row)
+                    .ThenByDescending(x => x.Col)
                     .First();
 
             #endregion
@@ -577,7 +575,7 @@ namespace RCi.PlainTextTable
             )
             {
                 var physicalColsToValidate = physicalToLogicalMap
-                    .Select(p => p.Key.col)
+                    .Select(p => p.Key.Col)
                     .Distinct()
                     .OrderByDescending(x => x)
                     .ToImmutableArray();
@@ -587,7 +585,7 @@ namespace RCi.PlainTextTable
                 }
 
                 var physicalRowsToValidate = physicalToLogicalMap
-                    .Select(p => p.Key.row)
+                    .Select(p => p.Key.Row)
                     .Distinct()
                     .OrderByDescending(x => x)
                     .ToImmutableArray();
@@ -609,10 +607,10 @@ namespace RCi.PlainTextTable
                     var logicalCoordinatesToAdjust = new HashSet<Coordinate>();
 
                     // find cols which start in this area
-                    foreach (var (_, logicalCoordinate) in physicalToLogicalMap.Where(x => x.Key.col == physicalCol))
+                    foreach (var (_, logicalCoordinate) in physicalToLogicalMap.Where(x => x.Key.Col == physicalCol))
                     {
                         var topLeftPhysicalCoordinate = GetLogicalCellTopLeftPhysicalCoordinate(logicalToPhysicalMap, logicalCoordinate);
-                        if (topLeftPhysicalCoordinate.col == physicalCol)
+                        if (topLeftPhysicalCoordinate.Col == physicalCol)
                         {
                             // this physical cell belongs to logical cell which is spawned in this column,
                             // this column is un-mergeable, thus terminate
@@ -633,7 +631,7 @@ namespace RCi.PlainTextTable
                         logicalCellsMap[logicalCoordinate] = newCell;
 
                         var physicalCoordinatesToRemove = logicalToPhysicalMap[logicalCoordinate]
-                            .Where(x => x.col == physicalCol)
+                            .Where(x => x.Col == physicalCol)
                             .ToImmutableArray();
                         foreach (var physicalCoordinate in physicalCoordinatesToRemove)
                         {
@@ -644,17 +642,17 @@ namespace RCi.PlainTextTable
 
                     // move all physical coordinates from this column to the right
                     var physicalCoordinatesToMove = physicalToLogicalMap
-                        .Where(p => p.Key.col > physicalCol)
+                        .Where(p => p.Key.Col > physicalCol)
                         .ToImmutableArray();
                     foreach (var (physicalCoordinate, logicalCoordinate) in physicalCoordinatesToMove)
                     {
                         physicalToLogicalMap.Remove(physicalCoordinate);
-                        physicalToLogicalMap.Add((physicalCoordinate.row, physicalCoordinate.col - 1), logicalCoordinate);
+                        physicalToLogicalMap.Add((physicalCoordinate.Row, physicalCoordinate.Col - 1), logicalCoordinate);
                     }
                     foreach (var (_, physicalCoordinateSet) in logicalToPhysicalMap)
                     {
                         var physicalCoordinates = physicalCoordinateSet
-                            .Where(x => x.col > physicalCol)
+                            .Where(x => x.Col > physicalCol)
                             .ToImmutableArray();
                         foreach (var physicalCoordinate in physicalCoordinates)
                         {
@@ -662,7 +660,7 @@ namespace RCi.PlainTextTable
                         }
                         foreach (var physicalCoordinate in physicalCoordinates)
                         {
-                            physicalCoordinateSet.Add((physicalCoordinate.row, physicalCoordinate.col - 1));
+                            physicalCoordinateSet.Add((physicalCoordinate.Row, physicalCoordinate.Col - 1));
                         }
                     }
                 }
@@ -678,10 +676,10 @@ namespace RCi.PlainTextTable
                     var logicalCoordinatesToAdjust = new HashSet<Coordinate>();
 
                     // find rows which start in this area
-                    foreach (var (_, logicalCoordinate) in physicalToLogicalMap.Where(x => x.Key.row == physicalRow))
+                    foreach (var (_, logicalCoordinate) in physicalToLogicalMap.Where(x => x.Key.Row == physicalRow))
                     {
                         var topLeftPhysicalCoordinate = GetLogicalCellTopLeftPhysicalCoordinate(logicalToPhysicalMap, logicalCoordinate);
-                        if (topLeftPhysicalCoordinate.row == physicalRow)
+                        if (topLeftPhysicalCoordinate.Row == physicalRow)
                         {
                             // this physical cell belongs to logical cell which is spawned in this row,
                             // this row is un-mergeable, thus terminate
@@ -702,7 +700,7 @@ namespace RCi.PlainTextTable
                         logicalCellsMap[logicalCoordinate] = newCell;
 
                         var physicalCoordinatesToRemove = logicalToPhysicalMap[logicalCoordinate]
-                            .Where(x => x.row == physicalRow)
+                            .Where(x => x.Row == physicalRow)
                             .ToImmutableArray();
                         foreach (var physicalCoordinate in physicalCoordinatesToRemove)
                         {
@@ -713,17 +711,17 @@ namespace RCi.PlainTextTable
 
                     // move all physical coordinates from this row to the upside
                     var physicalCoordinatesToMove = physicalToLogicalMap
-                        .Where(p => p.Key.row > physicalRow)
+                        .Where(p => p.Key.Row > physicalRow)
                         .ToImmutableArray();
                     foreach (var (physicalCoordinate, logicalCoordinate) in physicalCoordinatesToMove)
                     {
                         physicalToLogicalMap.Remove(physicalCoordinate);
-                        physicalToLogicalMap.Add((physicalCoordinate.row - 1, physicalCoordinate.col), logicalCoordinate);
+                        physicalToLogicalMap.Add((physicalCoordinate.Row - 1, physicalCoordinate.Col), logicalCoordinate);
                     }
                     foreach (var (_, physicalCoordinateSet) in logicalToPhysicalMap)
                     {
                         var physicalCoordinates = physicalCoordinateSet
-                            .Where(x => x.row > physicalRow)
+                            .Where(x => x.Row > physicalRow)
                             .ToImmutableArray();
                         foreach (var physicalCoordinate in physicalCoordinates)
                         {
@@ -731,7 +729,7 @@ namespace RCi.PlainTextTable
                         }
                         foreach (var physicalCoordinate in physicalCoordinates)
                         {
-                            physicalCoordinateSet.Add((physicalCoordinate.row - 1, physicalCoordinate.col));
+                            physicalCoordinateSet.Add((physicalCoordinate.Row - 1, physicalCoordinate.Col));
                         }
                     }
                 }
@@ -764,7 +762,7 @@ namespace RCi.PlainTextTable
                         // spread horizontally (right)
                         for (var x = 0; x < logicalCell.ColumnSpan; x++)
                         {
-                            var physicalCoordinate = new Coordinate(topLeftPhysicalCoordinate.row + y, topLeftPhysicalCoordinate.col + x);
+                            var physicalCoordinate = new Coordinate(topLeftPhysicalCoordinate.Row + y, topLeftPhysicalCoordinate.Col + x);
 
                             // check which physical cell borders are on the edge of logical cell
                             var canHaveLeftBorder = x == 0;
@@ -780,11 +778,11 @@ namespace RCi.PlainTextTable
 
                             // update vertical borders
                             MergeBorder(verticalPhysicalCellBordersMap, physicalCoordinate, canHaveLeftBorder, leftBorder);
-                            MergeBorder(verticalPhysicalCellBordersMap, (physicalCoordinate.row, physicalCoordinate.col + 1), canHaveRightBorder, rightBorder);
+                            MergeBorder(verticalPhysicalCellBordersMap, (physicalCoordinate.Row, physicalCoordinate.Col + 1), canHaveRightBorder, rightBorder);
 
                             // update horizontal borders
                             MergeBorder(horizontalPhysicalCellBordersMap, physicalCoordinate, canHaveTopBorder, topBorder);
-                            MergeBorder(horizontalPhysicalCellBordersMap, (physicalCoordinate.row + 1, physicalCoordinate.col), canHaveBottomBorder, bottomBorder);
+                            MergeBorder(horizontalPhysicalCellBordersMap, (physicalCoordinate.Row + 1, physicalCoordinate.Col), canHaveBottomBorder, bottomBorder);
                         }
                     }
                 }

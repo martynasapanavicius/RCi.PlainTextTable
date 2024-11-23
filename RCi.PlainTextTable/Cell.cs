@@ -1,6 +1,4 @@
-﻿using Coordinate = (int row, int col);
-
-namespace RCi.PlainTextTable
+﻿namespace RCi.PlainTextTable
 {
     public interface ICell
     {

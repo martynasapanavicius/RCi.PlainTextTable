@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Linq;
-using Coordinate = (int row, int col);
-using Size = (int width, int height);
 
 namespace RCi.PlainTextTable
 {
     internal sealed record LogicalCell
     {
         public required Coordinate Coordinate { get; init; }
-        public int Col => Coordinate.col;
-        public int Row => Coordinate.row;
+        public int Col => Coordinate.Col;
+        public int Row => Coordinate.Row;
         public required string Text { get; init; }
         public required int ColumnSpan { get; init; }
         public required int RowSpan { get; init; }
@@ -36,8 +34,8 @@ namespace RCi.PlainTextTable
         {
             return
             (
-                Margin.Left + TextSize.width + Margin.Right,
-                Margin.Top + TextSize.height + Margin.Bottom
+                Margin.Left + TextSize.Width + Margin.Right,
+                Margin.Top + TextSize.Height + Margin.Bottom
             );
         }
 
