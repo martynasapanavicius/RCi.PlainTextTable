@@ -2,7 +2,7 @@
 {
     public readonly struct RowControl(PlainTextTable host, int row)
     {
-        public ICell this[int col] => host[row, col];
+        public Cell this[int col] => host[row, col];
         public PlainTextTable Host() => host;
 
         public RowControl Text(params string[] texts)

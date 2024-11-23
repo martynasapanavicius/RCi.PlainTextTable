@@ -1,25 +1,9 @@
 ﻿namespace RCi.PlainTextTable
 {
-    public interface ICell
+    public sealed class Cell
     {
-        Coordinate Coordinate { get; }
-        string Text { get; set; }
-        int ColumnSpan { get; set; }
-        int RowSpan { get; set; }
-        Margin? Margin { get; set; }
-        Borders? Borders { get; set; }
-        HorizontalAlignment? HorizontalAlignment { get; set; }
-        VerticalAlignment? VerticalAlignment { get; set; }
-
-        PlainTextTable Host();
-        void Delete();
-    }
-
-    internal sealed class Cell :
-        ICell
-    {
-        public required PlainTextTable Host { get; init; }
-        public required Coordinate Coordinate { get; init; }
+        public PlainTextTable Host { get; }
+        public Coordinate Coordinate { get; }
         public string Text { get; set; } = string.Empty;
         public int ColumnSpan { get; set; } = 1; // TODO: validate or clamp values on set
         public int RowSpan { get; set; } = 1; // TODO: validate or clamp values on set
@@ -28,7 +12,12 @@
         public HorizontalAlignment? HorizontalAlignment { get; set; }
         public VerticalAlignment? VerticalAlignment { get; set; }
 
-        PlainTextTable ICell.Host() => Host;
+        internal Cell(PlainTextTable host, Coordinate coordinate)
+        {
+            Host = host;
+            Coordinate = coordinate;
+        }
+
         public void Delete() => Host.DeleteCell(this);
     }
 }

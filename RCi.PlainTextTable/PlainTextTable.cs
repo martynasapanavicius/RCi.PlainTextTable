@@ -6,6 +6,8 @@ namespace RCi.PlainTextTable
 {
     public sealed class PlainTextTable
     {
+        // storage
+
         private readonly Dictionary<Coordinate, Cell> _cells = new();
         public int RowCount { get; private set; }
         public int ColumnCount { get; private set; }
@@ -13,25 +15,34 @@ namespace RCi.PlainTextTable
         public Borders DefaultBorders { get; set; } = new(Border.Normal);
         public HorizontalAlignment DefaultHorizontalAlignment { get; set; } = HorizontalAlignment.Left;
         public VerticalAlignment DefaultVerticalAlignment { get; set; } = VerticalAlignment.Top;
-        public ICell this[Coordinate c]
+
+        // derivatives
+
+        public Cell this[Coordinate c]
         {
             get
             {
-                if (!_cells.TryGetValue(c, out var cell))
+                if (_cells.TryGetValue(c, out var cell))
                 {
-                    cell = new Cell
-                    {
-                        Host = this,
-                        Coordinate = c,
-                    };
-                    _cells.Add(c, cell);
-                    RowCount = Math.Max(RowCount, c.Row + 1);
-                    ColumnCount = Math.Max(ColumnCount, c.Col + 1);
+                    return cell;
                 }
+                cell = new Cell(this, c);
+                _cells.Add(c, cell);
+                RowCount = Math.Max(RowCount, c.Row + 1);
+                ColumnCount = Math.Max(ColumnCount, c.Col + 1);
                 return cell;
             }
         }
-        public ICell this[int row, int col] => this[(row, col)];
+
+        public Cell this[int row, int col] => this[(row, col)];
+
+        public RowChooser Rows => new(this);
+
+        public ColChooser Cols => new(this);
+
+        public RowControl Row(int row) => new(this, row);
+
+        public ColumnControl Col(int col) => new(this, col);
 
         public RowControl AppendRow()
         {
@@ -47,9 +58,9 @@ namespace RCi.PlainTextTable
             return new ColumnControl(this, col);
         }
 
-        internal void DeleteCell(ICell cell)
+        internal void DeleteCell(Cell cell)
         {
-            if (!ReferenceEquals(cell.Host(), this))
+            if (!ReferenceEquals(cell.Host, this))
             {
                 throw new ArgumentException("cell does not belong to this plain text table");
             }

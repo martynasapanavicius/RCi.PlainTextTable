@@ -2,7 +2,7 @@
 {
     public readonly struct ColumnControl(PlainTextTable host, int col)
     {
-        public ICell this[int row] => host[row, col];
+        public Cell this[int row] => host[row, col];
         public PlainTextTable Host() => host;
 
         public ColumnControl Text(params string[] texts)
