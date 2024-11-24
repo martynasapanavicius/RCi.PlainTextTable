@@ -1,7 +1,7 @@
 ﻿namespace RCi.PlainTextTable.Tests
 {
     [Parallelizable(ParallelScope.All)]
-    public static class RowControlTests
+    public static class RowTests
     {
         [Test]
         public static void AppendRowEmpty()

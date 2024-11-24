@@ -19,23 +19,26 @@ namespace RCi.PlainTextTable
 
         // derivatives
 
-        public Cell this[int row, int col] => this[new Coordinate(row, col)];
+        public Cell this[int row, int col] => Cell(new Coordinate(row, col));
 
-        public Cell this[Coordinate c]
+        public Cell this[Coordinate c] => Cell(c);
+
+        public Cell Cell(Coordinate c)
         {
-            get
+            if (_cells.TryGetValue(c, out var cell))
             {
-                if (_cells.TryGetValue(c, out var cell))
-                {
-                    return cell;
-                }
-                cell = new Cell(this, c);
-                _cells.Add(c, cell);
-                RowCount = Math.Max(RowCount, c.Row + 1);
-                ColumnCount = Math.Max(ColumnCount, c.Col + 1);
                 return cell;
             }
+            cell = new Cell(this, c);
+            _cells.Add(c, cell);
+            RowCount = Math.Max(RowCount, c.Row + 1);
+            ColumnCount = Math.Max(ColumnCount, c.Col + 1);
+            return cell;
         }
+
+        public Row Row(int row) => new(this, row);
+
+        public Column Column(int col) => new(this, col);
 
         internal void DeleteCell(Cell cell)
         {
@@ -48,24 +51,18 @@ namespace RCi.PlainTextTable
             ColumnCount = _cells.Count == 0 ? 0 : _cells.Max(p => p.Key.Col) + 1;
         }
 
-        public Cell Cell(Coordinate c) => this[c];
-
-        public RowControl Row(int row) => new(this, row);
-
-        public ColumnControl Col(int col) => new(this, col);
-
-        public RowControl AppendRow()
+        public Row AppendRow()
         {
             var row = RowCount;
             RowCount++;
-            return new RowControl(this, row);
+            return new Row(this, row);
         }
 
-        public ColumnControl AppendColumn()
+        public Column AppendColumn()
         {
             var col = ColumnCount;
             ColumnCount++;
-            return new ColumnControl(this, col);
+            return new Column(this, col);
         }
 
         public override string ToString() => RenderTable

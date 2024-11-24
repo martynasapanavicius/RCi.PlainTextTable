@@ -1,6 +1,6 @@
 ﻿namespace RCi.PlainTextTable
 {
-    public readonly struct ColumnControl(PlainTextTable host, int col)
+    public readonly struct Column(PlainTextTable host, int col)
     {
         public Cell this[int row] => host[row, col];
         public Cell Row(int row) => host[row, col];
@@ -16,7 +16,7 @@
             return host;
         }
 
-        public ColumnControl Text(params string[] texts)
+        public Column Text(params string[] texts)
         {
             for (var i = 0; i < texts.Length; i++)
             {
@@ -25,7 +25,7 @@
             return this;
         }
 
-        public ColumnControl Text(params object[] texts)
+        public Column Text(params object[] texts)
         {
             for (var i = 0; i < texts.Length; i++)
             {
@@ -34,7 +34,7 @@
             return this;
         }
 
-        public ColumnControl Text(string text)
+        public Column Text(string text)
         {
             for (var i = 0; i < host.RowCount; i++)
             {
@@ -43,7 +43,7 @@
             return this;
         }
 
-        public ColumnControl Text(object text)
+        public Column Text(object text)
         {
             for (var i = 0; i < host.RowCount; i++)
             {
@@ -52,7 +52,7 @@
             return this;
         }
 
-        public ColumnControl RowSpan(params int[] rowSpans)
+        public Column RowSpan(params int[] rowSpans)
         {
             for (var i = 0; i < rowSpans.Length; i++)
             {
@@ -61,7 +61,7 @@
             return this;
         }
 
-        public ColumnControl RowSpan(int rowSpan)
+        public Column RowSpan(int rowSpan)
         {
             for (var i = 0; i < host.RowCount; i++)
             {
@@ -70,7 +70,7 @@
             return this;
         }
 
-        public ColumnControl ColumnSpan(params int[] columnSpans)
+        public Column ColumnSpan(params int[] columnSpans)
         {
             for (var i = 0; i < columnSpans.Length; i++)
             {
@@ -79,7 +79,7 @@
             return this;
         }
 
-        public ColumnControl ColumnSpan(int columnSpan)
+        public Column ColumnSpan(int columnSpan)
         {
             for (var i = 0; i < host.RowCount; i++)
             {
@@ -88,7 +88,7 @@
             return this;
         }
 
-        public ColumnControl RowAndColumnSpan(params (int RowSpan, int ColumnSpan)[] rowAndColumnSpans)
+        public Column RowAndColumnSpan(params (int RowSpan, int ColumnSpan)[] rowAndColumnSpans)
         {
             for (var i = 0; i < rowAndColumnSpans.Length; i++)
             {
@@ -98,7 +98,7 @@
             return this;
         }
 
-        public ColumnControl RowAndColumnSpan((int RowSpan, int ColumnSpan) rowAndColumnSpan)
+        public Column RowAndColumnSpan((int RowSpan, int ColumnSpan) rowAndColumnSpan)
         {
             for (var i = 0; i < host.RowCount; i++)
             {
@@ -108,7 +108,7 @@
             return this;
         }
 
-        public ColumnControl Margin(params Margin[] margins)
+        public Column Margin(params Margin[] margins)
         {
             for (var i = 0; i < margins.Length; i++)
             {
@@ -117,7 +117,7 @@
             return this;
         }
 
-        public ColumnControl Margin(Margin margin)
+        public Column Margin(Margin margin)
         {
             for (var i = 0; i < host.RowCount; i++)
             {
@@ -126,7 +126,7 @@
             return this;
         }
 
-        public ColumnControl Borders(params Borders[] borders)
+        public Column Borders(params Borders[] borders)
         {
             for (var i = 0; i < borders.Length; i++)
             {
@@ -135,7 +135,7 @@
             return this;
         }
 
-        public ColumnControl Borders(Borders borders)
+        public Column Borders(Borders borders)
         {
             for (var i = 0; i < host.RowCount; i++)
             {
@@ -144,7 +144,7 @@
             return this;
         }
 
-        public ColumnControl HorizontalAlignment(params HorizontalAlignment[] horizontalAlignments)
+        public Column HorizontalAlignment(params HorizontalAlignment[] horizontalAlignments)
         {
             for (var i = 0; i < horizontalAlignments.Length; i++)
             {
@@ -153,7 +153,7 @@
             return this;
         }
 
-        public ColumnControl HorizontalAlignment(HorizontalAlignment horizontalAlignment)
+        public Column HorizontalAlignment(HorizontalAlignment horizontalAlignment)
         {
             for (var i = 0; i < host.RowCount; i++)
             {
@@ -162,7 +162,7 @@
             return this;
         }
 
-        public ColumnControl VerticalAlignment(params VerticalAlignment[] verticalAlignment)
+        public Column VerticalAlignment(params VerticalAlignment[] verticalAlignment)
         {
             for (var i = 0; i < verticalAlignment.Length; i++)
             {
@@ -171,7 +171,7 @@
             return this;
         }
 
-        public ColumnControl VerticalAlignment(VerticalAlignment verticalAlignment)
+        public Column VerticalAlignment(VerticalAlignment verticalAlignment)
         {
             for (var i = 0; i < host.RowCount; i++)
             {
@@ -180,8 +180,8 @@
             return this;
         }
 
-        public ColumnControl MoveLeft() => new(Host(), col - 1);
+        public Column MoveLeft() => new(Host(), col - 1);
 
-        public ColumnControl MoveRight() => new(Host(), col + 1);
+        public Column MoveRight() => new(Host(), col + 1);
     }
 }

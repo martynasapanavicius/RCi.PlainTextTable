@@ -42,8 +42,8 @@ namespace RCi.PlainTextTable
         }
 
         public void Delete() => Host.DeleteCell(this);
-        public RowControl Row() => new(Host, Coordinate.Row);
-        public ColumnControl Column() => new(Host, Coordinate.Col);
+        public Row Row() => new(Host, Coordinate.Row);
+        public Column Column() => new(Host, Coordinate.Col);
         public Cell MoveLeft() => Host[Coordinate.MoveLeft()];
         public Cell MoveUp() => Host[Coordinate.MoveUp()];
         public Cell MoveRight() => Host[Coordinate.MoveRight()];

@@ -800,7 +800,7 @@
             ptt[1, 0].Text("A");
             ptt[1, 1].Text("B");
 
-            ptt.Col(0).Delete();
+            ptt.Column(0).Delete();
 
             var actual = ptt.ToString();
             const string expected =
