@@ -69,11 +69,17 @@ namespace RCi.PlainTextTable
                     for (var x = 0; x < logicalCell.ColumnSpan; x++)
                     {
                         var physicalCoordinate = new Coordinate(topLeftPhysicalRow + y, topLeftPhysicalCol + x);
-                        physicalCoordinatesSet.Add(physicalCoordinate); // mark that this cell is created
-                        physicalCoordinates.Add(physicalCoordinate);    // add to logical -> physical mapping
 
-                        // TODO: are we okay to only have 1:1 mapping?
-                        //physicalToLogicalMap.Add(physicalCoordinate, logicalCell.Coordinate);
+                        // mark that this cell is created
+                        physicalCoordinatesSet.Add(physicalCoordinate);
+
+                        // add to logical -> physical mapping
+                        physicalCoordinates.Add(physicalCoordinate);
+
+                        // override physical -> logical mapping
+                        // although, it might be that multiple logical cells can point
+                        // to one physical cell (in cases of overlaps with row/col spans),
+                        // keep only the latest logical cell (because it overlaps on top of old one, if such exists)
                         physicalToLogicalMap[physicalCoordinate] = logicalCell.Coordinate;
                     }
                 }

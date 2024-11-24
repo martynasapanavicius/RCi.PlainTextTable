@@ -50,7 +50,7 @@ namespace RCi.PlainTextTable
 
         public RowChooser Rows => new(this);
 
-        public ColChooser Cols => new(this);
+        public ColumnChooser Cols => new(this);
 
         public RowControl Row(int row) => new(this, row);
 

@@ -301,8 +301,6 @@
             Assert.That(actual, Is.EqualTo(expected));
         }
 
-        #region // column span causes fractional growth
-
         [Test]
         public static void FractionalGrowth_ColumnSpan_DoesNotExpand()
         {
@@ -432,8 +430,6 @@
                 """;
             Assert.That(actual, Is.EqualTo(expected));
         }
-
-        #endregion
 
         [Test]
         public static void FractionalGrowth_RowSpan_DoesNotExpand()
@@ -616,15 +612,14 @@
             Assert.That(actual, Is.EqualTo(expected));
         }
 
-        [TestCase(false)]
-        [TestCase(true)]
-        public static void ComplexSingle(bool isDouble)
+        [TestCase(BorderStyle.Ascii)]
+        [TestCase(BorderStyle.UnicodeSingle)]
+        [TestCase(BorderStyle.UnicodeDouble)]
+        public static void ComplexSingle(BorderStyle style)
         {
             var ptt = new PlainTextTable
             {
-                BorderStyle = isDouble
-                    ? BorderStyle.UnicodeDouble
-                    : BorderStyle.UnicodeSingle,
+                BorderStyle = style,
                 DefaultHorizontalAlignment = HorizontalAlignment.Left,
                 DefaultVerticalAlignment = VerticalAlignment.Center,
             };
@@ -686,7 +681,23 @@
 
             var actual = ptt.ToString();
 
-            const string expectedSingle =
+            const string expectedAscii =
+                """
+                        +----------+-----------+-----------+----+----------------+-----------------+----+----+----+                        
+                  0     | 1        | 2         | 3         | 4  | 5              | 6               | 7  | 8  | 9  |                        
+                +-------+----------------------------------+----#==================================#----+----+----+----+----+----+         
+                | 0'    |                                  | 2' #                                  # 4' | 5' | 6' | 7' | 8' | 9' |         
+                +-------+ 1''''''''''''''''''''''''''''''' +----#----------------+                 #----#    #----+----+----+----+         
+                | 0*    |                                  |                     |'''''''''''''''' # 2* # 3* # 4* | 5* | 6* | 7* | 8*   9* 
+                | 0**   |                                  | 1*                  |                 #    #    #    |    |    |    |         
+                #==================#-----------+-----------+                     |                 #----#====#----+----+----+----+----+    
+                # aaaaaaaaaaaaa    # b         | c         |                     |                 # d  | e  | f  | g  | h  | i  | j  |    
+                #==================#-----------+-----------+----#==================================#----+----+----+----+----+----+----+    
+                | A     | B        | C         | D         | E  | F              | G               | H  | I  | J  |                        
+                +-------+----------+-----------+-----------+----+----------------+-----------------+----+----+----+                        
+                """;
+
+            const string expectedUnicodeSingle =
                 """
                         ┌──────────┬───────────┬───────────┬────┬────────────────┬─────────────────┬────┬────┬────┐                        
                   0     │ 1        │ 2         │ 3         │ 4  │ 5              │ 6               │ 7  │ 8  │ 9  │                        
@@ -702,7 +713,7 @@
                 └───────┴──────────┴───────────┴───────────┴────┴────────────────┴─────────────────┴────┴────┴────┘                        
                 """;
 
-            const string expectedDouble =
+            const string expectedUnicodeDouble =
                 """
                         ┌──────────┬───────────┬───────────┬────┬────────────────┬─────────────────┬────┬────┬────┐                        
                   0     │ 1        │ 2         │ 3         │ 4  │ 5              │ 6               │ 7  │ 8  │ 9  │                        
@@ -718,7 +729,89 @@
                 └───────┴──────────┴───────────┴───────────┴────┴────────────────┴─────────────────┴────┴────┴────┘                        
                 """;
 
-            Assert.That(actual, Is.EqualTo(isDouble ? expectedDouble : expectedSingle));
+            var expected = style switch
+            {
+                BorderStyle.Ascii => expectedAscii,
+                BorderStyle.UnicodeSingle => expectedUnicodeSingle,
+                BorderStyle.UnicodeDouble => expectedUnicodeDouble,
+                _ => throw new ArgumentOutOfRangeException(nameof(style)),
+            };
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public static void DeleteOne()
+        {
+            var ptt = new PlainTextTable();
+            ptt[0, 0].Text("a").Delete();
+
+            var actual = ptt.ToString();
+            Assert.That(actual, Is.EqualTo(string.Empty));
+        }
+
+        [Test]
+        public static void DeleteQuad()
+        {
+            var ptt = new PlainTextTable();
+            ptt[0, 0].Text("a").Delete();
+            ptt[0, 1].Text("b");
+            ptt[1, 0].Text("A");
+            ptt[1, 1].Text("B");
+
+            var actual = ptt.ToString();
+            const string expected =
+                """
+                +---+    
+                | b |    
+                +---+---+
+                | A | B |
+                +---+---+
+                """;
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public static void DeleteRow()
+        {
+            var ptt = new PlainTextTable();
+            ptt[0, 0].Text("a");
+            ptt[0, 1].Text("b");
+            ptt[1, 0].Text("A");
+            ptt[1, 1].Text("B");
+
+            ptt.Row(0).Delete();
+
+            var actual = ptt.ToString();
+            const string expected =
+                """
+                +---+---+
+                | A | B |
+                +---+---+
+                """;
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public static void DeleteColumn()
+        {
+            var ptt = new PlainTextTable();
+            ptt[0, 0].Text("a");
+            ptt[0, 1].Text("b");
+            ptt[1, 0].Text("A");
+            ptt[1, 1].Text("B");
+
+            ptt.Col(0).Delete();
+
+            var actual = ptt.ToString();
+            const string expected =
+                """
+                +---+
+                | b |
+                +---+
+                | B |
+                +---+
+                """;
+            Assert.That(actual, Is.EqualTo(expected));
         }
     }
 }

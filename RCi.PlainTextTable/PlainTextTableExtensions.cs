@@ -20,7 +20,13 @@
             return cell;
         }
 
-        public static Cell Borders(this Cell cell, Borders borders)
+        public static Cell Margin(this Cell cell, Margin? margin)
+        {
+            cell.Margin = margin;
+            return cell;
+        }
+
+        public static Cell Borders(this Cell cell, Borders? borders)
         {
             cell.Borders = borders;
             return cell;
@@ -77,6 +83,18 @@
             {
                 Bottom = border,
             };
+            return cell;
+        }
+
+        public static Cell HorizontalAlignment(this Cell cell, HorizontalAlignment? horizontalAlignment)
+        {
+            cell.HorizontalAlignment = horizontalAlignment;
+            return cell;
+        }
+
+        public static Cell VerticalAlignment(this Cell cell, VerticalAlignment? verticalAlignment)
+        {
+            cell.VerticalAlignment = verticalAlignment;
             return cell;
         }
     }
