@@ -48,9 +48,7 @@ namespace RCi.PlainTextTable
             ColumnCount = _cells.Count == 0 ? 0 : _cells.Max(p => p.Key.Col) + 1;
         }
 
-        public RowChooser Rows => new(this);
-
-        public ColumnChooser Cols => new(this);
+        public Cell Cell(Coordinate c) => this[c];
 
         public RowControl Row(int row) => new(this, row);
 

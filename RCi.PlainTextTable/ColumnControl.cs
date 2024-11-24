@@ -3,7 +3,8 @@
     public readonly struct ColumnControl(PlainTextTable host, int col)
     {
         public Cell this[int row] => host[row, col];
-        public PlainTextTable Host => host;
+        public Cell Row(int row) => host[row, col];
+        public PlainTextTable Host() => host;
 
         public PlainTextTable Delete()
         {
@@ -24,11 +25,85 @@
             return this;
         }
 
+        public ColumnControl Text(params object[] texts)
+        {
+            for (var i = 0; i < texts.Length; i++)
+            {
+                host[i, col].Text(texts[i]);
+            }
+            return this;
+        }
+
         public ColumnControl Text(string text)
         {
             for (var i = 0; i < host.RowCount; i++)
             {
                 host[i, col].Text(text);
+            }
+            return this;
+        }
+
+        public ColumnControl Text(object text)
+        {
+            for (var i = 0; i < host.RowCount; i++)
+            {
+                host[i, col].Text(text);
+            }
+            return this;
+        }
+
+        public ColumnControl RowSpan(params int[] rowSpans)
+        {
+            for (var i = 0; i < rowSpans.Length; i++)
+            {
+                host[i, col].RowSpan(rowSpans[i]);
+            }
+            return this;
+        }
+
+        public ColumnControl RowSpan(int rowSpan)
+        {
+            for (var i = 0; i < host.RowCount; i++)
+            {
+                host[i, col].RowSpan(rowSpan);
+            }
+            return this;
+        }
+
+        public ColumnControl ColumnSpan(params int[] columnSpans)
+        {
+            for (var i = 0; i < columnSpans.Length; i++)
+            {
+                host[i, col].ColumnSpan(columnSpans[i]);
+            }
+            return this;
+        }
+
+        public ColumnControl ColumnSpan(int columnSpan)
+        {
+            for (var i = 0; i < host.RowCount; i++)
+            {
+                host[i, col].ColumnSpan(columnSpan);
+            }
+            return this;
+        }
+
+        public ColumnControl RowAndColumnSpan(params (int RowSpan, int ColumnSpan)[] rowAndColumnSpans)
+        {
+            for (var i = 0; i < rowAndColumnSpans.Length; i++)
+            {
+                host[i, col].RowSpan(rowAndColumnSpans[i].RowSpan);
+                host[i, col].ColumnSpan(rowAndColumnSpans[i].ColumnSpan);
+            }
+            return this;
+        }
+
+        public ColumnControl RowAndColumnSpan((int RowSpan, int ColumnSpan) rowAndColumnSpan)
+        {
+            for (var i = 0; i < host.RowCount; i++)
+            {
+                host[i, col].RowSpan(rowAndColumnSpan.RowSpan);
+                host[i, col].ColumnSpan(rowAndColumnSpan.ColumnSpan);
             }
             return this;
         }
@@ -104,5 +179,9 @@
             }
             return this;
         }
+
+        public ColumnControl MoveLeft() => new(Host(), col - 1);
+
+        public ColumnControl MoveRight() => new(Host(), col + 1);
     }
 }

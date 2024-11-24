@@ -4,6 +4,10 @@ namespace RCi.PlainTextTable
 {
     public readonly record struct Borders
     {
+        public static readonly Borders None = new(Border.None);
+        public static readonly Borders Normal = new(Border.Normal);
+        public static readonly Borders Bold = new(Border.Bold);
+
         private readonly Border _left;
         public Border Left
         {

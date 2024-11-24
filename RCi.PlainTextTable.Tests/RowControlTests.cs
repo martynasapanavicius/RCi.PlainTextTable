@@ -38,7 +38,7 @@
             var ptt = new PlainTextTable();
             ptt.AppendRow().Text("a", "b");
             ptt.AppendRow().Text("A", "B");
-            ptt.Rows[0].Text("x");
+            ptt.Row(0).Text("x");
 
             var actual = ptt.ToString();
             const string expected =

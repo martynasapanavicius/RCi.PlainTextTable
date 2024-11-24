@@ -8,6 +8,9 @@
             return cell;
         }
 
+        public static Cell Text(this Cell cell, object text) =>
+            cell.Text(text.ToString() ?? string.Empty);
+
         public static Cell ColumnSpan(this Cell cell, int span)
         {
             cell.ColumnSpan = span;
