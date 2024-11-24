@@ -1,6 +1,6 @@
 namespace RCi.PlainTextTable.Tests
 {
-    [Parallelizable]
+    [Parallelizable(ParallelScope.All)]
     public static class PlainTextTableTests
     {
         [Test]

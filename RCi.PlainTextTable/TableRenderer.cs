@@ -127,7 +127,6 @@ namespace RCi.PlainTextTable
             var logicalCell = logicalCellsMap[logicalCoordinate];
             var margins = GetTableCellMargins
             (
-                logicalCellsMap,
                 logicalToPhysicalMap,
                 physicalVerticalBorderWidths,
                 physicalHorizontalBorderHeights,
@@ -159,7 +158,7 @@ namespace RCi.PlainTextTable
             PaintBorderCorner(canvas, borderMask, margins.BottomLeftBorderCorner, GetBorderCornerCharacter(style, bottomLeftBorder), bottomLeftBorder, ref borderCornerCoordinates);
         }
 
-        private static Coordinate GetTopLeftTableCoordinate
+        private static Coordinate GetTopLeftCanvasCoordinate
         (
             ImmutableArray<int> physicalVerticalBorderWidths,
             ImmutableArray<int> physicalHorizontalBorderHeights,
@@ -195,7 +194,6 @@ namespace RCi.PlainTextTable
 
         private static TableCellMargins GetTableCellMargins
         (
-            ReadOnlyLogicalCellsMap logicalCellsMap,
             ReadOnlyLogicalToPhysicalMap logicalToPhysicalMap,
             ImmutableArray<int> physicalVerticalBorderWidths,
             ImmutableArray<int> physicalHorizontalBorderHeights,
@@ -212,7 +210,7 @@ namespace RCi.PlainTextTable
                 .OrderByDescending(x => x)
                 .First();
 
-            var xyTopLeft = GetTopLeftTableCoordinate
+            var xyTopLeft = GetTopLeftCanvasCoordinate
             (
                 physicalVerticalBorderWidths,
                 physicalHorizontalBorderHeights,
@@ -220,7 +218,7 @@ namespace RCi.PlainTextTable
                 physicalRowHeights,
                 topLeftPhysicalCell
             );
-            var xyBottomRight = GetTopLeftTableCoordinate
+            var xyBottomRight = GetTopLeftCanvasCoordinate
             (
                 physicalVerticalBorderWidths,
                 physicalHorizontalBorderHeights,
@@ -236,11 +234,10 @@ namespace RCi.PlainTextTable
             var area = new Margin(xyTopLeft.Col, xyTopLeft.Row, xyBottomRight.Col, xyBottomRight.Row);
 
             // get borders and corners
-            var logicalCell = logicalCellsMap[logicalCoordinate];
-            var leftBorderSize = PlainTextTable.GetBorderSize(logicalCell.Borders.Left);
-            var topBorderSize = PlainTextTable.GetBorderSize(logicalCell.Borders.Top);
-            var rightBorderSize = PlainTextTable.GetBorderSize(logicalCell.Borders.Right);
-            var bottomBorderSize = PlainTextTable.GetBorderSize(logicalCell.Borders.Bottom);
+            var leftBorderSize = physicalVerticalBorderWidths[topLeftPhysicalCell.Col];
+            var topBorderSize = physicalHorizontalBorderHeights[topLeftPhysicalCell.Row];
+            var rightBorderSize = physicalVerticalBorderWidths[bottomRightPhysicalCell.Col + 1];
+            var bottomBorderSize = physicalHorizontalBorderHeights[topLeftPhysicalCell.Row + 1];
 
             var borderLeft = area with { Left = area.Left - leftBorderSize, Right = area.Left };
             var borderTopLeft = new Margin(area.Left - leftBorderSize, area.Top - topBorderSize, area.Left, area.Top);
@@ -470,7 +467,7 @@ namespace RCi.PlainTextTable
                     newCharacter = style switch
                     {
                         BorderStyle.UnicodeSingle => ReconcileSingle(left, top, right, bottom),
-                        BorderStyle.UnicodeDouble => throw new NotImplementedException(), // TODO:
+                        BorderStyle.UnicodeDouble => ReconcileDouble(left, top, right, bottom),
                         _ => throw new ArgumentOutOfRangeException(nameof(style)),
                     };
                 }
@@ -669,7 +666,7 @@ namespace RCi.PlainTextTable
                 {
                     Border.None => bottom switch
                     {
-                        Border.None => '\u2501',    // B N O O ━
+                        Border.None => '\u2519',    // B N O O ┙
                         Border.Normal => '\u2525',  // B N O N ┥
                         Border.Bold => '\u252a',    // B N O B ┪
                         _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
@@ -711,6 +708,248 @@ namespace RCi.PlainTextTable
                         Border.None => '\u253b',    // B B B O ┻
                         Border.Normal => '\u2547',  // B B B N ╇
                         Border.Bold => '\u254b',    // B B B B ╋
+                        _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
+                    },
+                    _ => throw new ArgumentOutOfRangeException(nameof(right)),
+                },
+                _ => throw new ArgumentOutOfRangeException(nameof(top)),
+            },
+            _ => throw new ArgumentOutOfRangeException(nameof(left)),
+        };
+
+        private static char ReconcileDouble(Border left, Border top, Border right, Border bottom) => left switch
+        {
+            Border.None => top switch
+            {
+                Border.None => right switch
+                {
+                    Border.None => bottom switch
+                    {
+                        Border.None => ' ',         // O O O O
+                        Border.Normal => ' ',       // O O O N      // adjusted
+                        Border.Bold => ' ',         // O O O W      // adjusted
+                        _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
+                    },
+                    Border.Normal => bottom switch
+                    {
+                        Border.None => ' ',         // O O N O      // adjusted
+                        Border.Normal => '\u250c',  // O O N N ┌
+                        Border.Bold => '\u2553',    // O O N W ╓
+                        _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
+                    },
+                    Border.Bold => bottom switch
+                    {
+                        Border.None => ' ',         // O O W O      // adjusted
+                        Border.Normal => '\u2552',  // O O W N ╒
+                        Border.Bold => '\u2554',    // O O W W ╔
+                        _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
+                    },
+                    _ => throw new ArgumentOutOfRangeException(nameof(right)),
+                },
+                Border.Normal => right switch
+                {
+                    Border.None => bottom switch
+                    {
+                        Border.None => ' ',         // O N O O      // adjusted
+                        Border.Normal => '\u2502',  // O N O N │
+                        Border.Bold => ' ',         // O N O W      // adjusted
+                        _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
+                    },
+                    Border.Normal => bottom switch
+                    {
+                        Border.None => '\u2514',    // O N N O └
+                        Border.Normal => '\u251c',  // O N N N ├
+                        Border.Bold => '\u2514',    // O N N W └    // adjusted
+                        _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
+                    },
+                    Border.Bold => bottom switch
+                    {
+                        Border.None => '\u2558',    // O N W O ╘
+                        Border.Normal => '\u255e',  // O N W N ╞
+                        Border.Bold => '\u2554',    // O N W W ╔    // adjusted
+                        _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
+                    },
+                    _ => throw new ArgumentOutOfRangeException(nameof(right)),
+                },
+                Border.Bold => right switch
+                {
+                    Border.None => bottom switch
+                    {
+                        Border.None => ' ',         // O W O O      // adjusted
+                        Border.Normal => ' ',       // O W O N      // adjusted
+                        Border.Bold => '\u2551',    // O W O W ║
+                        _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
+                    },
+                    Border.Normal => bottom switch
+                    {
+                        Border.None => '\u2559',    // O W N O ╙
+                        Border.Normal => '\u250c',  // O W N N ┌    // adjusted
+                        Border.Bold => '\u255f',    // O W N W ╟
+                        _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
+                    },
+                    Border.Bold => bottom switch
+                    {
+                        Border.None => '\u255a',    // O W W O ╚
+                        Border.Normal => '\u255a',  // O W W N ╚    // adjusted
+                        Border.Bold => '\u2560',    // O W W W ╠
+                        _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
+                    },
+                    _ => throw new ArgumentOutOfRangeException(nameof(right)),
+                },
+                _ => throw new ArgumentOutOfRangeException(nameof(top)),
+            },
+            Border.Normal => top switch
+            {
+                Border.None => right switch
+                {
+                    Border.None => bottom switch
+                    {
+                        Border.None => ' ',         // N O O O      // adjusted
+                        Border.Normal => '\u2510',  // N O O N ┐
+                        Border.Bold => '\u2556',    // N O O W ╖
+                        _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
+                    },
+                    Border.Normal => bottom switch
+                    {
+                        Border.None => '\u2500',    // N O N O ─
+                        Border.Normal => '\u252c',  // N O N N ┬
+                        Border.Bold => '\u2565',    // N O N W ╥
+                        _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
+                    },
+                    Border.Bold => bottom switch
+                    {
+                        Border.None => ' ',         // N O W O      // adjusted
+                        Border.Normal => '\u2510',  // N O W N ┐    // adjusted
+                        Border.Bold => '\u2554',    // N O W W ╔    // adjusted
+                        _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
+                    },
+                    _ => throw new ArgumentOutOfRangeException(nameof(right)),
+                },
+                Border.Normal => right switch
+                {
+                    Border.None => bottom switch
+                    {
+                        Border.None => '\u2518',    // N N O O ┘
+                        Border.Normal => '\u2524',  // N N O N ┤
+                        Border.Bold => '\u2518',    // N N O W ┘    // adjusted
+                        _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
+                    },
+                    Border.Normal => bottom switch
+                    {
+                        Border.None => '\u2534',    // N N N O ┴
+                        Border.Normal => '\u253c',  // N N N N ┼
+                        Border.Bold => '\u2534',    // N N N W ┴    // adjusted
+                        _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
+                    },
+                    Border.Bold => bottom switch
+                    {
+                        Border.None => '\u2518',    // N N W O ┘    // adjusted
+                        Border.Normal => '\u2524',  // N N W N ┤    // adjusted
+                        Border.Bold => '\u2554',    // N N W W ╔    // adjusted
+                        _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
+                    },
+                    _ => throw new ArgumentOutOfRangeException(nameof(right)),
+                },
+                Border.Bold => right switch
+                {
+                    Border.None => bottom switch
+                    {
+                        Border.None => '\u255c',    // N W O O ╜
+                        Border.Normal => '\u2510',  // N W O N ┐    // adjusted
+                        Border.Bold => '\u2562',    // N W O W ╢
+                        _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
+                    },
+                    Border.Normal => bottom switch
+                    {
+                        Border.None => '\u2568',    // N W N O ╨
+                        Border.Normal => '\u252c',  // N W N N ┬    // adjusted
+                        Border.Bold => '\u256b',    // N W N W ╫
+                        _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
+                    },
+                    Border.Bold => bottom switch
+                    {
+                        Border.None => '\u255a',    // N W W O ╚    // adjusted
+                        Border.Normal => '\u255a',  // N W W N ╚    // adjusted
+                        Border.Bold => '\u2560',    // N W W W ╠    // adjusted
+                        _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
+                    },
+                    _ => throw new ArgumentOutOfRangeException(nameof(right)),
+                },
+                _ => throw new ArgumentOutOfRangeException(nameof(top)),
+            },
+            Border.Bold => top switch
+            {
+                Border.None => right switch
+                {
+                    Border.None => bottom switch
+                    {
+                        Border.None => ' ',         // W O O O      // adjusted
+                        Border.Normal => '\u2555',  // W O O N ╕
+                        Border.Bold => '\u2557',    // W O O W ╗
+                        _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
+                    },
+                    Border.Normal => bottom switch
+                    {
+                        Border.None => ' ',         // W O N O      // adjusted
+                        Border.Normal => '\u250c',  // W O N N ┌    // adjusted
+                        Border.Bold => '\u2557',    // W O N W ╗    // adjusted
+                        _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
+                    },
+                    Border.Bold => bottom switch
+                    {
+                        Border.None => '\u2550',    // W O W O ═
+                        Border.Normal => '\u2564',  // W O W N ╤
+                        Border.Bold => '\u2566',    // W O W W ╦
+                        _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
+                    },
+                    _ => throw new ArgumentOutOfRangeException(nameof(right)),
+                },
+                Border.Normal => right switch
+                {
+                    Border.None => bottom switch
+                    {
+                        Border.None => '\u255b',    // W N O O ╛
+                        Border.Normal => '\u2561',  // W N O N ╡
+                        Border.Bold => '\u2557',    // W N O W ╗
+                        _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
+                    },
+                    Border.Normal => bottom switch
+                    {
+                        Border.None => '\u2514',    // W N N O └    // adjusted
+                        Border.Normal => '\u251c',  // W N N N ├    // adjusted
+                        Border.Bold => '\u2557',    // W N N W ╗    // adjusted
+                        _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
+                    },
+                    Border.Bold => bottom switch
+                    {
+                        Border.None => '\u2567',    // W N W O ╧
+                        Border.Normal => '\u256a',  // W N W N ╪
+                        Border.Bold => '\u2566',    // W N W W ╦    // adjusted
+                        _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
+                    },
+                    _ => throw new ArgumentOutOfRangeException(nameof(right)),
+                },
+                Border.Bold => right switch
+                {
+                    Border.None => bottom switch
+                    {
+                        Border.None => '\u255d',    // W W O O ╝
+                        Border.Normal => '\u255d',  // W W O N ╝    // adjusted
+                        Border.Bold => '\u2563',    // W W O W ╣
+                        _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
+                    },
+                    Border.Normal => bottom switch
+                    {
+                        Border.None => '\u255d',    // W W N O ╝    // adjusted
+                        Border.Normal => '\u255d',  // W W N N ╝    // adjusted
+                        Border.Bold => '\u2563',    // W W N W ╣    // adjusted
+                        _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
+                    },
+                    Border.Bold => bottom switch
+                    {
+                        Border.None => '\u2569',    // W W W O ╩
+                        Border.Normal => '\u2569',  // W W W N ╩    // adjusted
+                        Border.Bold => '\u256c',    // W W W W ╬
                         _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
                     },
                     _ => throw new ArgumentOutOfRangeException(nameof(right)),

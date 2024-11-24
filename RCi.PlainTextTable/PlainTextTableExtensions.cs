@@ -31,5 +31,41 @@
             cell.Borders = new Borders(uniform);
             return cell;
         }
+
+        public static Cell LeftBorder(this Cell cell, Border border)
+        {
+            cell.Borders = (cell.Borders ?? cell.Host.DefaultBorders) with
+            {
+                Left = border,
+            };
+            return cell;
+        }
+
+        public static Cell TopBorder(this Cell cell, Border border)
+        {
+            cell.Borders = (cell.Borders ?? cell.Host.DefaultBorders) with
+            {
+                Top = border,
+            };
+            return cell;
+        }
+
+        public static Cell RightBorder(this Cell cell, Border border)
+        {
+            cell.Borders = (cell.Borders ?? cell.Host.DefaultBorders) with
+            {
+                Right = border,
+            };
+            return cell;
+        }
+
+        public static Cell BottomBorder(this Cell cell, Border border)
+        {
+            cell.Borders = (cell.Borders ?? cell.Host.DefaultBorders) with
+            {
+                Bottom = border,
+            };
+            return cell;
+        }
     }
 }
