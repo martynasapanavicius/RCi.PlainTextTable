@@ -2,6 +2,7 @@
 {
     public readonly record struct Size(int Width, int Height)
     {
-        public static implicit operator Size((int, int) t) => new(t.Item1, t.Item2);
+        public static implicit operator Size((int Width, int Height) t) => new(t.Width, t.Height);
+        public static implicit operator (int Width, int Height)(Size s) => new(s.Width, s.Height);
     }
 }

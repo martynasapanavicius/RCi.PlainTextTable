@@ -19,7 +19,7 @@ namespace RCi.PlainTextTable
 {
     internal static class TableRenderer
     {
-        private sealed record TableCellMargins
+        private sealed record CanvasMargins
         {
             public required Margin Area { get; init; }
 
@@ -130,7 +130,7 @@ namespace RCi.PlainTextTable
         )
         {
             var logicalCell = logicalCellsMap[logicalCoordinate];
-            var margins = GetTableCellMargins
+            var margins = GetCanvasMargins
             (
                 logicalToPhysicalMap,
                 physicalVerticalBorderWidths,
@@ -197,7 +197,7 @@ namespace RCi.PlainTextTable
             return new Coordinate(row, col);
         }
 
-        private static TableCellMargins GetTableCellMargins
+        private static CanvasMargins GetCanvasMargins
         (
             ReadOnlyLogicalToPhysicalMap logicalToPhysicalMap,
             ImmutableArray<int> physicalVerticalBorderWidths,
@@ -253,7 +253,7 @@ namespace RCi.PlainTextTable
             var borderBottom = area with { Top = area.Bottom, Bottom = area.Bottom + bottomBorderSize };
             var borderBottomLeft = new Margin(area.Left - leftBorderSize, area.Bottom, area.Left, area.Bottom + bottomBorderSize);
 
-            return new TableCellMargins
+            return new CanvasMargins
             {
                 Area = area,
                 LeftBorder = borderLeft,

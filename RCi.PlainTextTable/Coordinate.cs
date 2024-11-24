@@ -2,9 +2,11 @@
 
 namespace RCi.PlainTextTable
 {
-    public readonly record struct Coordinate(int Row, int Col) : IComparable<Coordinate>
+    public readonly record struct Coordinate(int Row, int Col)
+        : IComparable<Coordinate>
     {
-        public static implicit operator Coordinate((int, int) t) => new(t.Item1, t.Item2);
+        public static implicit operator Coordinate((int Row, int Col) t) => new(t.Row, t.Col);
+        public static implicit operator (int Row, int Col)(Coordinate c) => new(c.Row, c.Col);
 
         public int CompareTo(Coordinate other)
         {
