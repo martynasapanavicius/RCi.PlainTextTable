@@ -2,8 +2,8 @@
 {
     public readonly record struct Borders(Border Left, Border Top, Border Right, Border Bottom)
     {
-        public Borders(Border Horizontal, Border vertical) :
-            this(Horizontal, vertical, Horizontal, vertical)
+        public Borders(Border horizontal, Border vertical) :
+            this(horizontal, vertical, horizontal, vertical)
         {
         }
 
