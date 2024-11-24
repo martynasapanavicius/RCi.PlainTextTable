@@ -1,12 +1,35 @@
-﻿namespace RCi.PlainTextTable
+﻿using System;
+
+namespace RCi.PlainTextTable
 {
     public sealed class Cell
     {
         public PlainTextTable Host { get; }
         public Coordinate Coordinate { get; }
         public string Text { get; set; } = string.Empty;
-        public int ColumnSpan { get; set; } = 1; // TODO: validate or clamp values on set
-        public int RowSpan { get; set; } = 1; // TODO: validate or clamp values on set
+
+        private int _columnSpan = 1;
+        public int ColumnSpan
+        {
+            get => _columnSpan;
+            set
+            {
+                ArgumentOutOfRangeException.ThrowIfLessThan(value, 1, nameof(ColumnSpan));
+                _columnSpan = value;
+            }
+        }
+
+        private int _rowSpan = 1;
+        public int RowSpan
+        {
+            get => _rowSpan;
+            set
+            {
+                ArgumentOutOfRangeException.ThrowIfLessThan(value, 1, nameof(RowSpan));
+                _rowSpan = value;
+            }
+        }
+
         public Margin? Margin { get; set; }
         public Borders? Borders { get; set; }
         public HorizontalAlignment? HorizontalAlignment { get; set; }

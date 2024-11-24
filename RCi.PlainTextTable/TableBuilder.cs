@@ -275,8 +275,8 @@ namespace RCi.PlainTextTable
             out IDictionary<Coordinate, Border> horizontalPhysicalCellBordersMap
         )
         {
-            verticalPhysicalCellBordersMap = new SortedDictionary<Coordinate /* physical coordinate */, Border>(); // TODO: SortedDictionary
-            horizontalPhysicalCellBordersMap = new SortedDictionary<Coordinate /* physical coordinate */, Border>(); // TODO: SortedDictionary
+            verticalPhysicalCellBordersMap = new Dictionary<Coordinate /* physical coordinate */, Border>();
+            horizontalPhysicalCellBordersMap = new Dictionary<Coordinate /* physical coordinate */, Border>();
 
             foreach (var logicalCell in logicalCellsMap.Values.OrderBy(x => x.Coordinate))
             {
