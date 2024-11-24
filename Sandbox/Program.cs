@@ -9,7 +9,7 @@ namespace Sandbox
         {
             var ptt = new PlainTextTable
             {
-                BorderStyle = BorderStyle.UnicodeSingle,
+                BorderStyle = BorderStyle.UnicodeDouble,
                 DefaultHorizontalAlignment = HorizontalAlignment.Left,
                 DefaultVerticalAlignment = VerticalAlignment.Center,
             };
@@ -47,7 +47,7 @@ namespace Sandbox
             ptt[2, 8].Text("8*").Borders(Border.None);
             ptt[2, 9].Text("9*").Borders(Border.None);
 
-            ptt[3, 0].Text("aaaaaaaaaaaaa").ColumnSpan(2);
+            ptt[3, 0].Text("aaaaaaaaaaaaa").Borders(Border.Bold).ColumnSpan(2);
             ptt[3, 1].Text("b");
             ptt[3, 2].Text("c");
             ptt[3, 3].Text("d");

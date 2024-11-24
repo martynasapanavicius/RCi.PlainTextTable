@@ -5,141 +5,6 @@ namespace RCi.PlainTextTable.Tests
     [Parallelizable(ParallelScope.All)]
     public static class ReconcileTests
     {
-        #region // available unicode characters
-
-        // ╴    N O O O
-        // ╵    O N O O
-        // ╶    O O N O
-        // ╷    O O O N
-        // ╸    B O O O
-        // ╹    O B O O
-        // ╺    O O B O
-        // ╻    O O O B
-
-        // ─    N O N O
-        // ━    B O B O
-        // ╼    N O B O
-        // ╾    B O N O
-
-        // │    O N O N
-        // ┃    O B O B
-        // ╽    O N O B
-        // ╿    O B O N
-
-        // ┌    O O N N
-        // ┍    O O B N
-        // ┎    O O N B
-        // ┏    O O B B
-
-        // ┐    N O O N
-        // ┑    B O O N
-        // ┒    N O O B
-        // ┓    B O O B
-
-        // └    O N N O
-        // ┕    O N B O
-        // ┖    O B N O
-        // ┗    O B B O
-
-        // ┘    N N O O
-        // ┙    B N O O
-        // ┚    N B O O
-        // ┛    B B O O
-
-        // ├    O N N N 
-        // ┝    O N B N
-        // ┞    O B N N
-        // ┟    O N N B
-        // ┠    O B N B
-        // ┡    O B B N
-        // ┢    O N B B
-        // ┣    O B B B
-
-        // ┤    N N O N
-        // ┥    B N O N
-        // ┦    N B O N
-        // ┧    N N O B
-        // ┨    N B O B
-        // ┩    B B O N
-        // ┪    B N O B
-        // ┫    B B O B
-
-        // ┬    N O N N
-        // ┭    B O N N
-        // ┮    N O B N
-        // ┯    B O B N
-        // ┰    N O N B
-        // ┱    B O N B
-        // ┲    N O B B
-        // ┳    B O B B
-
-        // ┴    N N N O
-        // ┵    B N N O
-        // ┶    N N B O
-        // ┷    B N B O
-        // ┸    N B N O
-        // ┹    B B N O
-        // ┺    N B B O
-        // ┻    B B B O
-
-        // ┼    N N N N
-        // ┽    B N N N
-        // ┾    N N B N
-        // ┿    B N B N
-        // ╀    N B N N
-        // ╁    N N N B
-        // ╂    N B N B
-        // ╃    B B N N
-        // ╄    N B B N
-        // ╅    B N N B
-        // ╆    N N B B
-        // ╇    B B B N
-        // ╈    B N B B
-        // ╉    B B N B
-        // ╊    N B B B
-        // ╋    B B B B
-
-        // ═    W O W O
-        // ║    O W O W
-
-        // ╒    O O W N
-        // ╓    O O N W
-        // ╔    O O W W
-
-        // ╕    W O O N
-        // ╖    N O O W
-        // ╗    W O O W
-
-        // ╘    O N W O
-        // ╙    O W N O
-        // ╚    O W W O
-
-        // ╛    W N O O
-        // ╜    N W O O
-        // ╝    W W O O
-
-        // ╞    O N W N
-        // ╟    O W N W
-        // ╠    O W W W
-
-        // ╡    W N O N
-        // ╢    N W O W
-        // ╣    W W O W
-
-        // ╤    W O W N
-        // ╥    N O N W
-        // ╦    W O W W
-
-        // ╧    W N W O
-        // ╨    N W N O
-        // ╩    W W W O
-
-        // ╪    W N W N
-        // ╫    N W N W
-        // ╬    W W W W
-
-        #endregion
-
         private static readonly ImmutableArray<(char Expected, string Neighbours)> TABLE_SINGLE =
         [
             #region // data
@@ -234,85 +99,85 @@ namespace RCi.PlainTextTable.Tests
             #region // data
 
             (' ', "O O O O"),
-            (' ', "O O O N"), // adjusted
-            (' ', "O O O W"), // adjusted
-            (' ', "O O N O"), // adjusted
+            ('╷', "O O O N"),
+            (' ', "O O O W"),
+            ('╶', "O O N O"),
             ('┌', "O O N N"),
             ('╓', "O O N W"),
-            (' ', "O O W O"), // adjusted
+            (' ', "O O W O"),
             ('╒', "O O W N"),
             ('╔', "O O W W"),
-            (' ', "O N O O"), // adjusted
+            ('╵', "O N O O"),
             ('│', "O N O N"),
-            (' ', "O N O W"), // adjusted
+            ('│', "O N O W"),
             ('└', "O N N O"),
             ('├', "O N N N"),
-            ('└', "O N N W"), // adjusted
+            ('├', "O N N W"),
             ('╘', "O N W O"),
             ('╞', "O N W N"),
-            ('╔', "O N W W"), // adjusted
-            (' ', "O W O O"), // adjusted
-            (' ', "O W O N"), // adjusted
+            ('╔', "O N W W"),
+            (' ', "O W O O"),
+            ('│', "O W O N"),
             ('║', "O W O W"),
             ('╙', "O W N O"),
-            ('┌', "O W N N"), // adjusted
+            ('├', "O W N N"),
             ('╟', "O W N W"),
             ('╚', "O W W O"),
-            ('╚', "O W W N"), // adjusted
+            ('╚', "O W W N"),
             ('╠', "O W W W"),
-            (' ', "N O O O"), // adjusted
+            ('╴', "N O O O"),
             ('┐', "N O O N"),
             ('╖', "N O O W"),
             ('─', "N O N O"),
             ('┬', "N O N N"),
             ('╥', "N O N W"),
-            (' ', "N O W O"), // adjusted
-            ('┐', "N O W N"), // adjusted
-            ('╔', "N O W W"), // adjusted
+            ('─', "N O W O"),
+            ('┬', "N O W N"),
+            ('╔', "N O W W"),
             ('┘', "N N O O"),
             ('┤', "N N O N"),
-            ('┘', "N N O W"), // adjusted
+            ('┤', "N N O W"),
             ('┴', "N N N O"),
             ('┼', "N N N N"),
-            ('┴', "N N N W"), // adjusted
-            ('┘', "N N W O"), // adjusted
-            ('┤', "N N W N"), // adjusted
-            ('╔', "N N W W"), // adjusted
+            ('┼', "N N N W"),
+            ('┘', "N N W O"),
+            ('┤', "N N W N"),
+            ('╔', "N N W W"),
             ('╜', "N W O O"),
-            ('┐', "N W O N"), // adjusted
+            ('┐', "N W O N"),
             ('╢', "N W O W"),
             ('╨', "N W N O"),
-            ('┬', "N W N N"), // adjusted
+            ('┼', "N W N N"),
             ('╫', "N W N W"),
-            ('╚', "N W W O"), // adjusted
-            ('╚', "N W W N"), // adjusted
-            ('╠', "N W W W"), // adjusted
-            (' ', "W O O O"), // adjusted
+            ('╚', "N W W O"),
+            ('╚', "N W W N"),
+            ('╠', "N W W W"),
+            (' ', "W O O O"),
             ('╕', "W O O N"),
             ('╗', "W O O W"),
-            (' ', "W O N O"), // adjusted
-            ('┌', "W O N N"), // adjusted
-            ('╗', "W O N W"), // adjusted
+            ('─', "W O N O"),
+            ('┬', "W O N N"),
+            ('╗', "W O N W"),
             ('═', "W O W O"),
             ('╤', "W O W N"),
             ('╦', "W O W W"),
             ('╛', "W N O O"),
             ('╡', "W N O N"),
             ('╗', "W N O W"),
-            ('└', "W N N O"), // adjusted
-            ('├', "W N N N"), // adjusted
-            ('╗', "W N N W"), // adjusted
+            ('┴', "W N N O"),
+            ('┼', "W N N N"),
+            ('╗', "W N N W"),
             ('╧', "W N W O"),
             ('╪', "W N W N"),
-            ('╦', "W N W W"), // adjusted
+            ('╦', "W N W W"),
             ('╝', "W W O O"),
-            ('╝', "W W O N"), // adjusted
+            ('╝', "W W O N"),
             ('╣', "W W O W"),
-            ('╝', "W W N O"), // adjusted
-            ('╝', "W W N N"), // adjusted
-            ('╣', "W W N W"), // adjusted
+            ('╝', "W W N O"),
+            ('╝', "W W N N"),
+            ('╣', "W W N W"),
             ('╩', "W W W O"),
-            ('╩', "W W W N"), // adjusted
+            ('╩', "W W W N"),
             ('╬', "W W W W"),
 
             #endregion

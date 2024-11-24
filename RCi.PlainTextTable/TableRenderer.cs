@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
@@ -750,13 +749,13 @@ namespace RCi.PlainTextTable
                     Border.None => bottom switch
                     {
                         Border.None => ' ',         // O O O O
-                        Border.Normal => ' ',       // O O O N      // adjusted
+                        Border.Normal => '\u2577',  // O O O N ╷
                         Border.Bold => ' ',         // O O O W      // adjusted
                         _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
                     },
                     Border.Normal => bottom switch
                     {
-                        Border.None => ' ',         // O O N O      // adjusted
+                        Border.None => '\u2576',    // O O N O ╶
                         Border.Normal => '\u250c',  // O O N N ┌
                         Border.Bold => '\u2553',    // O O N W ╓
                         _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
@@ -774,16 +773,16 @@ namespace RCi.PlainTextTable
                 {
                     Border.None => bottom switch
                     {
-                        Border.None => ' ',         // O N O O      // adjusted
+                        Border.None => '\u2575',    // O N O O ╵
                         Border.Normal => '\u2502',  // O N O N │
-                        Border.Bold => ' ',         // O N O W      // adjusted
+                        Border.Bold => '\u2502',    // O N O W │    // adjusted
                         _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
                     },
                     Border.Normal => bottom switch
                     {
                         Border.None => '\u2514',    // O N N O └
                         Border.Normal => '\u251c',  // O N N N ├
-                        Border.Bold => '\u2514',    // O N N W └    // adjusted
+                        Border.Bold => '\u251c',    // O N N W ├    // adjusted
                         _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
                     },
                     Border.Bold => bottom switch
@@ -800,14 +799,14 @@ namespace RCi.PlainTextTable
                     Border.None => bottom switch
                     {
                         Border.None => ' ',         // O W O O      // adjusted
-                        Border.Normal => ' ',       // O W O N      // adjusted
+                        Border.Normal => '\u2502',  // O W O N │    // adjusted
                         Border.Bold => '\u2551',    // O W O W ║
                         _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
                     },
                     Border.Normal => bottom switch
                     {
                         Border.None => '\u2559',    // O W N O ╙
-                        Border.Normal => '\u250c',  // O W N N ┌    // adjusted
+                        Border.Normal => '\u251c',  // O W N N ├    // adjusted
                         Border.Bold => '\u255f',    // O W N W ╟
                         _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
                     },
@@ -828,7 +827,7 @@ namespace RCi.PlainTextTable
                 {
                     Border.None => bottom switch
                     {
-                        Border.None => ' ',         // N O O O      // adjusted
+                        Border.None => '\u2574',    // N O O O ╴
                         Border.Normal => '\u2510',  // N O O N ┐
                         Border.Bold => '\u2556',    // N O O W ╖
                         _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
@@ -842,8 +841,8 @@ namespace RCi.PlainTextTable
                     },
                     Border.Bold => bottom switch
                     {
-                        Border.None => ' ',         // N O W O      // adjusted
-                        Border.Normal => '\u2510',  // N O W N ┐    // adjusted
+                        Border.None => '\u2500',    // N O W O ─    // adjusted
+                        Border.Normal => '\u252c',  // N O W N ┬    // adjusted
                         Border.Bold => '\u2554',    // N O W W ╔    // adjusted
                         _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
                     },
@@ -855,20 +854,20 @@ namespace RCi.PlainTextTable
                     {
                         Border.None => '\u2518',    // N N O O ┘
                         Border.Normal => '\u2524',  // N N O N ┤
-                        Border.Bold => '\u2518',    // N N O W ┘    // adjusted
+                        Border.Bold => '\u2524',    // N N O W ┤    // adjusted
                         _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
                     },
                     Border.Normal => bottom switch
                     {
                         Border.None => '\u2534',    // N N N O ┴
                         Border.Normal => '\u253c',  // N N N N ┼
-                        Border.Bold => '\u2534',    // N N N W ┴    // adjusted
+                        Border.Bold => '\u253c',    // N N N W ┼    // adjusted
                         _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
                     },
                     Border.Bold => bottom switch
                     {
-                        Border.None => '\u2518',    // N N W O ┘    // adjusted
-                        Border.Normal => '\u2524',  // N N W N ┤    // adjusted
+                        Border.None => '\u2518',    // N N W O ┴    // adjusted
+                        Border.Normal => '\u2524',  // N N W N ┼    // adjusted
                         Border.Bold => '\u2554',    // N N W W ╔    // adjusted
                         _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
                     },
@@ -879,14 +878,14 @@ namespace RCi.PlainTextTable
                     Border.None => bottom switch
                     {
                         Border.None => '\u255c',    // N W O O ╜
-                        Border.Normal => '\u2510',  // N W O N ┐    // adjusted
+                        Border.Normal => '\u2510',  // N W O N ┤    // adjusted
                         Border.Bold => '\u2562',    // N W O W ╢
                         _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
                     },
                     Border.Normal => bottom switch
                     {
                         Border.None => '\u2568',    // N W N O ╨
-                        Border.Normal => '\u252c',  // N W N N ┬    // adjusted
+                        Border.Normal => '\u253c',  // N W N N ┼    // adjusted
                         Border.Bold => '\u256b',    // N W N W ╫
                         _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
                     },
@@ -914,8 +913,8 @@ namespace RCi.PlainTextTable
                     },
                     Border.Normal => bottom switch
                     {
-                        Border.None => ' ',         // W O N O      // adjusted
-                        Border.Normal => '\u250c',  // W O N N ┌    // adjusted
+                        Border.None => '\u2500',    // W O N O ─    // adjusted
+                        Border.Normal => '\u252c',  // W O N N ┬    // adjusted
                         Border.Bold => '\u2557',    // W O N W ╗    // adjusted
                         _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
                     },
@@ -939,8 +938,8 @@ namespace RCi.PlainTextTable
                     },
                     Border.Normal => bottom switch
                     {
-                        Border.None => '\u2514',    // W N N O └    // adjusted
-                        Border.Normal => '\u251c',  // W N N N ├    // adjusted
+                        Border.None => '\u2534',    // W N N O ┴    // adjusted
+                        Border.Normal => '\u253c',  // W N N N ┼    // adjusted
                         Border.Bold => '\u2557',    // W N N W ╗    // adjusted
                         _ => throw new ArgumentOutOfRangeException(nameof(bottom)),
                     },
