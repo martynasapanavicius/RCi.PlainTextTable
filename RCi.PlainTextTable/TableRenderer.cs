@@ -81,7 +81,6 @@ namespace RCi.PlainTextTable
             var canvasSize = new Size(sumGlobalBordersWidth + sumGlobalCellsWidth, sumGlobalBordersHeight + sumGlobalCellsHeight);
             var canvas /* [row, col] */ = Enumerable.Range(0, canvasSize.Height).Select(_ => new char[canvasSize.Width]).ToArray();
             var borderMask /* [row, col] */ = Enumerable.Range(0, canvasSize.Height).Select(_ => new Border[canvasSize.Width]).ToArray();
-            var borderCornerCoordinates = new HashSet<Coordinate>();
 
             // render all cells
             foreach (var logicalCoordinate in logicalCellsMap.Keys.OrderBy(x => x))
@@ -97,13 +96,21 @@ namespace RCi.PlainTextTable
                     style,
                     ref canvas,
                     ref borderMask,
-                    ref borderCornerCoordinates,
                     logicalCoordinate
                 );
             }
 
             // reconcile precise corners
-            ReconcileBorderCorners(canvas, borderMask, borderCornerCoordinates, style);
+            ReconcileBorderCorners
+            (
+                physicalVerticalBorderWidths,
+                physicalHorizontalBorderHeights,
+                physicalColWidths,
+                physicalRowHeights,
+                canvas,
+                borderMask,
+                style
+            );
 
             // build string
             return CanvasToString(canvas);
@@ -120,7 +127,6 @@ namespace RCi.PlainTextTable
             BorderStyle style,
             ref char[][] canvas,
             ref Border[][] borderMask,
-            ref HashSet<Coordinate> borderCornerCoordinates,
             Coordinate logicalCoordinate
         )
         {
@@ -136,7 +142,7 @@ namespace RCi.PlainTextTable
             );
 
             // background
-            PaintRectangle(canvas, margins.Area, ' ');
+            PaintBackground(canvas, borderMask, margins.Area, ' ');
 
             // text
             PaintText(canvas, margins.Area, logicalCell);
@@ -152,10 +158,10 @@ namespace RCi.PlainTextTable
             var topRightBorder = (Border)Math.Max((int)logicalCell.Borders.Top, (int)logicalCell.Borders.Right);
             var bottomRightBorder = (Border)Math.Max((int)logicalCell.Borders.Bottom, (int)logicalCell.Borders.Right);
             var bottomLeftBorder = (Border)Math.Max((int)logicalCell.Borders.Bottom, (int)logicalCell.Borders.Left);
-            PaintBorderCorner(canvas, borderMask, margins.TopLeftBorderCorner, GetBorderCornerCharacter(style, topLeftBorder), topLeftBorder, ref borderCornerCoordinates);
-            PaintBorderCorner(canvas, borderMask, margins.TopRightBorderCorner, GetBorderCornerCharacter(style, topRightBorder), topRightBorder, ref borderCornerCoordinates);
-            PaintBorderCorner(canvas, borderMask, margins.BottomRightBorderCorner, GetBorderCornerCharacter(style, bottomRightBorder), bottomRightBorder, ref borderCornerCoordinates);
-            PaintBorderCorner(canvas, borderMask, margins.BottomLeftBorderCorner, GetBorderCornerCharacter(style, bottomLeftBorder), bottomLeftBorder, ref borderCornerCoordinates);
+            PaintBorderCorner(canvas, borderMask, margins.TopLeftBorderCorner, GetBorderCornerCharacter(style, topLeftBorder), topLeftBorder);
+            PaintBorderCorner(canvas, borderMask, margins.TopRightBorderCorner, GetBorderCornerCharacter(style, topRightBorder), topRightBorder);
+            PaintBorderCorner(canvas, borderMask, margins.BottomRightBorderCorner, GetBorderCornerCharacter(style, bottomRightBorder), bottomRightBorder);
+            PaintBorderCorner(canvas, borderMask, margins.BottomLeftBorderCorner, GetBorderCornerCharacter(style, bottomLeftBorder), bottomLeftBorder);
         }
 
         private static Coordinate GetTopLeftCanvasCoordinate
@@ -262,13 +268,14 @@ namespace RCi.PlainTextTable
             };
         }
 
-        private static void PaintRectangle(char[][] canvas, Margin rectangle, char color)
+        private static void PaintBackground(char[][] canvas, Border[][] borderMask, Margin rectangle, char color)
         {
             for (var y = rectangle.Top; y < rectangle.Bottom; y++)
             {
                 for (var x = rectangle.Left; x < rectangle.Right; x++)
                 {
                     canvas[y][x] = color;
+                    borderMask[y][x] = Border.None;
                 }
             }
         }
@@ -289,7 +296,7 @@ namespace RCi.PlainTextTable
             }
         }
 
-        private static void PaintBorderCorner(char[][] canvas, Border[][] borderMask, Margin rectangle, char color, Border weight, ref HashSet<Coordinate> borderCornerCoordinates)
+        private static void PaintBorderCorner(char[][] canvas, Border[][] borderMask, Margin rectangle, char color, Border weight)
         {
             for (var y = rectangle.Top; y < rectangle.Bottom; y++)
             {
@@ -301,7 +308,6 @@ namespace RCi.PlainTextTable
                     }
                     canvas[y][x] = color;
                     borderMask[y][x] = weight;
-                    borderCornerCoordinates?.Add(new Coordinate(y, x));
                 }
             }
         }
@@ -429,20 +435,16 @@ namespace RCi.PlainTextTable
             _ => throw new ArgumentOutOfRangeException(nameof(style)),
         };
 
-        private static Border GetBorder(Border[][] borderMask, Coordinate coordinate)
-        {
-            if (coordinate.Row < 0 || coordinate.Row >= borderMask.Length)
-            {
-                return Border.None;
-            }
-            if (coordinate.Col < 0 || coordinate.Col >= borderMask[coordinate.Row].Length)
-            {
-                return Border.None;
-            }
-            return borderMask[coordinate.Row][coordinate.Col];
-        }
-
-        private static void ReconcileBorderCorners(char[][] canvas, Border[][] borderMask, IReadOnlySet<Coordinate> cornerCoordinates, BorderStyle style)
+        private static void ReconcileBorderCorners
+        (
+            ImmutableArray<int> physicalVerticalBorderWidths,
+            ImmutableArray<int> physicalHorizontalBorderHeights,
+            ImmutableArray<int> physicalColWidths,
+            ImmutableArray<int> physicalRowHeights,
+            char[][] canvas,
+            Border[][] borderMask,
+            BorderStyle style
+        )
         {
             if (style == BorderStyle.Ascii)
             {
@@ -450,28 +452,50 @@ namespace RCi.PlainTextTable
                 return;
             }
 
-            foreach (var coordinate in cornerCoordinates.OrderBy(x => x))
+            var y = 0;
+            for (var row = 0; row < physicalHorizontalBorderHeights.Length; row++)
             {
-                char newCharacter;
-                var center = GetBorder(borderMask, coordinate);
-                if (center == Border.None)
+                if (y < borderMask.Length)
                 {
-                    newCharacter = ' ';
-                }
-                else
-                {
-                    var left = GetBorder(borderMask, coordinate.MoveLeft());
-                    var top = GetBorder(borderMask, coordinate.MoveUp());
-                    var right = GetBorder(borderMask, coordinate.MoveRight());
-                    var bottom = GetBorder(borderMask, coordinate.MoveDown());
-                    newCharacter = style switch
+                    var x = 0;
+                    for (var col = 0; col < physicalVerticalBorderWidths.Length; col++)
                     {
-                        BorderStyle.UnicodeSingle => ReconcileSingle(left, top, right, bottom),
-                        BorderStyle.UnicodeDouble => ReconcileDouble(left, top, right, bottom),
-                        _ => throw new ArgumentOutOfRangeException(nameof(style)),
-                    };
+                        if (x < borderMask[y].Length && borderMask[y][x] != Border.None)
+                        {
+                            var coordinate = new Coordinate(y, x);
+                            var left = GetBorder(borderMask, coordinate.MoveLeft());
+                            var top = GetBorder(borderMask, coordinate.MoveUp());
+                            var right = GetBorder(borderMask, coordinate.MoveRight());
+                            var bottom = GetBorder(borderMask, coordinate.MoveDown());
+                            var newCharacter = style switch
+                            {
+                                BorderStyle.UnicodeSingle => ReconcileSingle(left, top, right, bottom),
+                                BorderStyle.UnicodeDouble => ReconcileDouble(left, top, right, bottom),
+                                _ => throw new ArgumentOutOfRangeException(nameof(style)),
+                            };
+                            canvas[coordinate.Row][coordinate.Col] = newCharacter;
+                        }
+                        x += physicalVerticalBorderWidths[col];
+                        x += col < physicalColWidths.Length ? physicalColWidths[col] : 0;
+                    }
                 }
-                canvas[coordinate.Row][coordinate.Col] = newCharacter;
+                y += physicalHorizontalBorderHeights[row];
+                y += row < physicalRowHeights.Length ? physicalRowHeights[row] : 0;
+            }
+
+            return;
+
+            static Border GetBorder(Border[][] borderMask, Coordinate coordinate)
+            {
+                if (coordinate.Row < 0 || coordinate.Row >= borderMask.Length)
+                {
+                    return Border.None;
+                }
+                if (coordinate.Col < 0 || coordinate.Col >= borderMask[coordinate.Row].Length)
+                {
+                    return Border.None;
+                }
+                return borderMask[coordinate.Row][coordinate.Col];
             }
         }
 
