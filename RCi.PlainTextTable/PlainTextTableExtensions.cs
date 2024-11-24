@@ -26,6 +26,18 @@
             return cell;
         }
 
+        public static Cell Borders(this Cell cell, Border left, Border top, Border right, Border bottom)
+        {
+            cell.Borders = new Borders(left, top, right, bottom);
+            return cell;
+        }
+
+        public static Cell Borders(this Cell cell, Border horizontal, Border vertical)
+        {
+            cell.Borders = new Borders(horizontal, vertical);
+            return cell;
+        }
+
         public static Cell Borders(this Cell cell, Border uniform)
         {
             cell.Borders = new Borders(uniform);
