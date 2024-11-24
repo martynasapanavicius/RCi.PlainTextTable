@@ -25,14 +25,9 @@ namespace RCi.PlainTextTable
 {
     internal static class TableBuilder
     {
-        private static Coordinate GetLogicalCellTopLeftPhysicalCoordinate
-        (
-            LogicalToPhysicalMap logicalToPhysicalMap,
-            Coordinate logicalCoordinate
-        ) => logicalToPhysicalMap[logicalCoordinate]
-            .OrderBy(x => x.Row)
-            .ThenBy(x => x.Col)
-            .First();
+        private static Coordinate GetLogicalCellTopLeftPhysicalCoordinate(
+            LogicalToPhysicalMap logicalToPhysicalMap, Coordinate logicalCoordinate) =>
+            logicalToPhysicalMap[logicalCoordinate].OrderBy(x => x).First();
 
         private static void BuildPhysicalGrid
         (
@@ -56,9 +51,7 @@ namespace RCi.PlainTextTable
                 .OrderBy(x => x)
                 .Select((n, i) => (logicalRow: n, physicalRow: i))
                 .ToDictionary(t => t.logicalRow, t => t.physicalRow);
-            foreach (var logicalCell in logicalCellsMap.Values
-                         .OrderBy(x => x.Row)
-                         .ThenBy(x => x.Col))
+            foreach (var logicalCell in logicalCellsMap.Values.OrderBy(x => x.Coordinate))
             {
                 var physicalCoordinates = new HashSet<Coordinate>();
                 logicalToPhysicalMap.Add(logicalCell.Coordinate, physicalCoordinates);
@@ -285,9 +278,7 @@ namespace RCi.PlainTextTable
             verticalPhysicalCellBordersMap = new SortedDictionary<Coordinate /* physical coordinate */, Border>(); // TODO: SortedDictionary
             horizontalPhysicalCellBordersMap = new SortedDictionary<Coordinate /* physical coordinate */, Border>(); // TODO: SortedDictionary
 
-            foreach (var logicalCell in logicalCellsMap.Values
-                         .OrderBy(x => x.Row)
-                         .ThenBy(x => x.Col))
+            foreach (var logicalCell in logicalCellsMap.Values.OrderBy(x => x.Coordinate))
             {
                 var topLeftPhysicalCoordinate = GetLogicalCellTopLeftPhysicalCoordinate(logicalToPhysicalMap, logicalCell.Coordinate);
 
@@ -351,9 +342,7 @@ namespace RCi.PlainTextTable
         {
             var physicalColWidths = new int[logicalToPhysicalMap.Count == 0 ? 0 : logicalToPhysicalMap.Values.Max(x => x.Max(c => c.Col)) + 1];
 
-            foreach (var logicalCell in logicalCellsMap.Values
-                         .OrderBy(x => x.Row)
-                         .ThenBy(x => x.Col))
+            foreach (var logicalCell in logicalCellsMap.Values.OrderBy(x => x.Coordinate))
             {
                 // get physical columns which this logical cell interacts with
                 var physicalCols = logicalToPhysicalMap[logicalCell.Coordinate]
@@ -418,9 +407,7 @@ namespace RCi.PlainTextTable
         {
             var physicalRowHeights = new int[logicalToPhysicalMap.Count == 0 ? 0 : logicalToPhysicalMap.Values.Max(x => x.Max(c => c.Row)) + 1];
 
-            foreach (var logicalCell in logicalCellsMap.Values
-                         .OrderBy(x => x.Row)
-                         .ThenBy(x => x.Col))
+            foreach (var logicalCell in logicalCellsMap.Values.OrderBy(x => x.Coordinate))
             {
                 // get physical rows which this logical cell interacts with
                 var physicalRows = logicalToPhysicalMap[logicalCell.Coordinate]

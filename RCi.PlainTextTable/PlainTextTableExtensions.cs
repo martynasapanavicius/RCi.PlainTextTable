@@ -19,5 +19,17 @@
             cell.RowSpan = span;
             return cell;
         }
+
+        public static Cell Borders(this Cell cell, Borders borders)
+        {
+            cell.Borders = borders;
+            return cell;
+        }
+
+        public static Cell Borders(this Cell cell, Border uniform)
+        {
+            cell.Borders = new Borders(uniform);
+            return cell;
+        }
     }
 }

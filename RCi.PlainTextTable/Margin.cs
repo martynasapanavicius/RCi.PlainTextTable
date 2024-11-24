@@ -7,8 +7,8 @@
         {
         }
 
-        public Margin(int universal) :
-            this(universal, universal, universal, universal)
+        public Margin(int uniform) :
+            this(uniform, uniform, uniform, uniform)
         {
         }
 

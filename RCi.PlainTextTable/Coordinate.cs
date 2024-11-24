@@ -13,5 +13,10 @@ namespace RCi.PlainTextTable
                 ? rowComparison
                 : Col.CompareTo(other.Col);
         }
+
+        public Coordinate MoveLeft() => this with { Col = Col - 1 };
+        public Coordinate MoveRight() => this with { Col = Col + 1 };
+        public Coordinate MoveUp() => this with { Row = Row - 1 };
+        public Coordinate MoveDown() => this with { Row = Row + 1 };
     }
 }

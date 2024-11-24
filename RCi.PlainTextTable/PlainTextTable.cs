@@ -11,8 +11,9 @@ namespace RCi.PlainTextTable
         private readonly Dictionary<Coordinate, Cell> _cells = new();
         public int RowCount { get; private set; }
         public int ColumnCount { get; private set; }
-        public Margin DefaultMargin { get; set; } = new(1, 0);
+        public BorderStyle BorderStyle { get; set; } = BorderStyle.Ascii;
         public Borders DefaultBorders { get; set; } = new(Border.Normal);
+        public Margin DefaultMargin { get; set; } = new(1, 0);
         public HorizontalAlignment DefaultHorizontalAlignment { get; set; } = HorizontalAlignment.Left;
         public VerticalAlignment DefaultVerticalAlignment { get; set; } = VerticalAlignment.Top;
 
@@ -71,6 +72,7 @@ namespace RCi.PlainTextTable
 
         public override string ToString() => RenderTable
         (
+            BorderStyle,
             _cells.Select(p => new LogicalCell
             {
                 Coordinate = p.Value.Coordinate,
@@ -84,7 +86,7 @@ namespace RCi.PlainTextTable
             })
         );
 
-        internal static string RenderTable(IEnumerable<LogicalCell> logicalCells)
+        internal static string RenderTable(BorderStyle style, IEnumerable<LogicalCell> logicalCells)
         {
             TableBuilder.BuildPhysicalTable
             (
@@ -103,7 +105,8 @@ namespace RCi.PlainTextTable
                 physicalVerticalBorderWidths,
                 physicalHorizontalBorderHeights,
                 physicalColWidths,
-                physicalRowHeights
+                physicalRowHeights,
+                style
             );
         }
 
