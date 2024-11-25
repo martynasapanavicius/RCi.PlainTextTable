@@ -8,43 +8,119 @@ namespace RCi.PlainTextTable
     {
         public PlainTextTable Host() => host;
         public abstract Cell FirstCell();
-        public abstract Cell NextCell(Cell cell);
+        internal abstract Cell NextCell(Cell cell);
         public abstract IEnumerable<Cell> ExistingCells();
     }
 
-    public sealed class Row(PlainTextTable host, int row) :
+    public abstract class RowBase(PlainTextTable host, int row) :
         ControlBase(host)
     {
-        public int Index { get; } = row;
-        public Cell Col(int col) => Host().Cell(Index, col);
-        public override Cell FirstCell() => Col(0);
-        public override Cell NextCell(Cell cell) => Host().Cell(cell.Coordinate.MoveRight());
+        public int RowIndex { get; } = row;
+        public Row Row() => Host().Row(RowIndex);
+        public abstract Cell Skip(int count);
+        public override Cell FirstCell() => Skip(0);
+        internal override Cell NextCell(Cell cell) => Host().Cell(cell.Coordinate.MoveRight());
         public override IEnumerable<Cell> ExistingCells()
         {
             var host = Host();
             for (var i = 0; i < host.ColumnCount; i++)
             {
-                yield return host[Index, i];
+                var cell = host[RowIndex, i];
+                if (cell.IsAlive)
+                {
+                    yield return cell;
+                }
             }
         }
     }
 
-    public sealed class Column(PlainTextTable host, int col) :
+    public abstract class ColumnBase(PlainTextTable host, int col) :
         ControlBase(host)
     {
-        public int Index { get; } = col;
-        public Cell Row(int row) => Host().Cell(row, Index);
-        public override Cell FirstCell() => Row(0);
-        public override Cell NextCell(Cell cell) => Host().Cell(cell.Coordinate.MoveDown());
+        public int ColumnIndex { get; } = col;
+        public Column Column() => Host().Column(ColumnIndex);
+        public abstract Cell Skip(int count);
+        public override Cell FirstCell() => Skip(0);
+        internal override Cell NextCell(Cell cell) => Host().Cell(cell.Coordinate.MoveDown());
         public override IEnumerable<Cell> ExistingCells()
         {
             var host = Host();
             for (var i = 0; i < host.RowCount; i++)
             {
-                yield return host[i, Index];
+                var cell = host[i, ColumnIndex];
+                if (cell.IsAlive)
+                {
+                    yield return cell;
+                }
             }
         }
     }
+
+    public class Row(PlainTextTable host, int row) :
+        RowBase(host, row)
+    {
+        public override Cell Skip(int count) => Host().Cell(RowIndex, count);
+        public Row MoveUp() => new(Host(), RowIndex - 1);
+        public Row MoveDown() => new(Host(), RowIndex + 1);
+        public RowSpan Slice(int offset, int length) => new(Host(), RowIndex, offset, length);
+        public RowSpan Slice(int offset) => Slice(offset, Host().ColumnCount - offset);
+        public RowSpan Slice(Range range) => new(Host(), RowIndex, range.GetOffsetAndLength(Host().ColumnCount));
+        public RowSpan Take(int count) => Slice(0, count);
+        public RowSpan TakeLast(int count) => Slice(Host().ColumnCount - 1 - count, count);
+    }
+
+    public class Column(PlainTextTable host, int col) :
+        ColumnBase(host, col)
+    {
+        public override Cell Skip(int count) => Host().Cell(count, ColumnIndex);
+        public Column MoveLeft() => new(Host(), ColumnIndex - 1);
+        public Column MoveRight() => new(Host(), ColumnIndex + 1);
+        public ColumnSpan Slice(int offset, int length) => new(Host(), ColumnIndex, offset, length);
+        public ColumnSpan Slice(int offset) => Slice(offset, Host().RowCount - offset);
+        public ColumnSpan Slice(Range range) => new(Host(), ColumnIndex, range.GetOffsetAndLength(Host().RowCount));
+        public ColumnSpan Take(int count) => Slice(0, count);
+        public ColumnSpan TakeLast(int count) => Slice(Host().ColumnCount - 1 - count, count);
+    }
+
+    public sealed class RowSpan(PlainTextTable host, int row, int offset, int length) :
+        RowBase(host, row)
+    {
+        public RowSpan(PlainTextTable host, int row, (int Offset, int Length) t)
+            : this(host, row, t.Offset, t.Length) { }
+
+        public override Cell Skip(int count) => Host().Cell(RowIndex, offset + count);
+        public override IEnumerable<Cell> ExistingCells()
+        {
+            var host = Host();
+            for (var i = 0; i < length; i++)
+            {
+                yield return host[RowIndex, offset + i];
+            }
+        }
+        public RowSpan MoveUp() => new(Host(), RowIndex - 1, offset, length);
+        public RowSpan MoveDown() => new(Host(), RowIndex + 1, offset, length);
+    }
+
+    public sealed class ColumnSpan(PlainTextTable host, int col, int offset, int length) :
+        ColumnBase(host, col)
+    {
+        public ColumnSpan(PlainTextTable host, int row, (int Offset, int Length) t)
+            : this(host, row, t.Offset, t.Length) { }
+
+        public override Cell Skip(int count) => Host().Cell(offset + count, ColumnIndex);
+        public override IEnumerable<Cell> ExistingCells()
+        {
+            var host = Host();
+            for (var i = 0; i < length; i++)
+            {
+                yield return host[offset + i, ColumnIndex];
+            }
+        }
+        public ColumnSpan MoveLeft() => new(Host(), ColumnIndex - 1, offset, length);
+        public ColumnSpan MoveRight() => new(Host(), ColumnIndex + 1, offset, length);
+    }
+
+    // ---
 
     public static class ControlExtensions
     {

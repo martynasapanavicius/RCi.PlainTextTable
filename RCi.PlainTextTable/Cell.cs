@@ -6,7 +6,14 @@ namespace RCi.PlainTextTable
     {
         public PlainTextTable Host { get; }
         public Coordinate Coordinate { get; }
-        public string Text { get; set; } = string.Empty;
+
+        private string? _text; // is not alive if text is null
+        public string Text
+        {
+            get => _text ??= string.Empty; // create on touch if needed
+            set => _text = value;
+        }
+        internal bool IsAlive => _text is not null;
 
         private int _columnSpan = 1;
         public int ColumnSpan

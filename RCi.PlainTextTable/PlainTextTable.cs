@@ -36,7 +36,11 @@ namespace RCi.PlainTextTable
         }
 
         public Row Row(int row) => new(this, row);
+        public Row FirstRow() => new(this, 0);
+        public Row LastRow() => new(this, RowCount - 1);
         public Column Column(int col) => new(this, col);
+        public Column FirstColumn() => new(this, 0);
+        public Column LastColumn() => new(this, ColumnCount - 1);
 
         internal void DeleteCell(Cell cell)
         {
@@ -63,20 +67,25 @@ namespace RCi.PlainTextTable
             return new Column(this, col);
         }
 
+        public Row AppendRow(params string[] texts) => AppendRow().Text(texts);
+
+        public Row AppendRow(params object[] texts) => AppendRow().Text(texts);
+
         public override string ToString() => RenderTable
         (
             BorderStyle,
-            _cells.Select(p => new LogicalCell
-            {
-                Coordinate = p.Value.Coordinate,
-                Text = p.Value.Text,
-                ColumnSpan = p.Value.ColumnSpan,
-                RowSpan = p.Value.RowSpan,
-                Margin = p.Value.Margin ?? DefaultMargin,
-                Borders = p.Value.Borders ?? DefaultBorders,
-                HorizontalAlignment = p.Value.HorizontalAlignment ?? DefaultHorizontalAlignment,
-                VerticalAlignment = p.Value.VerticalAlignment ?? DefaultVerticalAlignment,
-            })
+            _cells.Where(c => c.Value.IsAlive)
+                .Select(p => new LogicalCell
+                {
+                    Coordinate = p.Value.Coordinate,
+                    Text = p.Value.Text,
+                    ColumnSpan = p.Value.ColumnSpan,
+                    RowSpan = p.Value.RowSpan,
+                    Margin = p.Value.Margin ?? DefaultMargin,
+                    Borders = p.Value.Borders ?? DefaultBorders,
+                    HorizontalAlignment = p.Value.HorizontalAlignment ?? DefaultHorizontalAlignment,
+                    VerticalAlignment = p.Value.VerticalAlignment ?? DefaultVerticalAlignment,
+                })
         );
 
         internal static string RenderTable(BorderStyle style, IEnumerable<LogicalCell> logicalCells)
