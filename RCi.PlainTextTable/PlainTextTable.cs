@@ -35,13 +35,6 @@ namespace RCi.PlainTextTable
             return cell;
         }
 
-        public Row Row(int row) => new(this, row);
-        public Row FirstRow() => new(this, 0);
-        public Row LastRow() => new(this, RowCount - 1);
-        public Column Column(int col) => new(this, col);
-        public Column FirstColumn() => new(this, 0);
-        public Column LastColumn() => new(this, ColumnCount - 1);
-
         internal void DeleteCell(Cell cell)
         {
             if (!ReferenceEquals(cell.Host(), this))

@@ -128,6 +128,18 @@ namespace RCi.PlainTextTable
 
     // ================================================================
 
+    public static class PlainTextTableMovementExtensions
+    {
+        public static Row Row(this PlainTextTable host, int row) => new(host, row);
+        public static Row Row(this PlainTextTable host, Index row) => new(host, row.IsFromEnd ? host.RowCount - row.Value : row.Value);
+        public static Column Column(this PlainTextTable host, int col) => new(host, col);
+        public static Column Column(this PlainTextTable host, Index col) => new(host, col.IsFromEnd ? host.ColumnCount - col.Value : col.Value);
+        public static Row FirstRow(this PlainTextTable host) => new(host, 0);
+        public static Row LastRow(this PlainTextTable host) => new(host, host.RowCount - 1);
+        public static Column FirstColumn(this PlainTextTable host) => new(host, 0);
+        public static Column LastColumn(this PlainTextTable host) => new(host, host.ColumnCount - 1);
+    }
+
     public static class ControlMovementExtensions
     {
         public static Row Row(this RowBase row) => row.Host().Row(row.RowIndex);
@@ -136,26 +148,26 @@ namespace RCi.PlainTextTable
         public static RowSpan Slice(this Row row, (int Offset, int Length) offsetAndLength) => row.Slice(offsetAndLength.Offset, offsetAndLength.Length);
         public static RowSpan Slice(this Row row, Range range) => row.Slice(range.GetOffsetAndLength(row.Host().ColumnCount));
         public static RowSpan Slice(this Row row, Index start, Index end) => row.Slice(new Range(start, end));
-        public static RowSpan Slice(this Row row, int offset) => row.Slice(new Index(offset), ^0);
         public static RowSpan Slice(this Row row, Index offset) => row.Slice(offset, ^0);
+        public static RowSpan Slice(this Row row, int offset) => row.Slice(new Index(offset));
 
         public static ColumnSpan Slice(this Column column, (int Offset, int Length) offsetAndLength) => column.Slice(offsetAndLength.Offset, offsetAndLength.Length);
         public static ColumnSpan Slice(this Column column, Range range) => column.Slice(range.GetOffsetAndLength(column.Host().RowCount));
         public static ColumnSpan Slice(this Column column, Index start, Index end) => column.Slice(new Range(start, end));
-        public static ColumnSpan Slice(this Column column, int offset) => column.Slice(new Index(offset), ^0);
         public static ColumnSpan Slice(this Column column, Index offset) => column.Slice(offset, ^0);
+        public static ColumnSpan Slice(this Column column, int offset) => column.Slice(new Index(offset));
 
         public static RowSpan Slice(this RowSpan rowSpan, (int Offset, int Length) offsetAndLength) => rowSpan.Slice(offsetAndLength.Offset, offsetAndLength.Length);
         public static RowSpan Slice(this RowSpan rowSpan, Range range) => rowSpan.Slice(range.GetOffsetAndLength(rowSpan.Length));
         public static RowSpan Slice(this RowSpan rowSpan, Index start, Index end) => rowSpan.Slice(new Range(start, end));
-        public static RowSpan Slice(this RowSpan rowSpan, int offset) => rowSpan.Slice(new Index(offset), ^0);
         public static RowSpan Slice(this RowSpan rowSpan, Index offset) => rowSpan.Slice(offset, ^0);
+        public static RowSpan Slice(this RowSpan rowSpan, int offset) => rowSpan.Slice(new Index(offset));
 
         public static ColumnSpan Slice(this ColumnSpan columnSpan, (int Offset, int Length) offsetAndLength) => columnSpan.Slice(offsetAndLength.Offset, offsetAndLength.Length);
         public static ColumnSpan Slice(this ColumnSpan columnSpan, Range range) => columnSpan.Slice(range.GetOffsetAndLength(columnSpan.Length));
         public static ColumnSpan Slice(this ColumnSpan columnSpan, Index start, Index end) => columnSpan.Slice(new Range(start, end));
-        public static ColumnSpan Slice(this ColumnSpan columnSpan, int offset) => columnSpan.Slice(new Index(offset), ^0);
         public static ColumnSpan Slice(this ColumnSpan columnSpan, Index offset) => columnSpan.Slice(offset, ^0);
+        public static ColumnSpan Slice(this ColumnSpan columnSpan, int offset) => columnSpan.Slice(new Index(offset));
 
         public static Row MoveUp(this Row row) => new(row.Host(), row.RowIndex - 1);
         public static Row MoveDown(this Row row) => new(row.Host(), row.RowIndex + 1);
