@@ -37,8 +37,8 @@
             };
 
             ptt.AppendRow("Personal Data", "Balance")
-                .ColumnSpan(3, 2)
-                .HorizontalAlignment(HorizontalAlignment.Center);
+                .SetColumnSpan(3, 2)
+                .SetHorizontalAlignment(HorizontalAlignment.Center);
             ptt.AppendRow("Full Name", "Age", "USD", "EUR")
                 .FirstCell()
                     .ColumnSpan(2)
@@ -53,14 +53,14 @@
 
             ptt.Row(1)
                 .TakeLast(2)
-                .HorizontalAlignment(HorizontalAlignment.Right);
+                .SetHorizontalAlignment(HorizontalAlignment.Right);
             ptt.LastColumn()
-                .HorizontalAlignment(HorizontalAlignment.Right)
+                .SetHorizontalAlignment(HorizontalAlignment.Right)
                 .MoveLeft()
-                .HorizontalAlignment(HorizontalAlignment.Right);
+                .SetHorizontalAlignment(HorizontalAlignment.Right);
             ptt.LastRow()
-                .HorizontalAlignment(HorizontalAlignment.Right)
-                .Borders(Borders.Bold);
+                .SetHorizontalAlignment(HorizontalAlignment.Right)
+                .SetBorders(Borders.Bold);
 
             var actual = ptt.ToString();
             const string expected =

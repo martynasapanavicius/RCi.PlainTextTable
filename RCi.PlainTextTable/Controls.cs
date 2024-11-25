@@ -170,67 +170,67 @@ namespace RCi.PlainTextTable
             return control;
         }
 
-        public static TControl Text<TControl>(this TControl control, params string[] texts)
+        public static TControl SetText<TControl>(this TControl control, params string[] texts)
             where TControl : ControlBase =>
             control.Apply((c, v) => c.Text(v), control.FirstCell(), control.NextCell, texts);
 
-        public static TControl Text<TControl>(this TControl control, params object[] texts)
+        public static TControl SetText<TControl>(this TControl control, params object[] texts)
             where TControl : ControlBase =>
             control.Apply((c, v) => c.Text(v), control.FirstCell(), control.NextCell, texts);
 
-        public static TControl Text<TControl>(this TControl control, string text)
+        public static TControl SetText<TControl>(this TControl control, string text)
             where TControl : ControlBase =>
             control.ApplyUniform((c, v) => c.Text(v), text);
 
-        public static TControl Text<TControl>(this TControl control, object text)
+        public static TControl SetText<TControl>(this TControl control, object text)
             where TControl : ControlBase =>
             control.ApplyUniform((c, v) => c.Text(v), text);
 
-        public static TControl Margin<TControl>(this TControl control, params Margin[] margins)
+        public static TControl SetMargin<TControl>(this TControl control, params Margin[] margins)
             where TControl : ControlBase =>
             control.Apply((c, v) => c.Margin(v), control.FirstCell(), control.NextCell, margins);
 
-        public static TControl Margin<TControl>(this TControl control, Margin margin)
+        public static TControl SetMargin<TControl>(this TControl control, Margin margin)
             where TControl : ControlBase =>
             control.ApplyUniform((c, v) => c.Margin(v), margin);
 
-        public static TControl RowSpan<TControl>(this TControl control, params int[] rowSpans)
+        public static TControl SetRowSpan<TControl>(this TControl control, params int[] rowSpans)
             where TControl : ControlBase =>
             control.Apply((c, v) => c.RowSpan(v), control.FirstCell(), control.NextCell, rowSpans);
 
-        public static TControl RowSpan<TControl>(this TControl control, int rowSpan)
+        public static TControl SetRowSpan<TControl>(this TControl control, int rowSpan)
             where TControl : ControlBase =>
             control.ApplyUniform((c, v) => c.RowSpan(v), rowSpan);
 
-        public static TControl ColumnSpan<TControl>(this TControl control, params int[] columnSpans)
+        public static TControl SetColumnSpan<TControl>(this TControl control, params int[] columnSpans)
             where TControl : ControlBase =>
             control.Apply((c, v) => c.ColumnSpan(v), control.FirstCell(), control.NextCell, columnSpans);
 
-        public static TControl ColumnSpan<TControl>(this TControl control, int columnSpan)
+        public static TControl SetColumnSpan<TControl>(this TControl control, int columnSpan)
             where TControl : ControlBase =>
             control.ApplyUniform((c, v) => c.ColumnSpan(v), columnSpan);
 
-        public static TControl Borders<TControl>(this TControl control, params Borders[] borders)
+        public static TControl SetBorders<TControl>(this TControl control, params Borders[] borders)
             where TControl : ControlBase =>
             control.Apply((c, v) => c.Borders(v), control.FirstCell(), control.NextCell, borders);
 
-        public static TControl Borders<TControl>(this TControl control, Borders borders)
+        public static TControl SetBorders<TControl>(this TControl control, Borders borders)
             where TControl : ControlBase =>
             control.ApplyUniform((c, v) => c.Borders(v), borders);
 
-        public static TControl HorizontalAlignment<TControl>(this TControl control, params HorizontalAlignment[] horizontalAlignments)
+        public static TControl SetHorizontalAlignment<TControl>(this TControl control, params HorizontalAlignment[] horizontalAlignments)
             where TControl : ControlBase =>
             control.Apply((c, v) => c.HorizontalAlignment(v), control.FirstCell(), control.NextCell, horizontalAlignments);
 
-        public static TControl HorizontalAlignment<TControl>(this TControl control, HorizontalAlignment horizontalAlignment)
+        public static TControl SetHorizontalAlignment<TControl>(this TControl control, HorizontalAlignment horizontalAlignment)
             where TControl : ControlBase =>
             control.ApplyUniform((c, v) => c.HorizontalAlignment(v), horizontalAlignment);
 
-        public static TControl VerticalAlignment<TControl>(this TControl control, params VerticalAlignment[] verticalAlignments)
+        public static TControl SetVerticalAlignment<TControl>(this TControl control, params VerticalAlignment[] verticalAlignments)
             where TControl : ControlBase =>
             control.Apply((c, v) => c.VerticalAlignment(v), control.FirstCell(), control.NextCell, verticalAlignments);
 
-        public static TControl VerticalAlignment<TControl>(this TControl control, VerticalAlignment verticalAlignment)
+        public static TControl SetVerticalAlignment<TControl>(this TControl control, VerticalAlignment verticalAlignment)
             where TControl : ControlBase =>
             control.ApplyUniform((c, v) => c.VerticalAlignment(v), verticalAlignment);
     }

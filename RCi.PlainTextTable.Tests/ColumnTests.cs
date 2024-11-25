@@ -17,8 +17,8 @@
         public static void AppendColumn()
         {
             var ptt = new PlainTextTable();
-            ptt.AppendColumn().Text("a", "A");
-            ptt.AppendColumn().Text("b", "B");
+            ptt.AppendColumn().SetText("a", "A");
+            ptt.AppendColumn().SetText("b", "B");
 
             var actual = ptt.ToString();
             const string expected =
@@ -36,9 +36,9 @@
         public static void Text()
         {
             var ptt = new PlainTextTable();
-            ptt.AppendRow().Text("a", "b");
-            ptt.AppendRow().Text("A", "B");
-            ptt.Column(0).Text("x");
+            ptt.AppendRow().SetText("a", "b");
+            ptt.AppendRow().SetText("A", "B");
+            ptt.Column(0).SetText("x");
 
             var actual = ptt.ToString();
             const string expected =
@@ -56,10 +56,10 @@
         public static void Margin()
         {
             var ptt = new PlainTextTable();
-            ptt.AppendRow().Text("a", "b");
-            ptt.AppendRow().Text("A", "B");
-            ptt.Column(0).Margin(new Margin(0), new Margin(3));
-            ptt.Column(1).Margin(new Margin(2));
+            ptt.AppendRow().SetText("a", "b");
+            ptt.AppendRow().SetText("A", "B");
+            ptt.Column(0).SetMargin(new Margin(0), new Margin(3));
+            ptt.Column(1).SetMargin(new Margin(2));
 
             var actual = ptt.ToString();
             const string expected =
@@ -86,10 +86,10 @@
         public static void Borders()
         {
             var ptt = new PlainTextTable();
-            ptt.AppendRow().Text("a", "b");
-            ptt.AppendRow().Text("A", "B");
-            ptt.Column(0).Borders(new Borders(Border.Normal), new Borders(Border.Bold));
-            ptt.Column(1).Borders(new Borders(Border.None));
+            ptt.AppendRow().SetText("a", "b");
+            ptt.AppendRow().SetText("A", "B");
+            ptt.Column(0).SetBorders(new Borders(Border.Normal), new Borders(Border.Bold));
+            ptt.Column(1).SetBorders(new Borders(Border.None));
 
             var actual = ptt.ToString();
             const string expected =
@@ -107,12 +107,12 @@
         public static void HorizontalAlignment_()
         {
             var ptt = new PlainTextTable();
-            ptt.AppendRow().Text("a", "b");
-            ptt.AppendRow().Text("A", "B");
-            ptt.AppendRow().Text("0", "1");
-            ptt.AppendRow().Text("xxxxx", "xxxxx");
-            ptt.Column(0).HorizontalAlignment(HorizontalAlignment.Left, HorizontalAlignment.Center, HorizontalAlignment.Right);
-            ptt.Column(1).HorizontalAlignment(HorizontalAlignment.Center);
+            ptt.AppendRow().SetText("a", "b");
+            ptt.AppendRow().SetText("A", "B");
+            ptt.AppendRow().SetText("0", "1");
+            ptt.AppendRow().SetText("xxxxx", "xxxxx");
+            ptt.Column(0).SetHorizontalAlignment(HorizontalAlignment.Left, HorizontalAlignment.Center, HorizontalAlignment.Right);
+            ptt.Column(1).SetHorizontalAlignment(HorizontalAlignment.Center);
 
             var actual = ptt.ToString();
             const string expected =
@@ -134,11 +134,11 @@
         public static void VerticalAlignment_()
         {
             var ptt = new PlainTextTable();
-            ptt.AppendRow().Text("a", "b", $"x{Environment.NewLine}x{Environment.NewLine}x{Environment.NewLine}x{Environment.NewLine}x");
-            ptt.AppendRow().Text("A", "B", $"x{Environment.NewLine}x{Environment.NewLine}x{Environment.NewLine}x{Environment.NewLine}x");
-            ptt.AppendRow().Text("0", "1", $"x{Environment.NewLine}x{Environment.NewLine}x{Environment.NewLine}x{Environment.NewLine}x");
-            ptt.Column(0).VerticalAlignment(VerticalAlignment.Top, VerticalAlignment.Center, VerticalAlignment.Bottom);
-            ptt.Column(1).VerticalAlignment(VerticalAlignment.Center);
+            ptt.AppendRow().SetText("a", "b", $"x{Environment.NewLine}x{Environment.NewLine}x{Environment.NewLine}x{Environment.NewLine}x");
+            ptt.AppendRow().SetText("A", "B", $"x{Environment.NewLine}x{Environment.NewLine}x{Environment.NewLine}x{Environment.NewLine}x");
+            ptt.AppendRow().SetText("0", "1", $"x{Environment.NewLine}x{Environment.NewLine}x{Environment.NewLine}x{Environment.NewLine}x");
+            ptt.Column(0).SetVerticalAlignment(VerticalAlignment.Top, VerticalAlignment.Center, VerticalAlignment.Bottom);
+            ptt.Column(1).SetVerticalAlignment(VerticalAlignment.Center);
 
             var actual = ptt.ToString();
             const string expected =

@@ -59,6 +59,8 @@ namespace RCi.PlainTextTable
             RowCount++;
             return new Row(this, row);
         }
+        public Row AppendRow(params string[] texts) => AppendRow().SetText(texts);
+        public Row AppendRow(params object[] texts) => AppendRow().SetText(texts);
 
         public Column AppendColumn()
         {
@@ -66,10 +68,8 @@ namespace RCi.PlainTextTable
             ColumnCount++;
             return new Column(this, col);
         }
-
-        public Row AppendRow(params string[] texts) => AppendRow().Text(texts);
-
-        public Row AppendRow(params object[] texts) => AppendRow().Text(texts);
+        public Column AppendColumn(params string[] texts) => AppendColumn().SetText(texts);
+        public Column AppendColumn(params object[] texts) => AppendColumn().SetText(texts);
 
         public override string ToString() => RenderTable
         (
