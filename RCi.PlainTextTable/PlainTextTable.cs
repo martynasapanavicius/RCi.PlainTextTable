@@ -44,7 +44,7 @@ namespace RCi.PlainTextTable
 
         internal void DeleteCell(Cell cell)
         {
-            if (!ReferenceEquals(cell.Host, this))
+            if (!ReferenceEquals(cell.Host(), this))
             {
                 throw new ArgumentException("cell does not belong to this plain text table");
             }

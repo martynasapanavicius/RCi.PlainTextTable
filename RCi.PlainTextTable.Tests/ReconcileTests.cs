@@ -215,25 +215,25 @@ namespace RCi.PlainTextTable.Tests
                 DefaultMargin = new Margin(0),
             };
 
-            ptt[0, 0].Text("a");
-            ptt[0, 1].Text("b");
-            ptt[0, 2].Text("c");
-            ptt[0, 3].Text("d");
+            ptt[0, 0].SetText("a");
+            ptt[0, 1].SetText("b");
+            ptt[0, 2].SetText("c");
+            ptt[0, 3].SetText("d");
 
-            ptt[1, 0].Text("A");
-            ptt[1, 1].Text("B").RightBorder(top).BottomBorder(left);
-            ptt[1, 2].Text("C").LeftBorder(top).BottomBorder(right);
-            ptt[1, 3].Text("D");
+            ptt[1, 0].SetText("A");
+            ptt[1, 1].SetText("B").SetRightBorder(top).SetBottomBorder(left);
+            ptt[1, 2].SetText("C").SetLeftBorder(top).SetBottomBorder(right);
+            ptt[1, 3].SetText("D");
 
-            ptt[2, 0].Text("0");
-            ptt[2, 1].Text("1").RightBorder(bottom).TopBorder(left);
-            ptt[2, 2].Text("2").LeftBorder(bottom).TopBorder(right);
-            ptt[2, 3].Text("3");
+            ptt[2, 0].SetText("0");
+            ptt[2, 1].SetText("1").SetRightBorder(bottom).SetTopBorder(left);
+            ptt[2, 2].SetText("2").SetLeftBorder(bottom).SetTopBorder(right);
+            ptt[2, 3].SetText("3");
 
-            ptt[3, 0].Text("!");
-            ptt[3, 1].Text("@");
-            ptt[3, 2].Text("#");
-            ptt[3, 3].Text("$");
+            ptt[3, 0].SetText("!");
+            ptt[3, 1].SetText("@");
+            ptt[3, 2].SetText("#");
+            ptt[3, 3].SetText("$");
 
             return ptt.ToString();
         }
