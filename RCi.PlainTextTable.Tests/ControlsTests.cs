@@ -306,6 +306,210 @@
             Assert.That(actual, Is.EqualTo(expected));
         }
 
+        // first
+
+        [Test]
+        public static void Row_First()
+        {
+            var ptt = Create5x5();
+
+            ptt.Row(1).First().SetBorders(Border.Bold);
+
+            var actual = ptt.ToString();
+            const string expected =
+                """
+                ┌───┬───┬───┬───┬───┐
+                │ a │ b │ c │ d │ e │
+                ┢━━━╅───┼───┼───┼───┤
+                ┃ f ┃ g │ h │ i │ j │
+                ┡━━━╃───┼───┼───┼───┤
+                │ k │ l │ m │ n │ o │
+                ├───┼───┼───┼───┼───┤
+                │ p │ q │ r │ s │ t │
+                ├───┼───┼───┼───┼───┤
+                │ u │ v │ w │ x │ y │
+                └───┴───┴───┴───┴───┘
+                """;
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public static void RowSpan_First()
+        {
+            var ptt = Create5x5();
+
+            ptt.Row(1).Slice(1, ^1).First().SetBorders(Border.Bold);
+
+            var actual = ptt.ToString();
+            const string expected =
+                """
+                ┌───┬───┬───┬───┬───┐
+                │ a │ b │ c │ d │ e │
+                ├───╆━━━╅───┼───┼───┤
+                │ f ┃ g ┃ h │ i │ j │
+                ├───╄━━━╃───┼───┼───┤
+                │ k │ l │ m │ n │ o │
+                ├───┼───┼───┼───┼───┤
+                │ p │ q │ r │ s │ t │
+                ├───┼───┼───┼───┼───┤
+                │ u │ v │ w │ x │ y │
+                └───┴───┴───┴───┴───┘
+                """;
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public static void Column_First()
+        {
+            var ptt = Create5x5();
+
+            ptt.Column(1).First().SetBorders(Border.Bold);
+
+            var actual = ptt.ToString();
+            const string expected =
+                """
+                ┌───┲━━━┱───┬───┬───┐
+                │ a ┃ b ┃ c │ d │ e │
+                ├───╄━━━╃───┼───┼───┤
+                │ f │ g │ h │ i │ j │
+                ├───┼───┼───┼───┼───┤
+                │ k │ l │ m │ n │ o │
+                ├───┼───┼───┼───┼───┤
+                │ p │ q │ r │ s │ t │
+                ├───┼───┼───┼───┼───┤
+                │ u │ v │ w │ x │ y │
+                └───┴───┴───┴───┴───┘
+                """;
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public static void ColumnSpan_First()
+        {
+            var ptt = Create5x5();
+
+            ptt.Column(1).Slice(1, ^1).First().SetBorders(Border.Bold);
+
+            var actual = ptt.ToString();
+            const string expected =
+                """
+                ┌───┬───┬───┬───┬───┐
+                │ a │ b │ c │ d │ e │
+                ├───╆━━━╅───┼───┼───┤
+                │ f ┃ g ┃ h │ i │ j │
+                ├───╄━━━╃───┼───┼───┤
+                │ k │ l │ m │ n │ o │
+                ├───┼───┼───┼───┼───┤
+                │ p │ q │ r │ s │ t │
+                ├───┼───┼───┼───┼───┤
+                │ u │ v │ w │ x │ y │
+                └───┴───┴───┴───┴───┘
+                """;
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        // last
+
+        [Test]
+        public static void Row_Last()
+        {
+            var ptt = Create5x5();
+
+            ptt.Row(1).Last().SetBorders(Border.Bold);
+
+            var actual = ptt.ToString();
+            const string expected =
+                """
+                ┌───┬───┬───┬───┬───┐
+                │ a │ b │ c │ d │ e │
+                ├───┼───┼───┼───╆━━━┪
+                │ f │ g │ h │ i ┃ j ┃
+                ├───┼───┼───┼───╄━━━┩
+                │ k │ l │ m │ n │ o │
+                ├───┼───┼───┼───┼───┤
+                │ p │ q │ r │ s │ t │
+                ├───┼───┼───┼───┼───┤
+                │ u │ v │ w │ x │ y │
+                └───┴───┴───┴───┴───┘
+                """;
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public static void RowSpan_Last()
+        {
+            var ptt = Create5x5();
+
+            ptt.Row(1).Slice(1, ^1).Last().SetBorders(Border.Bold);
+
+            var actual = ptt.ToString();
+            const string expected =
+                """
+                ┌───┬───┬───┬───┬───┐
+                │ a │ b │ c │ d │ e │
+                ├───┼───┼───╆━━━╅───┤
+                │ f │ g │ h ┃ i ┃ j │
+                ├───┼───┼───╄━━━╃───┤
+                │ k │ l │ m │ n │ o │
+                ├───┼───┼───┼───┼───┤
+                │ p │ q │ r │ s │ t │
+                ├───┼───┼───┼───┼───┤
+                │ u │ v │ w │ x │ y │
+                └───┴───┴───┴───┴───┘
+                """;
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public static void Column_Last()
+        {
+            var ptt = Create5x5();
+
+            ptt.Column(1).Last().SetBorders(Border.Bold);
+
+            var actual = ptt.ToString();
+            const string expected =
+                """
+                ┌───┬───┬───┬───┬───┐
+                │ a │ b │ c │ d │ e │
+                ├───┼───┼───┼───┼───┤
+                │ f │ g │ h │ i │ j │
+                ├───┼───┼───┼───┼───┤
+                │ k │ l │ m │ n │ o │
+                ├───┼───┼───┼───┼───┤
+                │ p │ q │ r │ s │ t │
+                ├───╆━━━╅───┼───┼───┤
+                │ u ┃ v ┃ w │ x │ y │
+                └───┺━━━┹───┴───┴───┘
+                """;
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public static void ColumnSpan_Last()
+        {
+            var ptt = Create5x5();
+
+            ptt.Column(1).Slice(1, ^1).Last().SetBorders(Border.Bold);
+
+            var actual = ptt.ToString();
+            const string expected =
+                """
+                ┌───┬───┬───┬───┬───┐
+                │ a │ b │ c │ d │ e │
+                ├───┼───┼───┼───┼───┤
+                │ f │ g │ h │ i │ j │
+                ├───┼───┼───┼───┼───┤
+                │ k │ l │ m │ n │ o │
+                ├───╆━━━╅───┼───┼───┤
+                │ p ┃ q ┃ r │ s │ t │
+                ├───╄━━━╃───┼───┼───┤
+                │ u │ v │ w │ x │ y │
+                └───┴───┴───┴───┴───┘
+                """;
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
         // slice
 
         [Test]

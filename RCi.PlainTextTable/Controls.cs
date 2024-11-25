@@ -70,7 +70,6 @@ namespace RCi.PlainTextTable
     {
         public override Cell First() => Host().Cell(0, ColumnIndex);
         public override Cell Last() => Host().Cell(Host().RowCount - 1, ColumnIndex);
-
         public override ColumnSpan Slice(Range range)
         {
             var (offset, length) = range.GetOffsetAndLength(Host().RowCount);
