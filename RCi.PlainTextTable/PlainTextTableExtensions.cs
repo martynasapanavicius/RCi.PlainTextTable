@@ -115,9 +115,9 @@
         public static Cell MoveRight(this Cell cell) => cell.Host()[cell.Coordinate.MoveRight()];
         public static Cell MoveDown(this Cell cell) => cell.Host()[cell.Coordinate.MoveDown()];
 
-        public static RowSpan TakeLeft(this Cell cell, int count) => cell.Row().Slice(cell.Coordinate.Col - count + 1, count);
-        public static RowSpan TakeRight(this Cell cell, int count) => cell.Row().Slice(cell.Coordinate.Col, count);
-        public static ColumnSpan TakeUp(this Cell cell, int count) => cell.Column().Slice(cell.Coordinate.Row - count + 1, count);
-        public static ColumnSpan TakeDown(this Cell cell, int count) => cell.Column().Slice(cell.Coordinate.Row, count);
+        //public static RowSpan TakeLeft(this Cell cell, int count) => cell.Row().Slice(cell.Coordinate.Col - count + 1, count);
+        //public static RowSpan TakeRight(this Cell cell, int count) => cell.Row().Slice(cell.Coordinate.Col, count);
+        //public static ColumnSpan TakeUp(this Cell cell, int count) => cell.Column().Slice(cell.Coordinate.Row - count + 1, count);
+        //public static ColumnSpan TakeDown(this Cell cell, int count) => cell.Column().Slice(cell.Coordinate.Row, count);
     }
 }
