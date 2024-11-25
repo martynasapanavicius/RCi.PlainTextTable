@@ -20,9 +20,8 @@ namespace RCi.PlainTextTable
         // derivatives
 
         public Cell this[int row, int col] => Cell(new Coordinate(row, col));
-
         public Cell this[Coordinate c] => Cell(c);
-
+        public Cell Cell(int row, int col) => Cell(new Coordinate(row, col));
         public Cell Cell(Coordinate c)
         {
             if (_cells.TryGetValue(c, out var cell))
@@ -37,7 +36,6 @@ namespace RCi.PlainTextTable
         }
 
         public Row Row(int row) => new(this, row);
-
         public Column Column(int col) => new(this, col);
 
         internal void DeleteCell(Cell cell)
