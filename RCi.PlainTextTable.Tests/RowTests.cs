@@ -35,7 +35,7 @@ namespace RCi.PlainTextTable.Tests
         }
 
         [Test]
-        public static void Text()
+        public static void SetText()
         {
             var ptt = new PlainTextTable();
             ptt.AppendRow().SetText("a", "b");
@@ -55,12 +55,12 @@ namespace RCi.PlainTextTable.Tests
         }
 
         [Test]
-        public static void Margin()
+        public static void SetMargin()
         {
             var ptt = new PlainTextTable();
             ptt.AppendRow().SetText("a", "b");
             ptt.AppendRow().SetText("A", "B");
-            ptt.Row(0).SetMargin(new Margin(0), new Margin(3));
+            ptt.Row(0).SetMargin(Margin.Empty, new Margin(3));
             ptt.Row(1).SetMargin(new Margin(2));
 
             var actual = ptt.ToString();
@@ -86,13 +86,13 @@ namespace RCi.PlainTextTable.Tests
         }
 
         [Test]
-        public static void Borders()
+        public static void SetBorders()
         {
             var ptt = new PlainTextTable();
             ptt.AppendRow().SetText("a", "b");
             ptt.AppendRow().SetText("A", "B");
-            ptt.Row(0).SetBorders(new Borders(Border.Normal), new Borders(Border.Bold));
-            ptt.Row(1).SetBorders(new Borders(Border.None));
+            ptt.Row(0).SetBorders(Borders.Normal, Borders.Bold);
+            ptt.Row(1).SetBorders(Borders.None);
 
             var actual = ptt.ToString();
             const string expected =
@@ -106,7 +106,7 @@ namespace RCi.PlainTextTable.Tests
         }
 
         [Test]
-        public static void HorizontalAlignment_()
+        public static void SetHorizontalAlignment()
         {
             var ptt = new PlainTextTable();
             ptt.AppendRow().SetText("a", "b", "c");
@@ -130,7 +130,7 @@ namespace RCi.PlainTextTable.Tests
         }
 
         [Test]
-        public static void VerticalAlignment_()
+        public static void SetVerticalAlignment()
         {
             var ptt = new PlainTextTable();
             ptt.AppendRow().SetText("a", "b", "c", $"x{Environment.NewLine}x{Environment.NewLine}x{Environment.NewLine}x{Environment.NewLine}x");

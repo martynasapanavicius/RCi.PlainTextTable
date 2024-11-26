@@ -52,8 +52,6 @@ namespace RCi.PlainTextTable
             RowCount++;
             return new Row(this, row);
         }
-        public Row AppendRow(params string[] texts) => AppendRow().SetText(texts);
-        public Row AppendRow(params object[] texts) => AppendRow().SetText(texts);
 
         public Column AppendColumn()
         {
@@ -61,8 +59,6 @@ namespace RCi.PlainTextTable
             ColumnCount++;
             return new Column(this, col);
         }
-        public Column AppendColumn(params string[] texts) => AppendColumn().SetText(texts);
-        public Column AppendColumn(params object[] texts) => AppendColumn().SetText(texts);
 
         public override string ToString() => RenderTable
         (
@@ -104,13 +100,5 @@ namespace RCi.PlainTextTable
                 style
             );
         }
-
-        internal static int GetBorderSize(Border border) => border switch
-        {
-            Border.None => 0,
-            Border.Normal => 1,
-            Border.Bold => 1,
-            _ => throw new ArgumentOutOfRangeException(nameof(border))
-        };
     }
 }

@@ -151,6 +151,10 @@ namespace RCi.PlainTextTable
 
     public static class PlainTextTableMovementExtensions
     {
+        public static Row AppendRow(this PlainTextTable host, params string[] texts) => host.AppendRow().SetText(texts);
+        public static Row AppendRow(this PlainTextTable host, params object[] texts) => host.AppendRow().SetText(texts);
+        public static Column AppendColumn(this PlainTextTable host, params string[] texts) => host.AppendColumn().SetText(texts);
+        public static Column AppendColumn(this PlainTextTable host, params object[] texts) => host.AppendColumn().SetText(texts);
         public static Row Row(this PlainTextTable host, int row) => new(host, row);
         public static Row Row(this PlainTextTable host, Index row) => new(host, row.IsFromEnd ? host.RowCount - row.Value : row.Value);
         public static Column Column(this PlainTextTable host, int col) => new(host, col);
@@ -341,6 +345,18 @@ namespace RCi.PlainTextTable
             where TControl : ControlBase =>
             control.ApplyUniform((c, v) => c.SetHorizontalAlignment(v), horizontalAlignment);
 
+        public static TControl SetLeftHorizontalAlignment<TControl>(this TControl control)
+            where TControl : ControlBase =>
+            control.SetHorizontalAlignment(HorizontalAlignment.Left);
+
+        public static TControl SetCenterHorizontalAlignment<TControl>(this TControl control)
+            where TControl : ControlBase =>
+            control.SetHorizontalAlignment(HorizontalAlignment.Center);
+
+        public static TControl SetRightHorizontalAlignment<TControl>(this TControl control)
+            where TControl : ControlBase =>
+            control.SetHorizontalAlignment(HorizontalAlignment.Right);
+
         public static TControl SetVerticalAlignment<TControl>(this TControl control, params VerticalAlignment[] verticalAlignments)
             where TControl : ControlBase =>
             control.Apply((c, v) => c.SetVerticalAlignment(v), control.First(), control.Next, verticalAlignments);
@@ -348,5 +364,17 @@ namespace RCi.PlainTextTable
         public static TControl SetVerticalAlignment<TControl>(this TControl control, VerticalAlignment verticalAlignment)
             where TControl : ControlBase =>
             control.ApplyUniform((c, v) => c.SetVerticalAlignment(v), verticalAlignment);
+
+        public static TControl SetTopVerticalAlignment<TControl>(this TControl control)
+            where TControl : ControlBase =>
+            control.SetVerticalAlignment(VerticalAlignment.Top);
+
+        public static TControl SetCenterVerticalAlignment<TControl>(this TControl control)
+            where TControl : ControlBase =>
+            control.SetVerticalAlignment(VerticalAlignment.Center);
+
+        public static TControl SetBottomVerticalAlignment<TControl>(this TControl control)
+            where TControl : ControlBase =>
+            control.SetVerticalAlignment(VerticalAlignment.Bottom);
     }
 }

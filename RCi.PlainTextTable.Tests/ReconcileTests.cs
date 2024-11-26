@@ -212,8 +212,8 @@ namespace RCi.PlainTextTable.Tests
                 BorderStyle = isDoubleStyle
                     ? BorderStyle.UnicodeDouble
                     : BorderStyle.UnicodeSingle,
-                DefaultBorders = new Borders(Border.Normal),
-                DefaultMargin = new Margin(0),
+                DefaultBorders = Borders.Normal,
+                DefaultMargin = Margin.Empty,
             };
 
             ptt[0, 0].SetText("a");

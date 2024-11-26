@@ -25,6 +25,14 @@ namespace RCi.PlainTextTable
 {
     internal static class TableBuilder
     {
+        private static int GetBorderSize(Border border) => border switch
+        {
+            Border.None => 0,
+            Border.Normal => 1,
+            Border.Bold => 1,
+            _ => throw new ArgumentOutOfRangeException(nameof(border))
+        };
+
         private static Coordinate GetLogicalCellTopLeftPhysicalCoordinate(
             LogicalToPhysicalMap logicalToPhysicalMap, Coordinate logicalCoordinate) =>
             logicalToPhysicalMap[logicalCoordinate].OrderBy(x => x).First();
@@ -498,7 +506,7 @@ namespace RCi.PlainTextTable
                     .GroupBy(p => p.Key.Col)
                     .Select(g => (col: g.Key, border: g.Max(p => p.Value)))
                     .OrderBy(t => t.col)
-                    .Select(t => PlainTextTable.GetBorderSize(t.border))
+                    .Select(t => GetBorderSize(t.border))
             ];
             physicalHorizontalBorderHeights =
             [
@@ -506,7 +514,7 @@ namespace RCi.PlainTextTable
                     .GroupBy(p => p.Key.Row)
                     .Select(g => (row: g.Key, border: g.Max(p => p.Value)))
                     .OrderBy(t => t.row)
-                    .Select(t => PlainTextTable.GetBorderSize(t.border))
+                    .Select(t => GetBorderSize(t.border))
             ];
 
             // get min sizes for physical rows and columns

@@ -32,6 +32,27 @@ namespace RCi.PlainTextTable.Tests
             return ptt;
         }
 
+        private static PlainTextTable Create2x2()
+        {
+            var ptt = new PlainTextTable();
+
+            var nl = Environment.NewLine;
+            // test append column param string[]
+            ptt.AppendColumn
+            (
+                "a",
+                $"ccccc{nl}ccccc{nl}ccccc{nl}ccccc{nl}ccccc"
+            );
+            // test append column param object[]
+            ptt.AppendColumn(new object[]
+            {
+                $"bbbbb{nl}bbbbb{nl}bbbbb{nl}bbbbb{nl}bbbbb",
+                $"ddddd{nl}ddddd{nl}ddddd{nl}ddddd{nl}ddddd",
+            });
+
+            return ptt;
+        }
+
         [Test]
         public static void Create5x5Verify()
         {
@@ -51,6 +72,31 @@ namespace RCi.PlainTextTable.Tests
                 ├───┼───┼───┼───┼───┤
                 │ u │ v │ w │ x │ y │
                 └───┴───┴───┴───┴───┘
+                """;
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public static void Create2x2Verify()
+        {
+            var ptt = Create2x2();
+
+            var actual = ptt.ToString();
+            const string expected =
+                """
+                +-------+-------+
+                | a     | bbbbb |
+                |       | bbbbb |
+                |       | bbbbb |
+                |       | bbbbb |
+                |       | bbbbb |
+                +-------+-------+
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                +-------+-------+
                 """;
             Assert.That(actual, Is.EqualTo(expected));
         }
@@ -1596,5 +1642,347 @@ namespace RCi.PlainTextTable.Tests
                 """;
             Assert.That(actual, Is.EqualTo(expected));
         }
+
+        // horizontal alignment
+
+        [Test]
+        public static void Cell_SetLeftHorizontalAlignment()
+        {
+            var ptt = Create2x2();
+            ptt.DefaultHorizontalAlignment = HorizontalAlignment.Right;
+
+            ptt[0, 0].SetLeftHorizontalAlignment();
+
+            var actual = ptt.ToString();
+            const string expected =
+                """
+                +-------+-------+
+                | a     | bbbbb |
+                |       | bbbbb |
+                |       | bbbbb |
+                |       | bbbbb |
+                |       | bbbbb |
+                +-------+-------+
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                +-------+-------+
+                """;
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public static void Cell_SetCenterHorizontalAlignment()
+        {
+            var ptt = Create2x2();
+
+            ptt[0, 0].SetCenterHorizontalAlignment();
+            ptt.DefaultHorizontalAlignment = HorizontalAlignment.Left;
+
+            var actual = ptt.ToString();
+            const string expected =
+                """
+                +-------+-------+
+                |   a   | bbbbb |
+                |       | bbbbb |
+                |       | bbbbb |
+                |       | bbbbb |
+                |       | bbbbb |
+                +-------+-------+
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                +-------+-------+
+                """;
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public static void Cell_SetRightHorizontalAlignment()
+        {
+            var ptt = Create2x2();
+            ptt.DefaultHorizontalAlignment = HorizontalAlignment.Center;
+
+            ptt[0, 0].SetRightHorizontalAlignment();
+
+            var actual = ptt.ToString();
+            const string expected =
+                """
+                +-------+-------+
+                |     a | bbbbb |
+                |       | bbbbb |
+                |       | bbbbb |
+                |       | bbbbb |
+                |       | bbbbb |
+                +-------+-------+
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                +-------+-------+
+                """;
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public static void ControlBase_SetLeftHorizontalAlignment()
+        {
+            var ptt = Create2x2();
+            ptt.DefaultHorizontalAlignment = HorizontalAlignment.Right;
+
+            ptt.Row(0).SetLeftHorizontalAlignment();
+
+            var actual = ptt.ToString();
+            const string expected =
+                """
+                +-------+-------+
+                | a     | bbbbb |
+                |       | bbbbb |
+                |       | bbbbb |
+                |       | bbbbb |
+                |       | bbbbb |
+                +-------+-------+
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                +-------+-------+
+                """;
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public static void ControlBase_SetCenterHorizontalAlignment()
+        {
+            var ptt = Create2x2();
+
+            ptt.Row(0).SetCenterHorizontalAlignment();
+            ptt.DefaultHorizontalAlignment = HorizontalAlignment.Left;
+
+            var actual = ptt.ToString();
+            const string expected =
+                """
+                +-------+-------+
+                |   a   | bbbbb |
+                |       | bbbbb |
+                |       | bbbbb |
+                |       | bbbbb |
+                |       | bbbbb |
+                +-------+-------+
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                +-------+-------+
+                """;
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public static void ControlBase_SetRightHorizontalAlignment()
+        {
+            var ptt = Create2x2();
+            ptt.DefaultHorizontalAlignment = HorizontalAlignment.Center;
+
+            ptt.Row(0).SetRightHorizontalAlignment();
+
+            var actual = ptt.ToString();
+            const string expected =
+                """
+                +-------+-------+
+                |     a | bbbbb |
+                |       | bbbbb |
+                |       | bbbbb |
+                |       | bbbbb |
+                |       | bbbbb |
+                +-------+-------+
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                +-------+-------+
+                """;
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        // vertical alignment
+
+        [Test]
+        public static void Cell_SetTopVerticalAlignment()
+        {
+            var ptt = Create2x2();
+            ptt.DefaultVerticalAlignment = VerticalAlignment.Center;
+
+            ptt[0, 0].SetTopVerticalAlignment();
+
+            var actual = ptt.ToString();
+            const string expected =
+                """
+                +-------+-------+
+                | a     | bbbbb |
+                |       | bbbbb |
+                |       | bbbbb |
+                |       | bbbbb |
+                |       | bbbbb |
+                +-------+-------+
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                +-------+-------+
+                """;
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public static void Cell_SetCenterVerticalAlignment()
+        {
+            var ptt = Create2x2();
+            ptt.DefaultVerticalAlignment = VerticalAlignment.Top;
+
+            ptt[0, 0].SetCenterVerticalAlignment();
+
+            var actual = ptt.ToString();
+            const string expected =
+                """
+                +-------+-------+
+                |       | bbbbb |
+                |       | bbbbb |
+                | a     | bbbbb |
+                |       | bbbbb |
+                |       | bbbbb |
+                +-------+-------+
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                +-------+-------+
+                """;
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public static void Cell_SetBottomVerticalAlignment()
+        {
+            var ptt = Create2x2();
+            ptt.DefaultVerticalAlignment = VerticalAlignment.Center;
+
+            ptt[0, 0].SetBottomVerticalAlignment();
+
+            var actual = ptt.ToString();
+            const string expected =
+                """
+                +-------+-------+
+                |       | bbbbb |
+                |       | bbbbb |
+                |       | bbbbb |
+                |       | bbbbb |
+                | a     | bbbbb |
+                +-------+-------+
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                +-------+-------+
+                """;
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public static void ControlBase_SetTopVerticalAlignment()
+        {
+            var ptt = Create2x2();
+            ptt.DefaultVerticalAlignment = VerticalAlignment.Center;
+
+            ptt.Row(0).SetTopVerticalAlignment();
+
+            var actual = ptt.ToString();
+            const string expected =
+                """
+                +-------+-------+
+                | a     | bbbbb |
+                |       | bbbbb |
+                |       | bbbbb |
+                |       | bbbbb |
+                |       | bbbbb |
+                +-------+-------+
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                +-------+-------+
+                """;
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public static void ControlBase_SetCenterVerticalAlignment()
+        {
+            var ptt = Create2x2();
+            ptt.DefaultVerticalAlignment = VerticalAlignment.Top;
+
+            ptt.Row(0).SetCenterVerticalAlignment();
+
+            var actual = ptt.ToString();
+            const string expected =
+                """
+                +-------+-------+
+                |       | bbbbb |
+                |       | bbbbb |
+                | a     | bbbbb |
+                |       | bbbbb |
+                |       | bbbbb |
+                +-------+-------+
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                +-------+-------+
+                """;
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public static void ControlBase_SetBottomVerticalAlignment()
+        {
+            var ptt = Create2x2();
+            ptt.DefaultVerticalAlignment = VerticalAlignment.Center;
+
+            ptt.Row(0).SetBottomVerticalAlignment();
+
+            var actual = ptt.ToString();
+            const string expected =
+                """
+                +-------+-------+
+                |       | bbbbb |
+                |       | bbbbb |
+                |       | bbbbb |
+                |       | bbbbb |
+                | a     | bbbbb |
+                +-------+-------+
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                | ccccc | ddddd |
+                +-------+-------+
+                """;
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        // row span
     }
 }
