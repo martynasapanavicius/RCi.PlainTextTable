@@ -13,7 +13,7 @@
 		<PackageProjectUrl>https://github.com/martynasapanavicius/RCi.PlainTextTable</PackageProjectUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryUrl>https://github.com/martynasapanavicius/RCi.PlainTextTable</RepositoryUrl>
-		<PackageTags>error, errors, value, values, err, exception, exceptions</PackageTags>
+		<PackageTags>plain, text, table, builder, plaintexttable, ptt, box, ascii, unicode</PackageTags>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<Version>1.0.0</Version>
 	</PropertyGroup>
