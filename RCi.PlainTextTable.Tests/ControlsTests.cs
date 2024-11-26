@@ -1,4 +1,7 @@
-﻿namespace RCi.PlainTextTable.Tests
+﻿using System;
+using System.Linq;
+
+namespace RCi.PlainTextTable.Tests
 {
     [Parallelizable(ParallelScope.All)]
     public static class ControlsTests
