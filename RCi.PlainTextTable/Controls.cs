@@ -196,15 +196,15 @@ namespace RCi.PlainTextTable
         public static ColumnSpan Slice(this ColumnSpan columnSpan, Index offset) => columnSpan.Slice(offset, ^0);
         public static ColumnSpan Slice(this ColumnSpan columnSpan, int offset) => columnSpan.Slice(new Index(offset));
 
-        public static Row MoveUp(this Row row) => new(row.Host(), row.RowIndex - 1);
-        public static Row MoveDown(this Row row) => new(row.Host(), row.RowIndex + 1);
-        public static Column MoveLeft(this Column column) => new(column.Host(), column.ColumnIndex - 1);
-        public static Column MoveRight(this Column column) => new(column.Host(), column.ColumnIndex + 1);
+        public static Row MoveUp(this Row row, int count = 1) => new(row.Host(), row.RowIndex - count);
+        public static Row MoveDown(this Row row, int count = 1) => new(row.Host(), row.RowIndex + count);
+        public static Column MoveLeft(this Column column, int count = 1) => new(column.Host(), column.ColumnIndex - count);
+        public static Column MoveRight(this Column column, int count = 1) => new(column.Host(), column.ColumnIndex + count);
 
-        public static RowSpan MoveUp(this RowSpan rowSpan) => new(rowSpan.Host(), rowSpan.RowIndex - 1, rowSpan.Offset, rowSpan.Length);
-        public static RowSpan MoveDown(this RowSpan rowSpan) => new(rowSpan.Host(), rowSpan.RowIndex + 1, rowSpan.Offset, rowSpan.Length);
-        public static ColumnSpan MoveLeft(this ColumnSpan columnSpan) => new(columnSpan.Host(), columnSpan.ColumnIndex - 1, columnSpan.Offset, columnSpan.Length);
-        public static ColumnSpan MoveRight(this ColumnSpan columnSpan) => new(columnSpan.Host(), columnSpan.ColumnIndex + 1, columnSpan.Offset, columnSpan.Length);
+        public static RowSpan MoveUp(this RowSpan rowSpan, int count = 1) => new(rowSpan.Host(), rowSpan.RowIndex - count, rowSpan.Offset, rowSpan.Length);
+        public static RowSpan MoveDown(this RowSpan rowSpan, int count = 1) => new(rowSpan.Host(), rowSpan.RowIndex + count, rowSpan.Offset, rowSpan.Length);
+        public static ColumnSpan MoveLeft(this ColumnSpan columnSpan, int count = 1) => new(columnSpan.Host(), columnSpan.ColumnIndex - count, columnSpan.Offset, columnSpan.Length);
+        public static ColumnSpan MoveRight(this ColumnSpan columnSpan, int count = 1) => new(columnSpan.Host(), columnSpan.ColumnIndex + count, columnSpan.Offset, columnSpan.Length);
 
         public static RowSpan Skip(this RowBase rowBase, int count) => rowBase.Slice(count);
         public static RowSpan SkipLast(this RowBase rowBase, int count) => rowBase.Slice(0, ^count);
