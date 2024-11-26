@@ -4,6 +4,8 @@ namespace RCi.PlainTextTable
 {
     public readonly record struct Margin
     {
+        public static readonly Margin Empty = new();
+
         private readonly int _left;
         public int Left
         {
