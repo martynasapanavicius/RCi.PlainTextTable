@@ -5,6 +5,17 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<WarningsAsErrors>Nullable</WarningsAsErrors>
+
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Title>Plain text table package</Title>
+		<Authors>Martynas Apanavicius</Authors>
+		<Description>.NET Plain text table package.</Description>
+		<PackageProjectUrl>https://github.com/martynasapanavicius/RCi.PlainTextTable</PackageProjectUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<RepositoryUrl>https://github.com/martynasapanavicius/RCi.PlainTextTable</RepositoryUrl>
+		<PackageTags>error, errors, value, values, err, exception, exceptions</PackageTags>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<Version>1.0.0</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
