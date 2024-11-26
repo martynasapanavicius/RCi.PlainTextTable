@@ -25,6 +25,7 @@
                 | Lexi       | Kim         | 47  |
                 +------------+-------------+-----+
                 """;
+            TestContext.WriteLine(actual);
             Assert.That(actual, Is.EqualTo(expected));
         }
 
@@ -44,7 +45,7 @@
                 // set column span (returns cell)
                 .SetColumnSpan(3)
                 // set horizontal alignment (returns cell)
-                .SetHorizontalAlignment(HorizontalAlignment.Center);
+                .SetCenterHorizontalAlignment();
 
             // append new row (returns row)
             ptt.AppendRow("Full Name", "Age", "USD", "EUR")
@@ -53,7 +54,7 @@
                 // set column span for this cell (returns cell)
                 .SetColumnSpan(2)
                 // set horizontal alignment for this cell (returns cell)
-                .SetHorizontalAlignment(HorizontalAlignment.Center);
+                .SetCenterHorizontalAlignment();
 
             // append new row (returns row)
             ptt.AppendRow("Erin", "Zhang", 35, 123.45, 0);
@@ -76,11 +77,11 @@
                 // slice column (skip first and take until last) (returns column span)
                 .Slice(2, ^1)
                 // set horizontal alignment for this column span (returns column span)
-                .SetHorizontalAlignment(HorizontalAlignment.Left)
+                .SetLeftHorizontalAlignment()
                 // move to the right (targeting 2nd column) (returns column span)
                 .MoveRight()
                 // set horizontal alignment for this column span (returns column span)
-                .SetHorizontalAlignment(HorizontalAlignment.Left);
+                .SetLeftHorizontalAlignment();
 
             // select last column (returns column)
             ptt.LastColumn()
