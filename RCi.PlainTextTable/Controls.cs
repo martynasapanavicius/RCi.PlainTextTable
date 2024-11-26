@@ -201,10 +201,20 @@ namespace RCi.PlainTextTable
         public static Column MoveLeft(this Column column, int count = 1) => new(column.Host(), column.ColumnIndex - count);
         public static Column MoveRight(this Column column, int count = 1) => new(column.Host(), column.ColumnIndex + count);
 
+        public static Row MoveUpToFirst(this Row row) => new(row.Host(), 0);
+        public static Row MoveDownToLast(this Row row) => new(row.Host(), row.Host().RowCount - 1);
+        public static Column MoveLeftToFirst(this Column column) => new(column.Host(), 0);
+        public static Column MoveRightToLast(this Column column) => new(column.Host(), column.Host().ColumnCount - 1);
+
         public static RowSpan MoveUp(this RowSpan rowSpan, int count = 1) => new(rowSpan.Host(), rowSpan.RowIndex - count, rowSpan.Offset, rowSpan.Length);
         public static RowSpan MoveDown(this RowSpan rowSpan, int count = 1) => new(rowSpan.Host(), rowSpan.RowIndex + count, rowSpan.Offset, rowSpan.Length);
         public static ColumnSpan MoveLeft(this ColumnSpan columnSpan, int count = 1) => new(columnSpan.Host(), columnSpan.ColumnIndex - count, columnSpan.Offset, columnSpan.Length);
         public static ColumnSpan MoveRight(this ColumnSpan columnSpan, int count = 1) => new(columnSpan.Host(), columnSpan.ColumnIndex + count, columnSpan.Offset, columnSpan.Length);
+
+        public static RowSpan MoveUpToFirst(this RowSpan rowSpan) => new(rowSpan.Host(), 0, rowSpan.Offset, rowSpan.Length);
+        public static RowSpan MoveDownToLast(this RowSpan rowSpan) => new(rowSpan.Host(), rowSpan.Host().RowCount - 1, rowSpan.Offset, rowSpan.Length);
+        public static ColumnSpan MoveLeftToFirst(this ColumnSpan columnSpan) => new(columnSpan.Host(), 0, columnSpan.Offset, columnSpan.Length);
+        public static ColumnSpan MoveRightToLast(this ColumnSpan columnSpan) => new(columnSpan.Host(), columnSpan.Host().ColumnCount - 1, columnSpan.Offset, columnSpan.Length);
 
         public static RowSpan Skip(this RowBase rowBase, int count) => rowBase.Slice(count);
         public static RowSpan SkipLast(this RowBase rowBase, int count) => rowBase.Slice(0, ^count);

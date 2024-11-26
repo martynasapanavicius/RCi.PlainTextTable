@@ -25,7 +25,7 @@ ptt.AppendRow("Lexi", "Kim", 47);
 ```csharp
 var ptt = new PlainTextTable
 {
-    BorderStyle = BorderStyle.UnicodeSingle,
+    BorderStyle = BorderStyle.UnicodeDouble,
     DefaultHorizontalAlignment = HorizontalAlignment.Right,
 };
 
@@ -93,8 +93,8 @@ ptt.FirstRow()
     .MoveDown()
     // set uniform bold borders for the whole row (returns row)
     .SetBorders(Border.Bold)
-    // move down to the last row (4 times) (returns row)
-    .MoveDown(4)
+    // move down to the last row (returns row)
+    .MoveDownToLast()
     // set uniform bold borders for the whole row (returns row)
     .SetBorders(Border.Bold);
 ```
