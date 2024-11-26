@@ -33,7 +33,7 @@
         {
             var ptt = new PlainTextTable
             {
-                BorderStyle = BorderStyle.UnicodeSingle,
+                BorderStyle = BorderStyle.UnicodeDouble,
                 DefaultHorizontalAlignment = HorizontalAlignment.Right,
             };
 
@@ -109,19 +109,19 @@
             var actual = ptt.ToString();
             const string expected =
                 """
-                ┏━━━━━━━━━━━━━━━━━━━━━━┓                   
-                ┃       Accounts       ┃                   
-                ┣━━━━━━━━━━━━━━━━┳━━━━━╋━━━━━━━━┳━━━━━━━━━┓
-                ┃   Full Name    ┃ Age ┃    USD ┃     EUR ┃
-                ┡━━━━━━━━┯━━━━━━━╇━━━━━╇━━━━━━━━┻━━━━━━━━━┩
+                ╔══════════════════════╗                   
+                ║       Accounts       ║                   
+                ╠════════════════╦═════╬════════╦═════════╗
+                ║   Full Name    ║ Age ║    USD ║     EUR ║
+                ╚════════╤═══════╩═════╩════════╩═════════╝
                 │ Erin   │ Zhang │  35 │ 123.45         0 │
                 ├────────┼───────┼─────┤                  │
                 │ Nalani │ David │  22 │      0    420.69 │
                 ├────────┼───────┼─────┤                  │
                 │ Lexi   │ Kim   │  47 │ 523.44      1999 │
-                ┢━━━━━━━━┷━━━━━━━┷━━━━━╈━━━━━━━━┳━━━━━━━━━┪
-                ┃                TOTAL ┃ 646.89 ┃ 2419.69 ┃
-                ┗━━━━━━━━━━━━━━━━━━━━━━┻━━━━━━━━┻━━━━━━━━━┛
+                ╔════════╧═══════╧═════╦════════╦═════════╗
+                ║                TOTAL ║ 646.89 ║ 2419.69 ║
+                ╚══════════════════════╩════════╩═════════╝
                 """;
             TestContext.WriteLine(actual);
             Assert.That(actual, Is.EqualTo(expected));
