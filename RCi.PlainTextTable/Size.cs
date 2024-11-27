@@ -1,4 +1,4 @@
-﻿namespace RCi.Toolbox
+﻿namespace RCi.Toolbox.Ptt
 {
     internal readonly record struct Size(int Width, int Height)
     {

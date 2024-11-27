@@ -5,7 +5,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<WarningsAsErrors>Nullable</WarningsAsErrors>
-		<RootNamespace>RCi.Toolbox</RootNamespace>
+		<RootNamespace>RCi.Toolbox.Ptt</RootNamespace>
 
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Title>Plain text table package</Title>

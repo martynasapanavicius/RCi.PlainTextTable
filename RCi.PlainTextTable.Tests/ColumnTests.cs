@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RCi.Toolbox.Tests
+namespace RCi.Toolbox.Ptt.Tests
 {
     [Parallelizable(ParallelScope.All)]
     public static class ColumnTests

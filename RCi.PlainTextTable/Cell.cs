@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RCi.Toolbox
+namespace RCi.Toolbox.Ptt
 {
     public sealed class Cell
     {

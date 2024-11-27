@@ -1,4 +1,4 @@
-﻿namespace RCi.Toolbox
+﻿namespace RCi.Toolbox.Ptt
 {
     public static class PlainTextTableExtensions
     {

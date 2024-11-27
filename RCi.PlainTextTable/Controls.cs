@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RCi.Toolbox
+namespace RCi.Toolbox.Ptt
 {
     public abstract class ControlBase(PlainTextTable host)
     {
