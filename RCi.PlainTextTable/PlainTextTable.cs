@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RCi.PlainTextTable
+namespace RCi.Toolbox
 {
     public sealed class PlainTextTable
     {

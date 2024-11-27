@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RCi.PlainTextTable
+namespace RCi.Toolbox
 {
     public readonly record struct Borders
     {

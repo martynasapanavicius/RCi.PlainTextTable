@@ -5,23 +5,23 @@ using System.Linq;
 using LogicalCellsMap =
     System.Collections.Generic.Dictionary
     <
-        RCi.PlainTextTable.Coordinate /* logical coordinate */,
-        RCi.PlainTextTable.LogicalCell
+        RCi.Toolbox.Coordinate /* logical coordinate */,
+        RCi.Toolbox.LogicalCell
     >;
 using LogicalToPhysicalMap =
     System.Collections.Generic.Dictionary
     <
-        RCi.PlainTextTable.Coordinate /* logical coordinate */,
-        System.Collections.Generic.HashSet<RCi.PlainTextTable.Coordinate /* physical coordinate */>
+        RCi.Toolbox.Coordinate /* logical coordinate */,
+        System.Collections.Generic.HashSet<RCi.Toolbox.Coordinate /* physical coordinate */>
     >;
 using PhysicalToLogicalMap =
     System.Collections.Generic.Dictionary
     <
-        RCi.PlainTextTable.Coordinate /* physical coordinate */,
-        RCi.PlainTextTable.Coordinate /* physical coordinate */
+        RCi.Toolbox.Coordinate /* physical coordinate */,
+        RCi.Toolbox.Coordinate /* physical coordinate */
     >;
 
-namespace RCi.PlainTextTable
+namespace RCi.Toolbox
 {
     internal static class TableBuilder
     {

@@ -1,4 +1,4 @@
-﻿namespace RCi.PlainTextTable
+﻿namespace RCi.Toolbox
 {
     public readonly record struct Size(int Width, int Height)
     {

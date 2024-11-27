@@ -1,4 +1,4 @@
-﻿namespace RCi.PlainTextTable
+﻿namespace RCi.Toolbox
 {
     public enum HorizontalAlignment
     {

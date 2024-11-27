@@ -1,4 +1,4 @@
-﻿namespace RCi.PlainTextTable.Tests
+﻿namespace RCi.Toolbox.Tests
 {
     [Parallelizable(ParallelScope.All)]
     public static class ReadmeTests

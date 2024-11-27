@@ -5,17 +5,17 @@ using System.Text;
 using ReadOnlyLogicalCellsMap =
     System.Collections.Generic.IReadOnlyDictionary
     <
-        RCi.PlainTextTable.Coordinate /* logical coordinate */,
-        RCi.PlainTextTable.LogicalCell
+        RCi.Toolbox.Coordinate /* logical coordinate */,
+        RCi.Toolbox.LogicalCell
     >;
 using ReadOnlyLogicalToPhysicalMap =
     System.Collections.Generic.IReadOnlyDictionary
     <
-        RCi.PlainTextTable.Coordinate /* logical coordinate */,
-        System.Collections.Generic.HashSet<RCi.PlainTextTable.Coordinate /* physical coordinate */>
+        RCi.Toolbox.Coordinate /* logical coordinate */,
+        System.Collections.Generic.HashSet<RCi.Toolbox.Coordinate /* physical coordinate */>
     >;
 
-namespace RCi.PlainTextTable
+namespace RCi.Toolbox
 {
     internal static class TableRenderer
     {

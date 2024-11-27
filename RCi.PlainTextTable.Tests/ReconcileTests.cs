@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Immutable;
 
-namespace RCi.PlainTextTable.Tests
+namespace RCi.Toolbox.Tests
 {
     [Parallelizable(ParallelScope.All)]
     public static class ReconcileTests

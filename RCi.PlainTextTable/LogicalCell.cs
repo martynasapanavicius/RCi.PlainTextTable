@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace RCi.PlainTextTable
+namespace RCi.Toolbox
 {
     internal sealed record LogicalCell
     {

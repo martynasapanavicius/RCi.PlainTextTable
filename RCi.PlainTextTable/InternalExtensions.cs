@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace RCi.PlainTextTable
+namespace RCi.Toolbox
 {
     internal static class InternalExtensions
     {
