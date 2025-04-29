@@ -72,15 +72,11 @@ namespace RCi.Toolbox.Ptt
             Bottom = bottom;
         }
 
-        public Borders(Border horizontal, Border vertical) :
-            this(horizontal, vertical, horizontal, vertical)
-        {
-        }
+        public Borders(Border horizontal, Border vertical)
+            : this(horizontal, vertical, horizontal, vertical) { }
 
-        public Borders(Border uniform) :
-            this(uniform, uniform, uniform, uniform)
-        {
-        }
+        public Borders(Border uniform)
+            : this(uniform, uniform, uniform, uniform) { }
 
         public override string ToString() => $"{Left},{Top},{Right},{Bottom}";
     }

@@ -91,7 +91,6 @@ namespace RCi.Toolbox.Ptt.Tests
             ('╉', "B B N B"),
             ('╊', "N B B B"),
             ('╋', "B B B B"),
-            
             #endregion
         ];
 
@@ -180,27 +179,27 @@ namespace RCi.Toolbox.Ptt.Tests
             ('╩', "W W W O"),
             ('╩', "W W W N"),
             ('╬', "W W W W"),
-
             #endregion
         ];
 
         private static string BuildTable((char Expected, string Neighbours) testCase, bool isDoubleStyle)
         {
-            static Border ParseBorder(char code, bool isDoubleStyle) => isDoubleStyle
-                ? code switch
-                {
-                    'O' => Border.None,
-                    'N' => Border.Normal,
-                    'W' => Border.Bold,
-                    _ => throw new NotSupportedException(nameof(code)),
-                }
-                : code switch
-                {
-                    'O' => Border.None,
-                    'N' => Border.Normal,
-                    'B' => Border.Bold,
-                    _ => throw new NotSupportedException(nameof(code)),
-                };
+            static Border ParseBorder(char code, bool isDoubleStyle) =>
+                isDoubleStyle
+                    ? code switch
+                    {
+                        'O' => Border.None,
+                        'N' => Border.Normal,
+                        'W' => Border.Bold,
+                        _ => throw new NotSupportedException(nameof(code)),
+                    }
+                    : code switch
+                    {
+                        'O' => Border.None,
+                        'N' => Border.Normal,
+                        'B' => Border.Bold,
+                        _ => throw new NotSupportedException(nameof(code)),
+                    };
 
             var left = ParseBorder(testCase.Neighbours[0], isDoubleStyle);
             var top = ParseBorder(testCase.Neighbours[2], isDoubleStyle);
@@ -209,9 +208,7 @@ namespace RCi.Toolbox.Ptt.Tests
 
             var ptt = new PlainTextTable
             {
-                BorderStyle = isDoubleStyle
-                    ? BorderStyle.UnicodeDouble
-                    : BorderStyle.UnicodeSingle,
+                BorderStyle = isDoubleStyle ? BorderStyle.UnicodeDouble : BorderStyle.UnicodeSingle,
                 DefaultBorders = Borders.Normal,
                 DefaultMargin = Margin.Empty,
             };

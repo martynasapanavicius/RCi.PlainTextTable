@@ -58,21 +58,16 @@ namespace RCi.Toolbox.Ptt
             Bottom = bottom;
         }
 
-        public Margin(int horizontal, int vertical) :
-            this(horizontal, vertical, horizontal, vertical)
-        {
-        }
+        public Margin(int horizontal, int vertical)
+            : this(horizontal, vertical, horizontal, vertical) { }
 
-        public Margin(int uniform) :
-            this(uniform, uniform, uniform, uniform)
-        {
-        }
+        public Margin(int uniform)
+            : this(uniform, uniform, uniform, uniform) { }
 
         public int Width => Right - Left;
         public int Height => Bottom - Top;
 
-        public static implicit operator Margin(int universal) =>
-            new(universal);
+        public static implicit operator Margin(int universal) => new(universal);
 
         public static implicit operator Margin((int horizontal, int vertical) tuple) =>
             new(tuple.horizontal, tuple.vertical);

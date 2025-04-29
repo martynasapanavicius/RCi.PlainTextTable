@@ -1,39 +1,34 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<ImplicitUsings>disable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-		<WarningsAsErrors>Nullable</WarningsAsErrors>
-		<RootNamespace>RCi.Toolbox.Ptt</RootNamespace>
-
-		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<Title>Plain text table package</Title>
-		<Authors>Martynas Apanavicius</Authors>
-		<Description>.NET Plain text table package.</Description>
-		<PackageProjectUrl>https://github.com/martynasapanavicius/RCi.PlainTextTable</PackageProjectUrl>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<RepositoryUrl>https://github.com/martynasapanavicius/RCi.PlainTextTable</RepositoryUrl>
-		<PackageTags>plain, text, table, builder, plaintexttable, ptt, box, ascii, unicode</PackageTags>
-		<PackageLicenseFile>LICENSE</PackageLicenseFile>
-		<Version>1.1.2</Version>
-	</PropertyGroup>
-
-	<ItemGroup>
-		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-			<_Parameter1>RCi.PlainTextTable.Tests</_Parameter1>
-		</AssemblyAttribute>
-	</ItemGroup>
-
-	<ItemGroup>
-		<None Include="..\LICENSE">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
-		</None>
-		<None Include="..\README.md">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
-		</None>
-	</ItemGroup>
-
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <WarningsAsErrors>Nullable</WarningsAsErrors>
+        <RootNamespace>RCi.Toolbox.Ptt</RootNamespace>
+        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+        <Title>Plain text table package</Title>
+        <Authors>Martynas Apanavicius</Authors>
+        <Description>.NET Plain text table package.</Description>
+        <PackageProjectUrl>https://github.com/martynasapanavicius/RCi.PlainTextTable</PackageProjectUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <RepositoryUrl>https://github.com/martynasapanavicius/RCi.PlainTextTable</RepositoryUrl>
+        <PackageTags>plain, text, table, builder, plaintexttable, ptt, box, ascii, unicode</PackageTags>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <Version>1.1.2</Version>
+    </PropertyGroup>
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+            <_Parameter1>RCi.PlainTextTable.Tests</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="..\LICENSE">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
+        <None Include="..\README.md">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
+    </ItemGroup>
 </Project>

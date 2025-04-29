@@ -32,22 +32,18 @@ namespace RCi.Toolbox.Ptt
 
         private Size GetTextSizeWithMargin()
         {
-            return
-            (
-                Margin.Left + TextSize.Width + Margin.Right,
-                Margin.Top + TextSize.Height + Margin.Bottom
-            );
+            return (Margin.Left + TextSize.Width + Margin.Right, Margin.Top + TextSize.Height + Margin.Bottom);
         }
 
         public override string ToString() =>
-            $"{Coordinate}, " +
-            $"CS={ColumnSpan}, " +
-            $"RS={RowSpan}, " +
-            $"M=({Margin}), " +
-            $"TS={TextSize}, " +
-            $"TSWM={TextSizeWithMargin}, " +
-            $"HA={HorizontalAlignment.ToString()[..1]}, " +
-            $"VA={VerticalAlignment.ToString()[..1]}, " +
-            $"B=({Borders})";
+            $"{Coordinate}, "
+            + $"CS={ColumnSpan}, "
+            + $"RS={RowSpan}, "
+            + $"M=({Margin}), "
+            + $"TS={TextSize}, "
+            + $"TSWM={TextSizeWithMargin}, "
+            + $"HA={HorizontalAlignment.ToString()[..1]}, "
+            + $"VA={VerticalAlignment.ToString()[..1]}, "
+            + $"B=({Borders})";
     }
 }

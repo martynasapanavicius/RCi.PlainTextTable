@@ -13,8 +13,7 @@
             ptt.AppendRow("Lexi", "Kim", 47);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +------------+-------------+-----+
                 | First Name | Second Name | Age |
                 +------------+-------------+-----+
@@ -108,8 +107,7 @@
                 .SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ╔══════════════════════╗                   
                 ║       Accounts       ║                   
                 ╠════════════════╦═════╬════════╦═════════╗

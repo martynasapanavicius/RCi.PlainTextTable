@@ -6,9 +6,9 @@ namespace RCi.Toolbox.Ptt.Tests
     [Parallelizable(ParallelScope.All)]
     public static class ControlsTests
     {
-        private static readonly string ALPHABET = new
-        (
-            Enumerable.Range(0, char.MaxValue)
+        private static readonly string ALPHABET = new(
+            Enumerable
+                .Range(0, char.MaxValue)
                 .Select(x => (char)x)
                 .Where(char.IsAsciiLetterLower)
                 .OrderBy(x => x)
@@ -17,10 +17,7 @@ namespace RCi.Toolbox.Ptt.Tests
 
         private static PlainTextTable Create5x5()
         {
-            var ptt = new PlainTextTable
-            {
-                BorderStyle = BorderStyle.UnicodeSingle,
-            };
+            var ptt = new PlainTextTable { BorderStyle = BorderStyle.UnicodeSingle };
             var i = 0;
             for (var row = 0; row < 5; row++)
             {
@@ -38,17 +35,15 @@ namespace RCi.Toolbox.Ptt.Tests
 
             var nl = Environment.NewLine;
             // test append column param string[]
-            ptt.AppendColumn
-            (
-                "a",
-                $"ccccc{nl}ccccc{nl}ccccc{nl}ccccc{nl}ccccc"
-            );
+            ptt.AppendColumn("a", $"ccccc{nl}ccccc{nl}ccccc{nl}ccccc{nl}ccccc");
             // test append column param object[]
-            ptt.AppendColumn(new object[]
-            {
-                $"bbbbb{nl}bbbbb{nl}bbbbb{nl}bbbbb{nl}bbbbb",
-                $"ddddd{nl}ddddd{nl}ddddd{nl}ddddd{nl}ddddd",
-            });
+            ptt.AppendColumn(
+                new object[]
+                {
+                    $"bbbbb{nl}bbbbb{nl}bbbbb{nl}bbbbb{nl}bbbbb",
+                    $"ddddd{nl}ddddd{nl}ddddd{nl}ddddd{nl}ddddd",
+                }
+            );
 
             return ptt;
         }
@@ -59,8 +54,7 @@ namespace RCi.Toolbox.Ptt.Tests
             var ptt = Create5x5();
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ├───┼───┼───┼───┼───┤
@@ -82,8 +76,7 @@ namespace RCi.Toolbox.Ptt.Tests
             var ptt = Create2x2();
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +-------+-------+
                 | a     | bbbbb |
                 |       | bbbbb |
@@ -111,8 +104,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Row(1).SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ┢━━━╈━━━╈━━━╈━━━╈━━━┪
@@ -136,8 +128,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Row(^2).SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ├───┼───┼───┼───┼───┤
@@ -161,8 +152,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Column(1).SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┲━━━┱───┬───┬───┐
                 │ a ┃ b ┃ c │ d │ e │
                 ├───╊━━━╉───┼───┼───┤
@@ -186,8 +176,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Column(^2).SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┲━━━┱───┐
                 │ a │ b │ c ┃ d ┃ e │
                 ├───┼───┼───╊━━━╉───┤
@@ -211,8 +200,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.FirstRow().SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┏━━━┳━━━┳━━━┳━━━┳━━━┓
                 ┃ a ┃ b ┃ c ┃ d ┃ e ┃
                 ┡━━━╇━━━╇━━━╇━━━╇━━━┩
@@ -236,8 +224,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.LastRow().SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ├───┼───┼───┼───┼───┤
@@ -261,8 +248,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.FirstColumn().SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┏━━━┱───┬───┬───┬───┐
                 ┃ a ┃ b │ c │ d │ e │
                 ┣━━━╉───┼───┼───┼───┤
@@ -286,8 +272,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.LastColumn().SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┲━━━┓
                 │ a │ b │ c │ d ┃ e ┃
                 ├───┼───┼───┼───╊━━━┫
@@ -313,8 +298,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.FirstRow().Slice(1, 1).MoveDown().Row().SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ┢━━━╈━━━╈━━━╈━━━╈━━━┪
@@ -338,8 +322,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.FirstColumn().Slice(1, 1).MoveRight().Column().SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┲━━━┱───┬───┬───┐
                 │ a ┃ b ┃ c │ d │ e │
                 ├───╊━━━╉───┼───┼───┤
@@ -365,8 +348,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Row(1).First().SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ┢━━━╅───┼───┼───┼───┤
@@ -390,8 +372,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Row(1).Slice(1, ^1).First().SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ├───╆━━━╅───┼───┼───┤
@@ -415,8 +396,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Column(1).First().SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┲━━━┱───┬───┬───┐
                 │ a ┃ b ┃ c │ d │ e │
                 ├───╄━━━╃───┼───┼───┤
@@ -440,8 +420,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Column(1).Slice(1, ^1).First().SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ├───╆━━━╅───┼───┼───┤
@@ -467,8 +446,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Row(1).Last().SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ├───┼───┼───┼───╆━━━┪
@@ -492,8 +470,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Row(1).Slice(1, ^1).Last().SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ├───┼───┼───╆━━━╅───┤
@@ -517,8 +494,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Column(1).Last().SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ├───┼───┼───┼───┼───┤
@@ -542,8 +518,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Column(1).Slice(1, ^1).Last().SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ├───┼───┼───┼───┼───┤
@@ -578,8 +553,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 variation(ptt.Row(1)).SetBorders(Border.Bold);
 
                 var actual = ptt.ToString();
-                const string expected =
-                    """
+                const string expected = """
                     ┌───┬───┬───┬───┬───┐
                     │ a │ b │ c │ d │ e │
                     ├───╆━━━╈━━━╅───┼───┤
@@ -599,11 +573,7 @@ namespace RCi.Toolbox.Ptt.Tests
         [Test]
         public static void Row_SliceSplit()
         {
-            var variations = new Func<Row, RowSpan>[]
-            {
-                x => x.Slice(^4),
-                x => x.Slice(1),
-            };
+            var variations = new Func<Row, RowSpan>[] { x => x.Slice(^4), x => x.Slice(1) };
 
             foreach (var variation in variations)
             {
@@ -612,8 +582,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 variation(ptt.Row(1)).SetBorders(Border.Bold);
 
                 var actual = ptt.ToString();
-                const string expected =
-                    """
+                const string expected = """
                     ┌───┬───┬───┬───┬───┐
                     │ a │ b │ c │ d │ e │
                     ├───╆━━━╈━━━╈━━━╈━━━┪
@@ -647,8 +616,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 variation(ptt.Column(1)).SetBorders(Border.Bold);
 
                 var actual = ptt.ToString();
-                const string expected =
-                    """
+                const string expected = """
                     ┌───┬───┬───┬───┬───┐
                     │ a │ b │ c │ d │ e │
                     ├───╆━━━╅───┼───┼───┤
@@ -668,11 +636,7 @@ namespace RCi.Toolbox.Ptt.Tests
         [Test]
         public static void Column_SliceSplit()
         {
-            var variations = new Func<Column, ColumnSpan>[]
-            {
-                x => x.Slice(^4),
-                x => x.Slice(1),
-            };
+            var variations = new Func<Column, ColumnSpan>[] { x => x.Slice(^4), x => x.Slice(1) };
 
             foreach (var variation in variations)
             {
@@ -681,8 +645,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 variation(ptt.Column(1)).SetBorders(Border.Bold);
 
                 var actual = ptt.ToString();
-                const string expected =
-                    """
+                const string expected = """
                     ┌───┬───┬───┬───┬───┐
                     │ a │ b │ c │ d │ e │
                     ├───╆━━━╅───┼───┼───┤
@@ -716,8 +679,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 variation(ptt.Row(1).Slice(1, 3)).SetBorders(Border.Bold);
 
                 var actual = ptt.ToString();
-                const string expected =
-                    """
+                const string expected = """
                     ┌───┬───┬───┬───┬───┐
                     │ a │ b │ c │ d │ e │
                     ├───╆━━━╈━━━╅───┼───┤
@@ -737,11 +699,7 @@ namespace RCi.Toolbox.Ptt.Tests
         [Test]
         public static void RowSpan_SliceSplit()
         {
-            var variations = new Func<RowSpan, RowSpan>[]
-            {
-                x => x.Slice(1),
-                x => x.Slice(^2),
-            };
+            var variations = new Func<RowSpan, RowSpan>[] { x => x.Slice(1), x => x.Slice(^2) };
 
             foreach (var variation in variations)
             {
@@ -750,8 +708,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 variation(ptt.Row(1).Slice(1, 3)).SetBorders(Border.Bold);
 
                 var actual = ptt.ToString();
-                const string expected =
-                    """
+                const string expected = """
                     ┌───┬───┬───┬───┬───┐
                     │ a │ b │ c │ d │ e │
                     ├───┼───╆━━━╈━━━╅───┤
@@ -785,8 +742,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 variation(ptt.Column(1).Slice(1, 3)).SetBorders(Border.Bold);
 
                 var actual = ptt.ToString();
-                const string expected =
-                    """
+                const string expected = """
                     ┌───┬───┬───┬───┬───┐
                     │ a │ b │ c │ d │ e │
                     ├───╆━━━╅───┼───┼───┤
@@ -806,11 +762,7 @@ namespace RCi.Toolbox.Ptt.Tests
         [Test]
         public static void ColumnSpan_SliceSplit()
         {
-            var variations = new Func<ColumnSpan, ColumnSpan>[]
-            {
-                x => x.Slice(1),
-                x => x.Slice(^2),
-            };
+            var variations = new Func<ColumnSpan, ColumnSpan>[] { x => x.Slice(1), x => x.Slice(^2) };
 
             foreach (var variation in variations)
             {
@@ -819,8 +771,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 variation(ptt.Column(1).Slice(1, 3)).SetBorders(Border.Bold);
 
                 var actual = ptt.ToString();
-                const string expected =
-                    """
+                const string expected = """
                     ┌───┬───┬───┬───┬───┐
                     │ a │ b │ c │ d │ e │
                     ├───┼───┼───┼───┼───┤
@@ -847,8 +798,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.LastRow().MoveUp().SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ├───┼───┼───┼───┼───┤
@@ -872,8 +822,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.FirstRow().MoveDown().SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ┢━━━╈━━━╈━━━╈━━━╈━━━┪
@@ -897,8 +846,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.LastColumn().MoveLeft().SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┲━━━┱───┐
                 │ a │ b │ c ┃ d ┃ e │
                 ├───┼───┼───╊━━━╉───┤
@@ -922,8 +870,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.FirstColumn().MoveRight().SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┲━━━┱───┬───┬───┐
                 │ a ┃ b ┃ c │ d │ e │
                 ├───╊━━━╉───┼───┼───┤
@@ -947,8 +894,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Row(3).MoveUpToFirst().SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┏━━━┳━━━┳━━━┳━━━┳━━━┓
                 ┃ a ┃ b ┃ c ┃ d ┃ e ┃
                 ┡━━━╇━━━╇━━━╇━━━╇━━━┩
@@ -972,8 +918,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Row(3).MoveDownToLast().SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ├───┼───┼───┼───┼───┤
@@ -997,8 +942,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Column(3).MoveLeftToFirst().SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┏━━━┱───┬───┬───┬───┐
                 ┃ a ┃ b │ c │ d │ e │
                 ┣━━━╉───┼───┼───┼───┤
@@ -1022,8 +966,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Column(3).MoveRightToLast().SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┲━━━┓
                 │ a │ b │ c │ d ┃ e ┃
                 ├───┼───┼───┼───╊━━━┫
@@ -1047,8 +990,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.LastRow().Slice(1, 2).MoveUp().SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ├───┼───┼───┼───┼───┤
@@ -1072,8 +1014,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.FirstRow().Slice(1, 2).MoveDown().SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ├───╆━━━╈━━━╅───┼───┤
@@ -1097,8 +1038,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.LastColumn().Slice(1, 2).MoveLeft().SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ├───┼───┼───╆━━━╅───┤
@@ -1122,8 +1062,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.FirstColumn().Slice(1, 2).MoveRight().SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ├───╆━━━╅───┼───┼───┤
@@ -1147,8 +1086,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Row(3).Slice(1, 2).MoveUpToFirst().SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┲━━━┳━━━┱───┬───┐
                 │ a ┃ b ┃ c ┃ d │ e │
                 ├───╄━━━╇━━━╃───┼───┤
@@ -1172,8 +1110,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Row(3).Slice(1, 2).MoveDownToLast().SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ├───┼───┼───┼───┼───┤
@@ -1197,8 +1134,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Column(3).Slice(1, 2).MoveLeftToFirst().SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ┢━━━╅───┼───┼───┼───┤
@@ -1222,8 +1158,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Column(3).Slice(1, 2).MoveRightToLast().SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ├───┼───┼───┼───╆━━━┪
@@ -1249,8 +1184,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Row(1).Skip(2).SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ├───┼───╆━━━╈━━━╈━━━┪
@@ -1274,8 +1208,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Row(1).SkipLast(2).SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ┢━━━╈━━━╈━━━╅───┼───┤
@@ -1299,8 +1232,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Column(1).Skip(2).SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ├───┼───┼───┼───┼───┤
@@ -1324,8 +1256,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Column(1).SkipLast(2).SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┲━━━┱───┬───┬───┐
                 │ a ┃ b ┃ c │ d │ e │
                 ├───╊━━━╉───┼───┼───┤
@@ -1349,8 +1280,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Row(1).Slice(1, ^1).Skip(2).SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ├───┼───┼───╆━━━╅───┤
@@ -1374,8 +1304,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Row(1).Slice(1, ^1).SkipLast(2).SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ├───╆━━━╅───┼───┼───┤
@@ -1399,8 +1328,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Column(1).Slice(1, ^1).Skip(2).SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ├───┼───┼───┼───┼───┤
@@ -1424,8 +1352,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Column(1).Slice(1, ^1).SkipLast(2).SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ├───╆━━━╅───┼───┼───┤
@@ -1451,8 +1378,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Row(1).Take(3).SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ┢━━━╈━━━╈━━━╅───┼───┤
@@ -1476,8 +1402,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Row(1).TakeLast(3).SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ├───┼───╆━━━╈━━━╈━━━┪
@@ -1501,8 +1426,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Column(1).Take(3).SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┲━━━┱───┬───┬───┐
                 │ a ┃ b ┃ c │ d │ e │
                 ├───╊━━━╉───┼───┼───┤
@@ -1526,8 +1450,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Column(1).SkipLast(3).SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┲━━━┱───┬───┬───┐
                 │ a ┃ b ┃ c │ d │ e │
                 ├───╊━━━╉───┼───┼───┤
@@ -1551,8 +1474,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Row(1).Slice(1, ^1).Take(2).SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ├───╆━━━╈━━━╅───┼───┤
@@ -1576,8 +1498,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Row(1).Slice(1, ^1).TakeLast(2).SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ├───┼───╆━━━╈━━━╅───┤
@@ -1601,8 +1522,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Column(1).Slice(1, ^1).Take(2).SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ├───╆━━━╅───┼───┼───┤
@@ -1626,8 +1546,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Column(1).Slice(1, ^1).TakeLast(2).SetBorders(Border.Bold);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 ┌───┬───┬───┬───┬───┐
                 │ a │ b │ c │ d │ e │
                 ├───┼───┼───┼───┼───┤
@@ -1654,8 +1573,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt[0, 0].SetLeftHorizontalAlignment();
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +-------+-------+
                 | a     | bbbbb |
                 |       | bbbbb |
@@ -1682,8 +1600,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.DefaultHorizontalAlignment = HorizontalAlignment.Left;
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +-------+-------+
                 |   a   | bbbbb |
                 |       | bbbbb |
@@ -1710,8 +1627,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt[0, 0].SetRightHorizontalAlignment();
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +-------+-------+
                 |     a | bbbbb |
                 |       | bbbbb |
@@ -1738,8 +1654,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Row(0).SetLeftHorizontalAlignment();
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +-------+-------+
                 | a     | bbbbb |
                 |       | bbbbb |
@@ -1766,8 +1681,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.DefaultHorizontalAlignment = HorizontalAlignment.Left;
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +-------+-------+
                 |   a   | bbbbb |
                 |       | bbbbb |
@@ -1794,8 +1708,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Row(0).SetRightHorizontalAlignment();
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +-------+-------+
                 |     a | bbbbb |
                 |       | bbbbb |
@@ -1824,8 +1737,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt[0, 0].SetTopVerticalAlignment();
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +-------+-------+
                 | a     | bbbbb |
                 |       | bbbbb |
@@ -1852,8 +1764,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt[0, 0].SetCenterVerticalAlignment();
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +-------+-------+
                 |       | bbbbb |
                 |       | bbbbb |
@@ -1880,8 +1791,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt[0, 0].SetBottomVerticalAlignment();
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +-------+-------+
                 |       | bbbbb |
                 |       | bbbbb |
@@ -1908,8 +1818,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Row(0).SetTopVerticalAlignment();
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +-------+-------+
                 | a     | bbbbb |
                 |       | bbbbb |
@@ -1936,8 +1845,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Row(0).SetCenterVerticalAlignment();
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +-------+-------+
                 |       | bbbbb |
                 |       | bbbbb |
@@ -1964,8 +1872,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Row(0).SetBottomVerticalAlignment();
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +-------+-------+
                 |       | bbbbb |
                 |       | bbbbb |

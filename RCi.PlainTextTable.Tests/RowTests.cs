@@ -23,8 +23,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.AppendRow().SetText("A", "B");
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +---+---+
                 | a | b |
                 +---+---+
@@ -43,8 +42,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Row(0).SetText("x");
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +---+---+
                 | x | x |
                 +---+---+
@@ -64,8 +62,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Row(1).SetMargin(new Margin(2));
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +-----+-------+
                 |a    |       |
                 |     |       |
@@ -95,8 +92,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Row(1).SetBorders(Borders.None);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +---#===#
                 | a # b #
                 +---#===#
@@ -112,12 +108,16 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.AppendRow().SetText("a", "b", "c");
             ptt.AppendRow().SetText("A", "B", "C");
             ptt.AppendRow().SetText("xxxxx", "xxxxx", "xxxxx");
-            ptt.Row(0).SetHorizontalAlignment(HorizontalAlignment.Left, HorizontalAlignment.Center, HorizontalAlignment.Right);
+            ptt.Row(0)
+                .SetHorizontalAlignment(
+                    HorizontalAlignment.Left,
+                    HorizontalAlignment.Center,
+                    HorizontalAlignment.Right
+                );
             ptt.Row(1).SetHorizontalAlignment(HorizontalAlignment.Center);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +-------+-------+-------+
                 | a     |   b   |     c |
                 +-------+-------+-------+
@@ -133,14 +133,25 @@ namespace RCi.Toolbox.Ptt.Tests
         public static void SetVerticalAlignment()
         {
             var ptt = new PlainTextTable();
-            ptt.AppendRow().SetText("a", "b", "c", $"x{Environment.NewLine}x{Environment.NewLine}x{Environment.NewLine}x{Environment.NewLine}x");
-            ptt.AppendRow().SetText("A", "B", "C", $"x{Environment.NewLine}x{Environment.NewLine}x{Environment.NewLine}x{Environment.NewLine}x");
+            ptt.AppendRow()
+                .SetText(
+                    "a",
+                    "b",
+                    "c",
+                    $"x{Environment.NewLine}x{Environment.NewLine}x{Environment.NewLine}x{Environment.NewLine}x"
+                );
+            ptt.AppendRow()
+                .SetText(
+                    "A",
+                    "B",
+                    "C",
+                    $"x{Environment.NewLine}x{Environment.NewLine}x{Environment.NewLine}x{Environment.NewLine}x"
+                );
             ptt.Row(0).SetVerticalAlignment(VerticalAlignment.Top, VerticalAlignment.Center, VerticalAlignment.Bottom);
             ptt.Row(1).SetVerticalAlignment(VerticalAlignment.Center);
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +---+---+---+---+
                 | a |   |   | x |
                 |   |   |   | x |

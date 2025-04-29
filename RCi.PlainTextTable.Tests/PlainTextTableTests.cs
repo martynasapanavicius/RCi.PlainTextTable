@@ -20,8 +20,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt[0, 0].SetText("a");
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +---+
                 | a |
                 +---+
@@ -36,8 +35,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt[99, 99].SetText("a");
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +---+
                 | a |
                 +---+
@@ -53,8 +51,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt[0, 1].SetText("b");
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +---+---+
                 | a | b |
                 +---+---+
@@ -70,8 +67,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt[0, 99].SetText("b");
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +---+---+
                 | a | b |
                 +---+---+
@@ -87,8 +83,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt[1, 0].SetText("b");
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +---+
                 | a |
                 +---+
@@ -106,8 +101,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt[1, 0].SetText("b");
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +---+
                 | a |
                 +---+
@@ -127,8 +121,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt[1, 1].SetText("B");
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +---+---+
                 | a | b |
                 +---+---+
@@ -148,8 +141,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt[99, 99].SetText("B");
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +---+---+
                 | a | b |
                 +---+---+
@@ -169,8 +161,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt[1, 1].SetText("B");
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +-------+---+
                 | a     | b |
                 +---+---+---+
@@ -190,8 +181,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt[1, 1].SetText("B");
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +---+---+    
                 | a | b |    
                 |   +---+---+
@@ -217,8 +207,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt[1, 3].SetText("D");
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +---+---+---+---+    
                 | a | b | c | d |    
                 +---+   +---+---+---+
@@ -249,8 +238,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt[3, 3].SetText("$");
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +---+-------+---+
                 | a | b     | c |
                 +-------+   +---+
@@ -267,10 +255,7 @@ namespace RCi.Toolbox.Ptt.Tests
         [Test]
         public static void Overlap_NoMargin()
         {
-            var ptt = new PlainTextTable
-            {
-                DefaultMargin = 0,
-            };
+            var ptt = new PlainTextTable { DefaultMargin = 0 };
 
             ptt[0, 0].SetText("a");
             ptt[0, 1].SetText("b").SetColumnSpan(2).SetRowSpan(2);
@@ -288,8 +273,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt[3, 3].SetText("$");
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +-+---+-+
                 |a|b  |c|
                 +---+ +-+
@@ -306,10 +290,7 @@ namespace RCi.Toolbox.Ptt.Tests
         [Test]
         public static void FractionalGrowth_ColumnSpan_DoesNotExpand()
         {
-            var ptt = new PlainTextTable
-            {
-                DefaultMargin = 0,
-            };
+            var ptt = new PlainTextTable { DefaultMargin = 0 };
 
             ptt[0, 0].SetText("1234").SetColumnSpan(3);
 
@@ -318,8 +299,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt[1, 2].SetText("c");
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +-----+
                 |1234 |
                 +-+-+-+
@@ -332,10 +312,7 @@ namespace RCi.Toolbox.Ptt.Tests
         [Test]
         public static void FractionalGrowth_ColumnSpan_Fit()
         {
-            var ptt = new PlainTextTable
-            {
-                DefaultMargin = 0,
-            };
+            var ptt = new PlainTextTable { DefaultMargin = 0 };
 
             ptt[0, 0].SetText("12345").SetColumnSpan(3);
 
@@ -344,8 +321,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt[1, 2].SetText("c");
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +-----+
                 |12345|
                 +-+-+-+
@@ -358,10 +334,7 @@ namespace RCi.Toolbox.Ptt.Tests
         [Test]
         public static void FractionalGrowth_ColumnSpan_DoesNotFit_Leftover1()
         {
-            var ptt = new PlainTextTable
-            {
-                DefaultMargin = 0,
-            };
+            var ptt = new PlainTextTable { DefaultMargin = 0 };
 
             ptt[0, 0].SetText("123456").SetColumnSpan(3);
 
@@ -370,8 +343,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt[1, 2].SetText("c");
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +------+
                 |123456|
                 +-+-+--+
@@ -384,10 +356,7 @@ namespace RCi.Toolbox.Ptt.Tests
         [Test]
         public static void FractionalGrowth_ColumnSpan_DoesNotFit_Leftover2()
         {
-            var ptt = new PlainTextTable
-            {
-                DefaultMargin = 0,
-            };
+            var ptt = new PlainTextTable { DefaultMargin = 0 };
 
             ptt[0, 0].SetText("1234567").SetColumnSpan(3);
 
@@ -396,8 +365,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt[1, 2].SetText("c");
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +-------+
                 |1234567|
                 +-+--+--+
@@ -410,10 +378,7 @@ namespace RCi.Toolbox.Ptt.Tests
         [Test]
         public static void FractionalGrowth_ColumnSpan_Fit2()
         {
-            var ptt = new PlainTextTable
-            {
-                DefaultMargin = 0,
-            };
+            var ptt = new PlainTextTable { DefaultMargin = 0 };
 
             ptt[0, 0].SetText("12345678").SetColumnSpan(3);
 
@@ -422,8 +387,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt[1, 2].SetText("c");
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +--------+
                 |12345678|
                 +--+--+--+
@@ -436,25 +400,25 @@ namespace RCi.Toolbox.Ptt.Tests
         [Test]
         public static void FractionalGrowth_RowSpan_DoesNotExpand()
         {
-            var ptt = new PlainTextTable
-            {
-                DefaultMargin = 0,
-            };
+            var ptt = new PlainTextTable { DefaultMargin = 0 };
 
-            ptt[0, 0].SetText("""
-                           0
-                           1
-                           2
-                           3
-                           """).SetRowSpan(3);
+            ptt[0, 0]
+                .SetText(
+                    """
+                    0
+                    1
+                    2
+                    3
+                    """
+                )
+                .SetRowSpan(3);
 
             ptt[0, 1].SetText("a");
             ptt[1, 1].SetText("b");
             ptt[2, 1].SetText("c");
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +-+-+
                 |0|a|
                 |1+-+
@@ -469,26 +433,26 @@ namespace RCi.Toolbox.Ptt.Tests
         [Test]
         public static void FractionalGrowth_RowSpan_Fit()
         {
-            var ptt = new PlainTextTable
-            {
-                DefaultMargin = 0,
-            };
+            var ptt = new PlainTextTable { DefaultMargin = 0 };
 
-            ptt[0, 0].SetText("""
-                           0
-                           1
-                           2
-                           3
-                           4
-                           """).SetRowSpan(3);
+            ptt[0, 0]
+                .SetText(
+                    """
+                    0
+                    1
+                    2
+                    3
+                    4
+                    """
+                )
+                .SetRowSpan(3);
 
             ptt[0, 1].SetText("a");
             ptt[1, 1].SetText("b");
             ptt[2, 1].SetText("c");
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +-+-+
                 |0|a|
                 |1+-+
@@ -503,27 +467,27 @@ namespace RCi.Toolbox.Ptt.Tests
         [Test]
         public static void FractionalGrowth_RowSpan_DoesNotFit_Leftover1()
         {
-            var ptt = new PlainTextTable
-            {
-                DefaultMargin = 0,
-            };
+            var ptt = new PlainTextTable { DefaultMargin = 0 };
 
-            ptt[0, 0].SetText("""
-                           0
-                           1
-                           2
-                           3
-                           4
-                           5
-                           """).SetRowSpan(3);
+            ptt[0, 0]
+                .SetText(
+                    """
+                    0
+                    1
+                    2
+                    3
+                    4
+                    5
+                    """
+                )
+                .SetRowSpan(3);
 
             ptt[0, 1].SetText("a");
             ptt[1, 1].SetText("b");
             ptt[2, 1].SetText("c");
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +-+-+
                 |0|a|
                 |1+-+
@@ -539,28 +503,28 @@ namespace RCi.Toolbox.Ptt.Tests
         [Test]
         public static void FractionalGrowth_RowSpan_DoesNotFit_Leftover2()
         {
-            var ptt = new PlainTextTable
-            {
-                DefaultMargin = 0,
-            };
+            var ptt = new PlainTextTable { DefaultMargin = 0 };
 
-            ptt[0, 0].SetText("""
-                           0
-                           1
-                           2
-                           3
-                           4
-                           5
-                           6
-                           """).SetRowSpan(3);
+            ptt[0, 0]
+                .SetText(
+                    """
+                    0
+                    1
+                    2
+                    3
+                    4
+                    5
+                    6
+                    """
+                )
+                .SetRowSpan(3);
 
             ptt[0, 1].SetText("a");
             ptt[1, 1].SetText("b");
             ptt[2, 1].SetText("c");
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +-+-+
                 |0|a|
                 |1+-+
@@ -577,29 +541,29 @@ namespace RCi.Toolbox.Ptt.Tests
         [Test]
         public static void FractionalGrowth_RowSpan_Fit2()
         {
-            var ptt = new PlainTextTable
-            {
-                DefaultMargin = 0,
-            };
+            var ptt = new PlainTextTable { DefaultMargin = 0 };
 
-            ptt[0, 0].SetText("""
-                           0
-                           1
-                           2
-                           3
-                           4
-                           5
-                           6
-                           7
-                           """).SetRowSpan(3);
+            ptt[0, 0]
+                .SetText(
+                    """
+                    0
+                    1
+                    2
+                    3
+                    4
+                    5
+                    6
+                    7
+                    """
+                )
+                .SetRowSpan(3);
 
             ptt[0, 1].SetText("a");
             ptt[1, 1].SetText("b");
             ptt[2, 1].SetText("c");
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +-+-+
                 |0|a|
                 |1| |
@@ -640,7 +604,11 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt[1, 0].SetText("0'");
             ptt[1, 1].SetText("1'''''''''''''''''''''''''''''''").SetColumnSpan(3).SetRowSpan(2);
             ptt[1, 2].SetText("2'");
-            ptt[1, 3].SetText("3'''''''''''''''''''''''''''''''").SetBorders(Border.Bold).SetColumnSpan(2).SetRowSpan(3);
+            ptt[1, 3]
+                .SetText("3'''''''''''''''''''''''''''''''")
+                .SetBorders(Border.Bold)
+                .SetColumnSpan(2)
+                .SetRowSpan(3);
             ptt[1, 4].SetText("4'");
             ptt[1, 5].SetText("5'").SetBorders(Border.Normal, Border.Normal, Border.Normal, Border.None);
             ptt[1, 6].SetText("6'");
@@ -683,8 +651,7 @@ namespace RCi.Toolbox.Ptt.Tests
 
             var actual = ptt.ToString();
 
-            const string expectedAscii =
-                """
+            const string expectedAscii = """
                         +----------+-----------+-----------+----+----------------+-----------------+----+----+----+                        
                   0     | 1        | 2         | 3         | 4  | 5              | 6               | 7  | 8  | 9  |                        
                 +-------+----------------------------------+----#==================================#----+----+----+----+----+----+         
@@ -699,8 +666,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 +-------+----------+-----------+-----------+----+----------------+-----------------+----+----+----+                        
                 """;
 
-            const string expectedUnicodeSingle =
-                """
+            const string expectedUnicodeSingle = """
                         ┌──────────┬───────────┬───────────┬────┬────────────────┬─────────────────┬────┬────┬────┐                        
                   0     │ 1        │ 2         │ 3         │ 4  │ 5              │ 6               │ 7  │ 8  │ 9  │                        
                 ┌───────┼──────────┴───────────┴───────────┼────╆━━━━━━━━━━━━━━━━┷━━━━━━━━━━━━━━━━━╅────┼────┼────┼────┬────┬────┐         
@@ -715,8 +681,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 └───────┴──────────┴───────────┴───────────┴────┴────────────────┴─────────────────┴────┴────┴────┘                        
                 """;
 
-            const string expectedUnicodeDouble =
-                """
+            const string expectedUnicodeDouble = """
                         ┌──────────┬───────────┬───────────┬────┬────────────────┬─────────────────┬────┬────┬────┐                        
                   0     │ 1        │ 2         │ 3         │ 4  │ 5              │ 6               │ 7  │ 8  │ 9  │                        
                 ┌───────┼──────────┴───────────┴───────────┼────╔════════════════╧═════════════════╗────┼────┼────┼────┬────┬────┐         
@@ -761,8 +726,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt[1, 1].SetText("B");
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +---+    
                 | b |    
                 +---+---+
@@ -784,8 +748,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Row(0).Delete();
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +---+---+
                 | A | B |
                 +---+---+
@@ -805,8 +768,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.Column(0).Delete();
 
             var actual = ptt.ToString();
-            const string expected =
-                """
+            const string expected = """
                 +---+
                 | b |
                 +---+

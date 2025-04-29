@@ -21,7 +21,9 @@ namespace RCi.Toolbox.Ptt
 
         public Cell this[int row, int col] => Cell(new Coordinate(row, col));
         public Cell this[Coordinate c] => Cell(c);
+
         public Cell Cell(int row, int col) => Cell(new Coordinate(row, col));
+
         public Cell Cell(Coordinate c)
         {
             if (_cells.TryGetValue(c, out var cell))
@@ -60,27 +62,27 @@ namespace RCi.Toolbox.Ptt
             return new Column(this, col);
         }
 
-        public override string ToString() => RenderTable
-        (
-            BorderStyle,
-            _cells.Where(c => c.Value.IsAlive)
-                .Select(p => new LogicalCell
-                {
-                    Coordinate = p.Value.Coordinate,
-                    Text = p.Value.Text,
-                    ColumnSpan = p.Value.ColumnSpan,
-                    RowSpan = p.Value.RowSpan,
-                    Margin = p.Value.Margin ?? DefaultMargin,
-                    Borders = p.Value.Borders ?? DefaultBorders,
-                    HorizontalAlignment = p.Value.HorizontalAlignment ?? DefaultHorizontalAlignment,
-                    VerticalAlignment = p.Value.VerticalAlignment ?? DefaultVerticalAlignment,
-                })
-        );
+        public override string ToString() =>
+            RenderTable(
+                BorderStyle,
+                _cells
+                    .Where(c => c.Value.IsAlive)
+                    .Select(p => new LogicalCell
+                    {
+                        Coordinate = p.Value.Coordinate,
+                        Text = p.Value.Text,
+                        ColumnSpan = p.Value.ColumnSpan,
+                        RowSpan = p.Value.RowSpan,
+                        Margin = p.Value.Margin ?? DefaultMargin,
+                        Borders = p.Value.Borders ?? DefaultBorders,
+                        HorizontalAlignment = p.Value.HorizontalAlignment ?? DefaultHorizontalAlignment,
+                        VerticalAlignment = p.Value.VerticalAlignment ?? DefaultVerticalAlignment,
+                    })
+            );
 
         internal static string RenderTable(BorderStyle style, IEnumerable<LogicalCell> logicalCells)
         {
-            TableBuilder.BuildPhysicalTable
-            (
+            TableBuilder.BuildPhysicalTable(
                 logicalCells,
                 out var logicalCellsMap,
                 out var logicalToPhysicalMap,
@@ -89,8 +91,7 @@ namespace RCi.Toolbox.Ptt
                 out var physicalColWidths,
                 out var physicalRowHeights
             );
-            return TableRenderer.RenderText
-            (
+            return TableRenderer.RenderText(
                 logicalCellsMap,
                 logicalToPhysicalMap,
                 physicalVerticalBorderWidths,

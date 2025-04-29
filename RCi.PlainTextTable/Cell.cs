@@ -5,6 +5,7 @@ namespace RCi.Toolbox.Ptt
     public sealed class Cell
     {
         private readonly PlainTextTable _host;
+
         public PlainTextTable Host() => _host;
 
         public Coordinate Coordinate { get; }
