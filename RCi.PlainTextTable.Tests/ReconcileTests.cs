@@ -238,7 +238,6 @@ namespace RCi.Toolbox.Ptt.Tests
 
         private static void AssertActual(string pttStr, char expected)
         {
-            TestContext.WriteLine(pttStr);
             Assert.That(pttStr.Length, Is.EqualTo(97));
 
             var lines = pttStr.Split(Environment.NewLine);

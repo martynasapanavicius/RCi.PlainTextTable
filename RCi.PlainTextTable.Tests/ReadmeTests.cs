@@ -24,7 +24,6 @@
                 | Lexi       | Kim         | 47  |
                 +------------+-------------+-----+
                 """;
-            TestContext.WriteLine(actual);
             Assert.That(actual, Is.EqualTo(expected));
         }
 
@@ -122,7 +121,6 @@
                 ║                TOTAL ║ 646.89 ║ 2419.69 ║
                 ╚══════════════════════╩════════╩═════════╝
                 """;
-            TestContext.WriteLine(actual);
             Assert.That(actual, Is.EqualTo(expected));
         }
     }
