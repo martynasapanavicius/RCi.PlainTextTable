@@ -24,7 +24,7 @@
                 | Lexi       | Kim         | 47  |
                 +------------+-------------+-----+
                 """;
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
 
         [Test]
@@ -121,7 +121,7 @@
                 ║                TOTAL ║ 646.89 ║ 2419.69 ║
                 ╚══════════════════════╩════════╩═════════╝
                 """;
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt.AppendColumn();
 
             var actual = ptt.ToString();
-            Assert.That(actual, Is.EqualTo(string.Empty));
+            AssertEx.That(actual, string.Empty);
         }
 
         [Test]
@@ -30,7 +30,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 | A | B |
                 +---+---+
                 """;
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
 
         [Test]
@@ -49,7 +49,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 | x | B |
                 +---+---+
                 """;
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
 
         [Test]
@@ -79,7 +79,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 |       |     |
                 +-------+-----+
                 """;
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
 
         [Test]
@@ -99,7 +99,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 # A # B 
                 #===#   
                 """;
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
 
         [Test]
@@ -130,7 +130,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 | xxxxx | xxxxx |
                 +-------+-------+
                 """;
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
 
         [Test]
@@ -181,7 +181,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 | 0 |   | x |
                 +---+---+---+
                 """;
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
     }
 }

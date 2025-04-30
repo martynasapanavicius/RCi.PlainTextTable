@@ -238,13 +238,15 @@ namespace RCi.Toolbox.Ptt.Tests
 
         private static void AssertActual(string pttStr, char expected)
         {
-            Assert.That(pttStr.Length, Is.EqualTo(97));
+            var pttStrUnix = pttStr.ToUnixLineEnding();
 
-            var lines = pttStr.Split(Environment.NewLine);
+            Assert.That(pttStrUnix.Length, Is.EqualTo(89));
+
+            var lines = pttStrUnix.SplitLines();
             Assert.That(lines.Length, Is.EqualTo(9));
 
             var actual = lines[4][4];
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
 
         [TestCaseSource(nameof(TABLE_SINGLE))]

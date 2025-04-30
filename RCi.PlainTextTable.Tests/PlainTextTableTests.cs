@@ -10,7 +10,7 @@ namespace RCi.Toolbox.Ptt.Tests
         {
             var ptt = new PlainTextTable();
             var actual = ptt.ToString();
-            Assert.That(actual, Is.EqualTo(string.Empty));
+            AssertEx.That(actual, string.Empty);
         }
 
         [Test]
@@ -25,7 +25,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 | a |
                 +---+
                 """;
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
 
         [Test]
@@ -40,7 +40,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 | a |
                 +---+
                 """;
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
 
         [Test]
@@ -56,7 +56,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 | a | b |
                 +---+---+
                 """;
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
 
         [Test]
@@ -72,7 +72,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 | a | b |
                 +---+---+
                 """;
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
 
         [Test]
@@ -90,7 +90,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 | b |
                 +---+
                 """;
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
 
         [Test]
@@ -108,7 +108,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 | b |
                 +---+
                 """;
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
 
         [Test]
@@ -128,7 +128,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 | A | B |
                 +---+---+
                 """;
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
 
         [Test]
@@ -148,7 +148,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 | A | B |
                 +---+---+
                 """;
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
 
         [Test]
@@ -168,7 +168,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 | A | B |    
                 +---+---+    
                 """;
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
 
         [Test]
@@ -188,7 +188,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 |   | A | B |
                 +---+---+---+
                 """;
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
 
         [Test]
@@ -214,7 +214,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 | A |   | B | C | D |
                 +---+---+---+---+---+
                 """;
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
 
         [Test]
@@ -249,7 +249,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 | ! | @ | # | $ |
                 +---+---+---+---+
                 """;
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
 
         [Test]
@@ -284,7 +284,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 |!|@|#|$|
                 +-+-+-+-+
                 """;
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
 
         [Test]
@@ -306,7 +306,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 |a|b|c|
                 +-+-+-+
                 """;
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
 
         [Test]
@@ -328,7 +328,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 |a|b|c|
                 +-+-+-+
                 """;
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
 
         [Test]
@@ -350,7 +350,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 |a|b|c |
                 +-+-+--+
                 """;
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
 
         [Test]
@@ -372,7 +372,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 |a|b |c |
                 +-+--+--+
                 """;
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
 
         [Test]
@@ -394,7 +394,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 |a |b |c |
                 +--+--+--+
                 """;
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
 
         [Test]
@@ -427,7 +427,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 | |c|
                 +-+-+
                 """;
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
 
         [Test]
@@ -461,7 +461,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 |4|c|
                 +-+-+
                 """;
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
 
         [Test]
@@ -497,7 +497,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 |5| |
                 +-+-+
                 """;
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
 
         [Test]
@@ -535,7 +535,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 |6| |
                 +-+-+
                 """;
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
 
         [Test]
@@ -575,7 +575,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 |7| |
                 +-+-+
                 """;
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
 
         [TestCase(BorderStyle.Ascii)]
@@ -703,7 +703,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 BorderStyle.UnicodeDouble => expectedUnicodeDouble,
                 _ => throw new ArgumentOutOfRangeException(nameof(style)),
             };
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
 
         [Test]
@@ -713,7 +713,7 @@ namespace RCi.Toolbox.Ptt.Tests
             ptt[0, 0].SetText("a").Delete();
 
             var actual = ptt.ToString();
-            Assert.That(actual, Is.EqualTo(string.Empty));
+            AssertEx.That(actual, string.Empty);
         }
 
         [Test]
@@ -733,7 +733,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 | A | B |
                 +---+---+
                 """;
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
 
         [Test]
@@ -753,7 +753,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 | A | B |
                 +---+---+
                 """;
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
 
         [Test]
@@ -775,7 +775,7 @@ namespace RCi.Toolbox.Ptt.Tests
                 | B |
                 +---+
                 """;
-            Assert.That(actual, Is.EqualTo(expected));
+            AssertEx.That(actual, expected);
         }
     }
 }
